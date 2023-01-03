@@ -1,0 +1,27 @@
+import { Loader2 } from 'lucide-react'
+
+const VARIANTS = {
+  primary: 'bg-[#F97316] hover:bg-[#EA6C0A] text-white',
+  ghost:   'bg-transparent hover:bg-[#374151] text-gray-300',
+  danger:  'bg-transparent hover:bg-red-500/10 text-red-400',
+}
+
+export default function Button({
+  children,
+  variant = 'primary',
+  loading = false,
+  className = '',
+  fullWidth = false,
+  ...props
+}) {
+  return (
+    <button
+      className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition-colors duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${VARIANTS[variant] ?? VARIANTS.primary} ${fullWidth ? 'w-full' : ''} ${className}`}
+      disabled={loading || props.disabled}
+      {...props}
+    >
+      {loading && <Loader2 size={16} className="animate-spin flex-shrink-0" />}
+      {children}
+    </button>
+  )
+}
