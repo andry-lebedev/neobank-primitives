@@ -11,7 +11,7 @@ function Avatar({ firstName, lastName }) {
   const initials = [firstName?.[0], lastName?.[0]].filter(Boolean).join('').toUpperCase() || '?'
   return (
     <div className="w-16 h-16 rounded-full bg-[#F97316]/20 flex items-center justify-center">
-      <span className="text-xl font-bold text-[#F97316]">{initials}</span>
+      <span className="text-xl font-bold text-white">{initials}</span>
     </div>
   )
 }
