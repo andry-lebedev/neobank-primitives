@@ -78,7 +78,7 @@ export function AppShell({ nav, children }: { nav: NavItem[]; children: ReactNod
           <div className="flex items-center gap-2">
             {mode === 'live' && (
               <span className="flex items-center gap-1.5 rounded-full bg-success/10 px-2.5 py-1 text-[10px] font-semibold text-success">
-                <span className="size-1.5 rounded-full bg-success" /> Live
+                <span className="size-1.5 rounded-full bg-success" /> Provider mode
               </span>
             )}
             <Button variant={open ? 'default' : 'outline'} size="sm" className="h-7 gap-1 rounded-full px-3 text-xs" onClick={toggle}>

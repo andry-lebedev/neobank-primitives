@@ -36,7 +36,7 @@ export function GoLiveDialog({ trigger }: { trigger: ReactNode }) {
         <DialogHeader>
           <DialogTitle>Go live</DialogTitle>
           <DialogDescription>
-            Paste your Swipelux API key — the whole app switches to live data. No rebuild, no config files.
+            Paste a Swipelux API key. It is checked against the v3 capabilities endpoint before provider-backed mode is enabled.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">

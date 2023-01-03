@@ -31,6 +31,8 @@ function load(): DemoState {
     for (const t of p.transfers) {
       if ((t.state === 'pending' || t.state === 'in_progress') && Date.now() - Date.parse(t.createdAt) >= SETTLE_MS) {
         t.state = 'completed'
+        t.updatedAt = new Date(Date.parse(t.createdAt) + SETTLE_MS).toISOString()
+        t.completedAt = t.updatedAt
       }
     }
   }
@@ -68,12 +70,15 @@ function settleLater(id: string): void {
     const found = findTransfer(id)
     if (!found || found.transfer.state === 'completed' || found.transfer.state === 'failed') return
     found.transfer.state = 'in_progress'
+    found.transfer.updatedAt = new Date().toISOString()
     save()
     emitAction({ type: 'transfer.updated', transfer: { ...found.transfer } })
     setTimeout(() => {
       const f2 = findTransfer(id)
       if (!f2 || f2.transfer.state === 'completed' || f2.transfer.state === 'failed') return
       f2.transfer.state = 'completed'
+      f2.transfer.updatedAt = new Date().toISOString()
+      f2.transfer.completedAt = f2.transfer.updatedAt
       save()
       emitAction({ type: 'transfer.updated', transfer: { ...f2.transfer } })
     }, SETTLE_MS / 2)
@@ -142,7 +147,7 @@ export const demoStore = {
     return { ...customer }
   },
 
-  initiateKyc(customerId: string): KycSession {
+  initiateKyc(customerId: string, delayMs = KYC_MS): KycSession {
     setTimeout(() => {
       const p = persona(customerId)
       if (p.customer.id === customerId && p.customer.verificationStatus === 'pending') {
@@ -150,7 +155,7 @@ export const demoStore = {
         save()
         emitAction({ type: 'kyc.approved' })
       }
-    }, KYC_MS)
+    }, delayMs)
     return {}
   },
 
@@ -171,6 +176,7 @@ export const demoStore = {
       chain,
       address: `0x${Math.random().toString(16).slice(2).padEnd(40, '0').slice(0, 40)}`,
       balances: [],
+      custody: { type: 'custodial', custodianName: 'Swipelux Sandbox' },
     }
     save()
     return { ...p.wallet }
@@ -266,11 +272,13 @@ export const demoStore = {
     const quote = isP2p ? null : this.createPayoutQuote({ fromWalletId: input.fromWalletId, amount: input.amount, currency, toAccountId: input.toId, toCurrency: input.toCurrency })
     const recipient = p.recipients.find(r => (p.recipientAccounts[r.id] ?? []).some(a => a.id === input.toId))
     const recipientName = recipient ? [recipient.firstName, recipient.lastName].filter(Boolean).join(' ') || recipient.companyName || 'Recipient' : 'Recipient'
+    const createdAt = new Date().toISOString()
     const t: Transfer = {
       id: nextId('tx'),
       type: isP2p ? 'wallet_to_wallet' : 'offramp',
       state: 'pending',
-      createdAt: new Date().toISOString(),
+      createdAt,
+      updatedAt: createdAt,
       from: { amount: input.amount.toFixed(2), currency },
       to: isP2p
         ? { identifier: `${input.toId.slice(0, 6)}…${input.toId.slice(-4)}`, amount: input.amount.toFixed(2), currency }
@@ -287,11 +295,13 @@ export const demoStore = {
     const amount = input.amount ?? 1000
     const currency = input.currency ?? p.wallet.balances?.find(b => b.currency === brand.currency)?.currency ?? p.wallet.balances?.[0]?.currency ?? brand.currency
     adjustBalance(p, currency, amount)
+    const createdAt = new Date().toISOString()
     const t: Transfer = {
       id: nextId('tx'),
       type: 'onramp',
       state: 'pending',
-      createdAt: new Date().toISOString(),
+      createdAt,
+      updatedAt: createdAt,
       from: { rail: 'sandbox', identifier: 'Simulated deposit' },
       to: { amount: amount.toFixed(2), currency },
     }

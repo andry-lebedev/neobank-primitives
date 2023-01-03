@@ -29,6 +29,10 @@ export interface Wallet {
   address?: string
   chain?: string
   balances?: Balance[]
+  custody?: {
+    type: 'custodial' | 'self_custodied'
+    custodianName?: string
+  }
 }
 
 export interface Account {
@@ -93,6 +97,8 @@ export interface Transfer {
   from?: TransferLeg
   to?: TransferLeg
   createdAt: string
+  updatedAt?: string
+  completedAt?: string
   failureReason?: string
 }
 

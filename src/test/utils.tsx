@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import type { ReactElement } from 'react'
-import { AppProvider } from '@/context/AppContext'
-import { ExplainerProvider } from '@/context/ExplainerContext'
+import { AppProvider } from '@/context/AppProvider'
+import { ExplainerProvider } from '@/context/ExplainerProvider'
 import { setSourceOverride } from '@/data'
 import { withTracking } from '@/data/tracked'
 import { createDemoSource } from '@/data/demo/source'
@@ -14,7 +14,7 @@ export function renderWithProviders(ui: ReactElement, { route = '/' } = {}) {
   sessionStorage.clear()
   localStorage.clear()
   demoStore.reset()
-  setSourceOverride(withTracking(createDemoSource({ latencyMs: 0 })))
+  setSourceOverride(withTracking(createDemoSource({ latencyMs: 0, kycMs: 0 })))
   return render(
     <MemoryRouter initialEntries={[route]}>
       <AppProvider>

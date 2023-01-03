@@ -4,7 +4,7 @@
 
 ### Agent-native financial primitives for fintechs and software that can act.
 
-Build accounts, identity flows, deposits, payouts, wallet transfers, and compliance-aware operations on a provider-neutral contract. Start with the working neobank demo; extend it into policy-controlled MCP tools and a TypeScript SDK.
+Build accounts, identity flows, deposits, payouts, wallet transfers, and policy-aware operations on a provider-neutral contract. Start with the working neobank demo; extend it into policy-controlled MCP tools and a TypeScript SDK.
 
 [![Live demo](https://img.shields.io/badge/Live_demo-Open-111111?style=for-the-badge)](https://neobank-starter.vercel.app/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -26,7 +26,7 @@ Neobank Primitives is building that layer for two consumers:
 - **Fintech applications** that want reusable identity, account, balance, and transaction building blocks.
 - **AI agents** that need narrowly scoped financial tools, machine-readable outcomes, and human approval when policy requires it.
 
-The repository is useful now as a fully interactive neobank starter with realistic demo data and a Swipelux sandbox integration. The MCP server, standalone SDK, policy engine, and full KYB surface described below are the direction of the project and are **not yet shipped as a production runtime**.
+The repository is useful now as an interactive neobank starter with realistic demo data, a Swipelux sandbox integration, and an in-app policy runtime with approvals, receipts, and audit events. The MCP server, standalone SDK, and full KYB surface described below are the direction of the project and are **not yet shipped**; the current runtime is an MVP, not a production compliance system.
 
 ## The primitive surface
 
@@ -36,8 +36,8 @@ The repository is useful now as a fully interactive neobank starter with realist
 | **Businesses** | Business account persona | Create organizations and track KYB requirements |
 | **Accounts** | Fiat accounts, stablecoin wallets, and balances | Provision and query normalized financial accounts |
 | **Transactions** | Quotes, bank payouts, and wallet transfers | Quote, authorize, execute, and inspect money movement |
-| **Storage** | Local demo ledger and provider-backed state | Persist normalized operation state, receipts, and metadata |
-| **Controls** | Human-readable execution explainers | Evaluate policies, require approval, and expose audit history |
+| **Storage** | Local demo ledger, provider-backed state, and a versioned operation journal | Move normalized operation state and receipts to a server-side store |
+| **Controls** | Policy evaluation, authorized approval, durable browser receipts, and audit events | Expose the controls through a standalone audit API |
 
 The contract is designed to stay provider-neutral. **Swipelux is the first adapter**, not the shape every integration must inherit.
 
@@ -63,7 +63,7 @@ Demo mode runs without credentials and remains interactive across personal and b
   <tr>
     <td colspan="3" align="center">
       <img src="docs/assets/readme/transaction-quote.png" alt="Bank payout quote with fee, rate, recipient amount, and execution explainer" />
-      <br /><sub><b>Transaction execution</b> · quote, compliance context, conversion, and payout</sub>
+      <br /><sub><b>Transaction execution</b> · policy decision, provider quote, and payout</sub>
     </td>
   </tr>
 </table>
@@ -132,12 +132,12 @@ The tool response should give the agent enough information to make the next boun
 
 ## Policy-controlled autonomy
 
-The intended safety model is simple:
+The in-app transaction runtime follows this safety model:
 
 1. An application or agent submits a structured financial intent.
-2. Policy validates identity state, permissions, limits, destination rules, purpose, and idempotency.
+2. Capability and policy checks validate the rail, currency, amount and period limits, destination rules, and approval permissions.
 3. Allowed operations execute automatically; exceptions pause for an authorized human.
-4. The adapter returns normalized status, provider references, receipts, and audit events.
+4. Execution rejects expired or replayed quotes, then records the adapter state, provider references, receipt, and audit events.
 
 This makes autonomy configurable instead of binary. A treasury agent might rebalance approved wallets automatically while a first-time bank recipient always requires review.
 
@@ -154,20 +154,20 @@ No `.env` file is required for demo mode. Open the local URL, switch between per
 
 ### Connect the first adapter
 
-Click **Go live** in the app and provide a Swipelux sandbox API key. The key is held in the browser session and the same screens switch from realistic local data to the live adapter.
+Click **Go live** in the app and provide a Swipelux sandbox API key. The key is held in browser storage and validated against the v3 capabilities endpoint before the screens switch from realistic local data to the live adapter.
 
-The existing integration lives under [`src/data/live`](src/data/live), behind the same `DataSource` contract used by the demo implementation. Provider documentation: [Swipelux API reference](https://platform.swipelux.com/api-reference) · [Swipelux docs](https://docs.swipelux.com)
+The read integration lives under [`src/data/live`](src/data/live), behind the same `DataSource` contract used by the demo implementation. Capability-aware onboarding, accounts, recipients, destinations, quotes, transfers, rules, webhooks, and sandbox verification use the typed v3 provider in [`src/financial`](src/financial). Provider documentation: [Swipelux API reference](https://platform.swipelux.com/api-reference) · [Swipelux docs](https://docs.swipelux.com)
 
 ## Project status
 
 | Area | Available now | Next |
 | --- | --- | --- |
-| Product demo | Personal + business personas, onboarding, balances, deposits, payouts, transfers, activity | More operational and approval workflows |
-| Identity | Customer onboarding and KYC product states | Full KYB primitives and requirement handling |
-| Integrations | Demo data source and Swipelux sandbox adapter | Additional provider adapters |
-| Developer surface | Typed in-app domain and `DataSource` boundary | Published TypeScript SDK |
+| Product demo | Personal + business personas, verified onboarding, balances, deposits, payouts, wallet transfers, approval, and activity | More operational workflows |
+| Identity | Customer onboarding gated on returned KYC state, with custody and account evidence | Full KYB primitives and requirement handling |
+| Integrations | Demo provider plus typed Swipelux v3 capability, account, recipient, destination, quote, transfer, rule, webhook, and verification calls | Additional provider adapters |
+| Developer surface | Typed in-app domain, financial provider/runtime boundaries, and executable support metadata | Published TypeScript SDK |
 | Agent surface | Human-readable operation explainers | MCP server backed by the SDK |
-| Controls | Explicit demo/live modes and operation events | Policy engine, approval queue, durable receipts, audit API |
+| Controls | Policy limits and destination rules, authorized approval, exact-quote execution, durable browser receipts, and audit events | Server-side persistence and a standalone audit API |
 
 This is an early build. Do not use demo addresses for real funds, and do not treat the current UI as a production compliance or custody system. Production users remain responsible for provider onboarding, credentials, jurisdictional requirements, policy configuration, and operational controls.
 

@@ -3,6 +3,13 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=22.12.0 <26"
+  },
+  "browserslist": [
+    "defaults and supports es6-module",
+    "not IE 11"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

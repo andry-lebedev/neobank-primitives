@@ -10,6 +10,7 @@ import { useApp } from '@/context/useApp'
 import { demoStore } from '@/data/demo/store'
 import { clearApiKey } from '@/data/mode'
 import { notify } from '@/integrations'
+import { APP_SUPPORT } from '@/support'
 
 export default function Profile() {
   const { source, mode, customer, customerId, wallet, accounts, reload, refreshCustomer } = useApp()
@@ -64,6 +65,9 @@ export default function Profile() {
           <CardHeader className="pb-1"><CardTitle className="text-sm">Wallet</CardTitle></CardHeader>
           <CardContent>
             {wallet.address && <CopyField label={`Address (${wallet.chain ?? 'polygon'})${mode === 'demo' ? ' · demo' : ''}`} value={wallet.address} />}
+            <p className="py-2 text-xs text-muted-foreground">
+              Custody: {wallet.custody?.type ?? 'not reported'}{wallet.custody?.custodianName ? ` by ${wallet.custody.custodianName}` : ''}
+            </p>
             {accounts.map(a => a.iban && <CopyField key={a.id} label={a.label ?? 'IBAN'} value={a.iban} />)}
           </CardContent>
         </Card>
@@ -74,8 +78,8 @@ export default function Profile() {
           <CardTitle className="text-sm">Connection</CardTitle>
           <CardDescription>
             {mode === 'demo'
-              ? 'Running on demo data. Connect a Swipelux API key to go live — that is the only configuration this app has.'
-              : 'Connected to Swipelux.'}
+              ? 'Running on demo data. A key is validated against the v3 capabilities endpoint before live mode is enabled.'
+              : 'The API key was accepted; customer-specific capabilities are checked after account selection.'}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex gap-2">
@@ -91,6 +95,9 @@ export default function Profile() {
               Disconnect
             </Button>
           )}
+        </CardContent>
+        <CardContent className="pt-0 text-xs text-muted-foreground">
+          Required runtime configuration: {APP_SUPPORT.configuration.required.includes('swipeluxApiKey') ? 'Swipelux API key' : APP_SUPPORT.configuration.required.join(', ')}.
         </CardContent>
       </Card>
 

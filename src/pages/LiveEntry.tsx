@@ -38,8 +38,8 @@ export default function LiveEntry() {
     <div className="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center gap-5 px-4 py-10">
       <div className="text-center">
         <img src={brand.logoSrc} alt="" className="mx-auto mb-3 size-12 rounded-xl" />
-        <h1 className="text-xl font-extrabold">You're live</h1>
-        <p className="text-sm text-muted-foreground">Connected to Swipelux. Whose account should we open?</p>
+        <h1 className="text-xl font-extrabold">API key accepted</h1>
+        <p className="text-sm text-muted-foreground">Choose a customer so the app can load account data and customer-specific capabilities.</p>
       </div>
 
       <Card>

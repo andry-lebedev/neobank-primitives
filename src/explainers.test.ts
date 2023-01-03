@@ -5,7 +5,7 @@ import type { ActionEventType } from './lib/events'
 const ALL_EVENTS: ActionEventType[] = [
   'customer.created', 'kyc.started', 'kyc.approved', 'wallet.provisioned',
   'account.issued', 'payout.quoted', 'payout.created', 'p2p.created',
-  'topup.created', 'transfer.updated', 'mode.changed',
+  'topup.created', 'transfer.updated', 'operation.receipt', 'mode.changed',
 ]
 
 describe('explainers', () => {
