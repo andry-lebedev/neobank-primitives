@@ -38,7 +38,7 @@ client.interceptors.request.use(config => {
       status: 'pending',
       statusCode: null,
       durationMs: null,
-      requestBody: config.data ? JSON.parse(config.data) : null,
+      requestBody: config.data ?? null,
       responseBody: null,
       timestamp: new Date().toISOString(),
     },
