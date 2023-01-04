@@ -49,6 +49,16 @@ export function AppProvider({ children }) {
       .finally(() => setLoading(false))
   }, [])
 
+  useEffect(() => {
+    function onFocus() {
+      const customerId = resolveCustomerId()
+      if (!customerId) return
+      getCustomer(customerId).then(c => { if (c) setCustomer(c) }).catch(() => {})
+    }
+    window.addEventListener('focus', onFocus)
+    return () => window.removeEventListener('focus', onFocus)
+  }, [])
+
   function addTransfer(transfer) {
     setTransferLog(prev => [transfer, ...prev])
   }
@@ -65,9 +75,17 @@ export function AppProvider({ children }) {
       .catch(() => {})
   }
 
+  function refreshCustomer() {
+    const customerId = resolveCustomerId()
+    if (!customerId) return
+    getCustomer(customerId)
+      .then(c => { if (c) setCustomer(c) })
+      .catch(() => {})
+  }
+
   return (
     <AppContext.Provider
-      value={{ customer, wallet, accounts, transferLog, addTransfer, refreshWallet, loading, error, loggedOut, setLoggedOut }}
+      value={{ customer, wallet, accounts, transferLog, addTransfer, refreshWallet, refreshCustomer, loading, error, loggedOut, setLoggedOut }}
     >
       {children}
     </AppContext.Provider>
