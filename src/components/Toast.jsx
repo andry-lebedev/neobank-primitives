@@ -8,7 +8,7 @@ function ToastItem({ id, message, type, onDismiss }) {
   }, [id, onDismiss])
 
   return (
-    <div className="flex items-start gap-3 bg-[#1F2937] border border-[#374151] rounded-xl p-4 shadow-xl min-w-64 max-w-80">
+    <div className="flex items-start gap-3 bg-card border border-card-hover rounded-xl p-4 shadow-xl min-w-64 max-w-80">
       {type === 'error'
         ? <AlertCircle size={18} className="text-danger mt-0.5 flex-shrink-0" />
         : <CheckCircle2 size={18} className="text-success mt-0.5 flex-shrink-0" />}

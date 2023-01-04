@@ -59,7 +59,7 @@ function StablecoinTab({ wallet }) {
         )}
       </Card>
       <div className="flex justify-center">
-        <div className="w-32 h-32 border-2 border-dashed border-[#374151] rounded-2xl flex flex-col items-center justify-center gap-2 text-gray-600">
+        <div className="w-32 h-32 border-2 border-dashed border-card-hover rounded-2xl flex flex-col items-center justify-center gap-2 text-gray-600">
           <QrCode size={28} className="opacity-40" />
           <span className="text-[10px]">QR code</span>
         </div>
@@ -116,21 +116,21 @@ export default function AddMoney() {
     <div className="max-w-lg mx-auto px-4 pt-6 pb-28 space-y-5">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-xl hover:bg-[#1F2937] transition-colors duration-150 cursor-pointer text-gray-400 hover:text-white">
+        <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-xl hover:bg-card transition-colors duration-150 cursor-pointer text-gray-400 hover:text-white">
           <ArrowLeft size={20} />
         </button>
         <h1 className="text-xl font-bold text-white">Add money</h1>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-[#1F2937] rounded-xl p-1">
+      <div className="flex gap-1 bg-card rounded-xl p-1">
         {availableTabs.map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors duration-150 cursor-pointer ${
               activeTab === tab
-                ? 'bg-[#374151] text-white'
+                ? 'bg-card-hover text-white'
                 : 'text-gray-500 hover:text-gray-300'
             }`}
           >
@@ -147,7 +147,7 @@ export default function AddMoney() {
       {/* Share button */}
       <button
         onClick={handleShare}
-        className="w-full flex items-center justify-center gap-2 bg-[#1F2937] hover:bg-[#374151] border border-[#374151] rounded-xl py-3 text-sm text-gray-300 transition-colors duration-150 cursor-pointer"
+        className="w-full flex items-center justify-center gap-2 bg-card hover:bg-card-hover border border-card-hover rounded-xl py-3 text-sm text-gray-300 transition-colors duration-150 cursor-pointer"
       >
         <Share2 size={16} />
         Share details

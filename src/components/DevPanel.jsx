@@ -19,13 +19,13 @@ function RequestEntry({ entry, isNew }) {
 
   return (
     <div
-      className={`border-b border-[#374151] last:border-0 ${
+      className={`border-b border-card-hover last:border-0 ${
         !prefersReduced && isNew ? 'animate-slide-in-top' : ''
       }`}
     >
       <button
         onClick={() => setExpanded(e => !e)}
-        className="w-full flex items-center gap-2 p-3 hover:bg-[#1F2937] transition-colors duration-150 cursor-pointer text-left"
+        className="w-full flex items-center gap-2 p-3 hover:bg-card transition-colors duration-150 cursor-pointer text-left"
       >
         <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded font-mono ${METHOD_COLORS[entry.method] ?? 'bg-gray-500/20 text-gray-400'}`}>
           {entry.method}
@@ -54,7 +54,7 @@ function RequestEntry({ entry, isNew }) {
           {entry.requestBody && (
             <div>
               <p className="text-[10px] text-gray-500 mb-1 uppercase tracking-wide">Request</p>
-              <pre className="text-[11px] text-gray-300 bg-[#111827] rounded-lg p-2 overflow-x-auto leading-relaxed">
+              <pre className="text-[11px] text-gray-300 bg-base rounded-lg p-2 overflow-x-auto leading-relaxed">
                 {JSON.stringify(entry.requestBody, null, 2)}
               </pre>
             </div>
@@ -62,7 +62,7 @@ function RequestEntry({ entry, isNew }) {
           {entry.responseBody && (
             <div>
               <p className="text-[10px] text-gray-500 mb-1 uppercase tracking-wide">Response</p>
-              <pre className="text-[11px] text-gray-300 bg-[#111827] rounded-lg p-2 overflow-x-auto leading-relaxed max-h-48">
+              <pre className="text-[11px] text-gray-300 bg-base rounded-lg p-2 overflow-x-auto leading-relaxed max-h-48">
                 {JSON.stringify(entry.responseBody, null, 2)}
               </pre>
             </div>
@@ -76,16 +76,16 @@ function RequestEntry({ entry, isNew }) {
 function StateSection({ title, data }) {
   const [open, setOpen] = useState(true)
   return (
-    <div className="border-b border-[#374151] last:border-0">
+    <div className="border-b border-card-hover last:border-0">
       <button
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center gap-2 p-3 hover:bg-[#1F2937] transition-colors duration-150 cursor-pointer text-left"
+        className="w-full flex items-center gap-2 p-3 hover:bg-card transition-colors duration-150 cursor-pointer text-left"
       >
         {open ? <ChevronDown size={13} className="text-gray-500" /> : <ChevronRight size={13} className="text-gray-500" />}
         <span className="text-xs font-medium text-gray-300">{title}</span>
       </button>
       {open && (
-        <pre className="text-[11px] text-gray-300 bg-[#111827] rounded-lg mx-3 mb-3 p-2 overflow-x-auto leading-relaxed max-h-40">
+        <pre className="text-[11px] text-gray-300 bg-base rounded-lg mx-3 mb-3 p-2 overflow-x-auto leading-relaxed max-h-40">
           {JSON.stringify(data, null, 2)}
         </pre>
       )}
@@ -173,7 +173,7 @@ export default function DevPanel() {
       {/* FAB toggle */}
       <button
         onClick={open ? () => setOpen(false) : handleOpen}
-        className="fixed bottom-20 right-4 md:bottom-6 z-50 w-12 h-12 rounded-full bg-[#F97316] hover:bg-[#EA6C0A] text-white flex items-center justify-center shadow-lg transition-colors duration-150 cursor-pointer"
+        className="fixed bottom-20 right-4 md:bottom-6 z-50 w-12 h-12 rounded-full bg-accent hover:bg-accent-hover text-white flex items-center justify-center shadow-lg transition-colors duration-150 cursor-pointer"
         aria-label="Toggle developer panel"
       >
         {open ? <X size={20} /> : <Terminal size={20} />}
@@ -186,7 +186,7 @@ export default function DevPanel() {
 
       {/* Panel — desktop: right slide-in, mobile: bottom sheet */}
       <div
-        className={`fixed z-40 bg-[#0F172A] border-[#374151] flex flex-col transition-transform duration-300 ease-in-out
+        className={`fixed z-40 bg-[#0F172A] border-card-hover flex flex-col transition-transform duration-300 ease-in-out
           md:top-0 md:right-0 md:bottom-auto md:left-auto md:h-full md:w-96 md:border-l
           bottom-0 left-0 right-0 h-[65vh] rounded-t-2xl border-t md:rounded-none
           ${open
@@ -196,14 +196,14 @@ export default function DevPanel() {
         `}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-[#374151] flex-shrink-0">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-card-hover flex-shrink-0">
           <div className="flex items-center gap-2">
-            <Activity size={16} className="text-[#F97316]" />
+            <Activity size={16} className="text-accent" />
             <span className="text-sm font-semibold text-white">Dev Panel</span>
           </div>
           <button
             onClick={() => setOpen(false)}
-            className="p-1.5 rounded-lg hover:bg-[#1F2937] transition-colors duration-150 cursor-pointer text-gray-400 hover:text-white"
+            className="p-1.5 rounded-lg hover:bg-card transition-colors duration-150 cursor-pointer text-gray-400 hover:text-white"
             aria-label="Close dev panel"
           >
             <X size={16} />
@@ -211,7 +211,7 @@ export default function DevPanel() {
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-[#374151] flex-shrink-0">
+        <div className="flex border-b border-card-hover flex-shrink-0">
           {[
             { id: 'requests', label: 'Requests', icon: Activity },
             { id: 'state', label: 'State', icon: Database },
@@ -223,7 +223,7 @@ export default function DevPanel() {
               onClick={() => setActiveTab(id)}
               className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium transition-colors duration-150 cursor-pointer border-b-2 ${
                 activeTab === id
-                  ? 'border-[#F97316] text-[#F97316]'
+                  ? 'border-accent text-accent'
                   : 'border-transparent text-gray-500 hover:text-gray-300'
               }`}
             >
@@ -269,8 +269,8 @@ export default function DevPanel() {
                       onClick={() => setTopupAmount(a)}
                       className={`py-1.5 rounded-lg text-xs font-medium transition-colors duration-150 cursor-pointer ${
                         topupAmount === a
-                          ? 'bg-[#F97316] text-white'
-                          : 'bg-[#1F2937] text-gray-400 hover:text-white'
+                          ? 'bg-accent text-white'
+                          : 'bg-card text-gray-400 hover:text-white'
                       }`}
                     >
                       {a}
@@ -281,7 +281,7 @@ export default function DevPanel() {
                   type="number"
                   value={topupAmount}
                   onChange={e => setTopupAmount(e.target.value)}
-                  className="w-full bg-[#111827] border border-[#374151] rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-[#F97316] transition-colors duration-150"
+                  className="w-full bg-base border border-card-hover rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-accent transition-colors duration-150"
                   placeholder="Custom amount"
                   min="1"
                 />
@@ -293,7 +293,7 @@ export default function DevPanel() {
               <button
                 onClick={handleTopup}
                 disabled={topupState === 'loading' || !topupAmount}
-                className="w-full flex items-center justify-center gap-2 bg-[#F97316] hover:bg-[#EA6C0A] disabled:opacity-50 text-white rounded-xl py-3 text-sm font-medium transition-colors duration-150 cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-accent-hover disabled:opacity-50 text-white rounded-xl py-3 text-sm font-medium transition-colors duration-150 cursor-pointer"
               >
                 <Zap size={14} />
                 {topupState === 'loading' ? 'Crediting…' : `Credit ${topupAmount} USDC`}
@@ -310,7 +310,7 @@ export default function DevPanel() {
             <div className="p-4 space-y-4">
               <button
                 onClick={handleCreateCustomer}
-                className="w-full flex items-center justify-center gap-2 bg-[#F97316] hover:bg-[#EA6C0A] text-white rounded-xl py-3 text-sm font-medium transition-colors duration-150 cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-accent-hover text-white rounded-xl py-3 text-sm font-medium transition-colors duration-150 cursor-pointer"
               >
                 <UserPlus size={14} />
                 Create customer

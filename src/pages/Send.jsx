@@ -190,7 +190,7 @@ function BankPayoutFlow({ wallet, addTransfer, refreshWallet, kycOk, customer })
           id="bank-recipient"
           value={selectedRecipientId}
           onChange={e => handleSelectRecipient(e.target.value)}
-          className="w-full bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#F97316] transition-colors duration-150"
+          className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent transition-colors duration-150"
         >
           <option value="">Select recipient</option>
           {recipients.map(r => (
@@ -206,7 +206,7 @@ function BankPayoutFlow({ wallet, addTransfer, refreshWallet, kycOk, customer })
             id="bank-recipient-account"
             value={selectedAccountId}
             onChange={e => setSelectedAccountId(e.target.value)}
-            className="w-full bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#F97316] transition-colors duration-150"
+            className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent transition-colors duration-150"
           >
             <option value="">Select account</option>
             {recipientAccounts.map(a => (
@@ -219,7 +219,7 @@ function BankPayoutFlow({ wallet, addTransfer, refreshWallet, kycOk, customer })
       <button
         type="button"
         onClick={() => setShowAddForm(show => !show)}
-        className="text-sm text-[#F97316] hover:text-[#EA6C0A] cursor-pointer"
+        className="text-sm text-accent hover:text-accent-hover cursor-pointer"
       >
         + Add recipient
       </button>
@@ -227,15 +227,15 @@ function BankPayoutFlow({ wallet, addTransfer, refreshWallet, kycOk, customer })
       {showAddForm && (
         <Card className="p-4 space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="First name" className="bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#F97316]" />
-            <input value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Last name" className="bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#F97316]" />
+            <input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="First name" className="bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent" />
+            <input value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Last name" className="bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent" />
           </div>
-          <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" type="email" className="w-full bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#F97316]" />
-          <input value={iban} onChange={e => setIban(e.target.value)} placeholder="IBAN" className="w-full bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#F97316] font-mono" />
-          <input value={accountHolderName} onChange={e => setAccountHolderName(e.target.value)} placeholder="Account holder name" className="w-full bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#F97316]" />
+          <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" type="email" className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent" />
+          <input value={iban} onChange={e => setIban(e.target.value)} placeholder="IBAN" className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent font-mono" />
+          <input value={accountHolderName} onChange={e => setAccountHolderName(e.target.value)} placeholder="Account holder name" className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent" />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <input value={country} onChange={e => setCountry(e.target.value.toUpperCase())} placeholder="Country" className="bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#F97316]" />
-            <input value={currency} onChange={e => setCurrency(e.target.value.toUpperCase())} placeholder="Currency" className="bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#F97316]" />
+            <input value={country} onChange={e => setCountry(e.target.value.toUpperCase())} placeholder="Country" className="bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent" />
+            <input value={currency} onChange={e => setCurrency(e.target.value.toUpperCase())} placeholder="Currency" className="bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent" />
           </div>
           <Button fullWidth onClick={handleAddRecipient} loading={loading}>Save recipient</Button>
         </Card>
@@ -252,7 +252,7 @@ function BankPayoutFlow({ wallet, addTransfer, refreshWallet, kycOk, customer })
             placeholder="0.00"
             value={amount}
             onChange={e => setAmount(e.target.value)}
-            className="w-full bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#F97316] transition-colors duration-150 pr-16"
+            className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent transition-colors duration-150 pr-16"
           />
           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-gray-400">USDC</span>
         </div>
@@ -266,7 +266,7 @@ function BankPayoutFlow({ wallet, addTransfer, refreshWallet, kycOk, customer })
           placeholder="Payment reference"
           value={memo}
           onChange={e => setMemo(e.target.value)}
-          className="w-full bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#F97316] transition-colors duration-150"
+          className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent transition-colors duration-150"
         />
       </div>
 
@@ -374,7 +374,7 @@ function P2PFlow({ wallet, addTransfer, refreshWallet, kycOk }) {
           placeholder="wal_..."
           value={destWalletId}
           onChange={e => setDestWalletId(e.target.value.trim())}
-          className="w-full bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#F97316] transition-colors duration-150 font-mono"
+          className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent transition-colors duration-150 font-mono"
         />
         {destWalletId && !walletIdValid && <p className="text-xs text-danger mt-1">Enter a valid wallet ID (wal_...)</p>}
       </div>
@@ -390,7 +390,7 @@ function P2PFlow({ wallet, addTransfer, refreshWallet, kycOk }) {
             placeholder="0.00"
             value={amount}
             onChange={e => setAmount(e.target.value)}
-            className="w-full bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#F97316] transition-colors duration-150 pr-16"
+            className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent transition-colors duration-150 pr-16"
           />
           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-gray-400">USDC</span>
         </div>
@@ -404,7 +404,7 @@ function P2PFlow({ wallet, addTransfer, refreshWallet, kycOk }) {
           placeholder="What's this for?"
           value={note}
           onChange={e => setNote(e.target.value)}
-          className="w-full bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#F97316] transition-colors duration-150"
+          className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent transition-colors duration-150"
         />
       </div>
 
@@ -430,13 +430,13 @@ export default function Send() {
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-28 space-y-5">
       <div className="flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-xl hover:bg-[#1F2937] transition-colors duration-150 cursor-pointer text-gray-400 hover:text-white">
+        <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-xl hover:bg-card transition-colors duration-150 cursor-pointer text-gray-400 hover:text-white">
           <ArrowLeft size={20} />
         </button>
         <h1 className="text-xl font-bold text-white">Send</h1>
       </div>
 
-      <div className="flex gap-1 bg-[#1F2937] rounded-xl p-1">
+      <div className="flex gap-1 bg-card rounded-xl p-1">
         {[
           { id: 'bank', label: 'Bank payout', icon: Building2 },
           { id: 'p2p', label: 'P2P Transfer', icon: User },
@@ -446,7 +446,7 @@ export default function Send() {
             onClick={() => setMode(id)}
             className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium rounded-lg transition-colors duration-150 cursor-pointer ${
               mode === id
-                ? 'bg-[#374151] text-white'
+                ? 'bg-card-hover text-white'
                 : 'text-gray-500 hover:text-gray-300'
             }`}
           >
