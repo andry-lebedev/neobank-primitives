@@ -14,6 +14,10 @@ export function getBalances(id) {
   return client.get(`/v1/customers/${id}/balances`).then(r => r.data)
 }
 
+export function initiateKyc(customerId, level = 'simplified') {
+  return client.post(`/v1/customers/${customerId}/kyc`, { level }).then(r => r.data)
+}
+
 export function createCustomer({
   firstName,
   middleName,
