@@ -3,11 +3,8 @@ import { getCustomer } from '../api/customers'
 import { listWallets, getWallet } from '../api/wallets'
 import { listAccounts } from '../api/accounts'
 import { listTransfers } from '../api/transfers'
+import { resolveCustomerId, onSession } from '../integrations'
 import { AppContext } from './appContext'
-
-function resolveCustomerId() {
-  return localStorage.getItem('swipelux_customer_id') ?? import.meta.env.VITE_CUSTOMER_ID
-}
 
 export function AppProvider({ children }) {
   const hasCustomerId = Boolean(resolveCustomerId())
@@ -43,6 +40,7 @@ export function AppProvider({ children }) {
     ])
       .then(([cust, wal, accs, txns]) => {
         setCustomer(cust)
+        onSession(cust)
         setWallet(wal)
         setAccounts(accs)
         setTransferLog(txns)
