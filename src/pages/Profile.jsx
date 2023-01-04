@@ -34,7 +34,10 @@ function LoggedOutScreen() {
 export default function Profile() {
   const { customer, wallet, accounts, loggedOut, setLoggedOut } = useApp()
   const navigate = useNavigate()
-  const kycInfo = getKycLabel(customer?.status)
+  const verificationStatus = customer?.verificationStatus
+  const firstName = customer?.personal?.firstName ?? ''
+  const lastName = customer?.personal?.lastName ?? ''
+  const kycInfo = getKycLabel(verificationStatus)
   const virtualAccount = getVirtualAccount(accounts)
 
   if (loggedOut) return <LoggedOutScreen />
@@ -65,13 +68,13 @@ export default function Profile() {
 
       {/* Identity */}
       <div className="flex items-center gap-4">
-        <Avatar firstName={customer?.firstName} lastName={customer?.lastName} />
+        <Avatar firstName={firstName} lastName={lastName} />
         <div>
           <p className="text-lg font-bold text-white">
-            {customer ? `${customer.firstName ?? ''} ${customer.lastName ?? ''}`.trim() : '—'}
+            {customer ? `${firstName} ${lastName}`.trim() || '—' : '—'}
           </p>
-          <p className="text-sm text-gray-400">{customer?.email ?? '—'}</p>
-          {customer?.phone && <p className="text-sm text-gray-500">{customer.phone}</p>}
+          <p className="text-sm text-gray-400">{customer?.personal?.email ?? '—'}</p>
+          {customer?.personal?.phone && <p className="text-sm text-gray-500">{customer.personal.phone}</p>}
         </div>
       </div>
 
@@ -81,9 +84,9 @@ export default function Profile() {
           <Shield size={16} className={kycInfo.color === 'green' ? 'text-green-400' : kycInfo.color === 'amber' ? 'text-amber-400' : kycInfo.color === 'red' ? 'text-red-400' : 'text-gray-400'} />
           <span className="text-sm font-semibold text-white">Identity verification</span>
         </div>
-        <Badge status={customer?.status ?? 'not_started'} className="mb-2" />
+        <Badge status={verificationStatus ?? 'not_started'} className="mb-2" />
         <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-          {kycDescriptions[customer?.status] ?? kycDescriptions.not_started}
+          {kycDescriptions[verificationStatus] ?? kycDescriptions.not_started}
         </p>
       </Card>
 

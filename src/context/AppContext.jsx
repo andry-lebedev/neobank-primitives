@@ -3,7 +3,6 @@ import { getCustomer } from '../api/customers'
 import { listWallets, getWallet } from '../api/wallets'
 import { listAccounts } from '../api/accounts'
 import { listTransfers } from '../api/transfers'
-import { MOCK_CUSTOMER, MOCK_WALLET, MOCK_IBAN, MOCK_TRANSFERS } from '../mocks'
 import { AppContext } from './appContext'
 
 function resolveCustomerId() {
@@ -12,40 +11,32 @@ function resolveCustomerId() {
 
 export function AppProvider({ children }) {
   const hasCustomerId = Boolean(resolveCustomerId())
-  const [customer, setCustomer] = useState(hasCustomerId ? null : MOCK_CUSTOMER)
-  const [wallet, setWallet] = useState(hasCustomerId ? null : MOCK_WALLET)
-  const [accounts, setAccounts] = useState(hasCustomerId ? [] : [MOCK_IBAN])
-  const [transferLog, setTransferLog] = useState(hasCustomerId ? [] : MOCK_TRANSFERS)
+  const [customer, setCustomer] = useState(null)
+  const [wallet, setWallet] = useState(null)
+  const [accounts, setAccounts] = useState([])
+  const [transferLog, setTransferLog] = useState([])
   const [loading, setLoading] = useState(hasCustomerId)
   const [error, setError] = useState(null)
   const [loggedOut, setLoggedOut] = useState(false)
 
   useEffect(() => {
     const customerId = resolveCustomerId()
-    if (!customerId) {
-      return
-    }
+    if (!customerId) return
 
     const fetchWallet = () =>
-      listWallets(customerId)
-        .then(({ wallets }) => {
-          if (!wallets?.length) return MOCK_WALLET
-          return getWallet(customerId, wallets[0].id).catch(() => MOCK_WALLET)
-        })
-        .catch(() => MOCK_WALLET)
+      listWallets(customerId).then(({ wallets }) => {
+        if (!wallets?.length) return null
+        return getWallet(customerId, wallets[0].id).catch(() => null)
+      })
 
     const fetchAccounts = () =>
-      listAccounts(customerId)
-        .then(({ accounts }) => (accounts?.length ? accounts : [MOCK_IBAN]))
-        .catch(() => [MOCK_IBAN])
+      listAccounts(customerId).then(({ accounts }) => accounts ?? [])
 
     const fetchTransfers = () =>
-      listTransfers(customerId)
-        .then(data => (Array.isArray(data) && data.length ? data : MOCK_TRANSFERS))
-        .catch(() => MOCK_TRANSFERS)
+      listTransfers(customerId).then(data => (Array.isArray(data) ? data : data?.transfers ?? []))
 
     Promise.all([
-      getCustomer(customerId).catch(() => MOCK_CUSTOMER),
+      getCustomer(customerId),
       fetchWallet(),
       fetchAccounts(),
       fetchTransfers(),
@@ -56,13 +47,7 @@ export function AppProvider({ children }) {
         setAccounts(accs)
         setTransferLog(txns)
       })
-      .catch(() => {
-        setError('Failed to load account. Using demo data.')
-        setCustomer(MOCK_CUSTOMER)
-        setWallet(MOCK_WALLET)
-        setAccounts([MOCK_IBAN])
-        setTransferLog(MOCK_TRANSFERS)
-      })
+      .catch(() => setError('Failed to load your account.'))
       .finally(() => setLoading(false))
   }, [])
 
@@ -75,7 +60,7 @@ export function AppProvider({ children }) {
     if (!customerId) return
     listWallets(customerId)
       .then(({ wallets }) => {
-        if (!wallets?.length) return
+        if (!wallets?.length) return null
         return getWallet(customerId, wallets[0].id)
       })
       .then(wal => { if (wal) setWallet(wal) })
@@ -84,18 +69,7 @@ export function AppProvider({ children }) {
 
   return (
     <AppContext.Provider
-      value={{
-        customer,
-        wallet,
-        accounts,
-        transferLog,
-        addTransfer,
-        refreshWallet,
-        loading,
-        error,
-        loggedOut,
-        setLoggedOut,
-      }}
+      value={{ customer, wallet, accounts, transferLog, addTransfer, refreshWallet, loading, error, loggedOut, setLoggedOut }}
     >
       {children}
     </AppContext.Provider>

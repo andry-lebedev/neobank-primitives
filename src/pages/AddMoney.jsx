@@ -49,8 +49,14 @@ function StablecoinTab({ wallet }) {
     <div className="space-y-4">
       <Card className="p-5">
         <p className="text-xs text-gray-500 mb-3">Send USDC or other stablecoins to this address</p>
-        <CopyField label="Wallet address" value={wallet?.address} />
-        {wallet?.chain && <CopyField label="Network" value={wallet.chain.toUpperCase()} />}
+        {wallet?.address ? (
+          <>
+            <CopyField label="Wallet address" value={wallet.address} />
+            {wallet?.chain && <CopyField label="Network" value={wallet.chain.toUpperCase()} />}
+          </>
+        ) : (
+          <p className="text-sm text-gray-500 p-4">No wallet yet.</p>
+        )}
       </Card>
       <div className="flex justify-center">
         <div className="w-32 h-32 border-2 border-dashed border-[#374151] rounded-2xl flex flex-col items-center justify-center gap-2 text-gray-600">
@@ -82,6 +88,7 @@ export default function AddMoney() {
   function handleShare() {
     const account = activeTab === 'SEPA' ? sepaAccount : swiftAccount
     if (!account && activeTab !== 'Stablecoin') return
+    if (activeTab === 'Stablecoin' && !wallet?.address) return
     let lines = []
     if (activeTab === 'SEPA' && account) {
       if (account.iban) lines.push(`IBAN: ${account.iban}`)

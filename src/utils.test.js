@@ -3,11 +3,12 @@ import {
   formatBalance,
   formatAmount,
   truncateAddress,
-  resolveEmail,
   relativeTime,
   groupByDate,
   getKycLabel,
   getVirtualAccount,
+  canSend,
+  kycBanner,
 } from './utils'
 
 describe('formatBalance', () => {
@@ -44,21 +45,6 @@ describe('truncateAddress', () => {
   })
 })
 
-describe('resolveEmail', () => {
-  it('resolves demo email to wallet ID', () => {
-    expect(resolveEmail('ak2@swipelux.com', 'ak2@swipelux.com', 'wal_abc')).toBe('wal_abc')
-  })
-  it('returns null for unknown email', () => {
-    expect(resolveEmail('other@x.com', 'ak2@swipelux.com', 'wal_abc')).toBeNull()
-  })
-  it('is case-insensitive', () => {
-    expect(resolveEmail('AK2@SWIPELUX.COM', 'ak2@swipelux.com', 'wal_abc')).toBe('wal_abc')
-  })
-  it('returns null for empty email', () => {
-    expect(resolveEmail('', 'ak2@swipelux.com', 'wal_abc')).toBeNull()
-  })
-})
-
 describe('getKycLabel', () => {
   it('returns green for approved', () => {
     expect(getKycLabel('approved').color).toBe('green')
@@ -92,6 +78,25 @@ describe('getVirtualAccount', () => {
   it('ignores external accounts', () => {
     const accounts = [{ source: 'external', type: 'sepa', iban: 'EE38' }]
     expect(getVirtualAccount(accounts)).toBeNull()
+  })
+})
+
+describe('canSend (soft KYC gate)', () => {
+  it('blocks only when rejected', () => {
+    expect(canSend('rejected')).toBe(false)
+    expect(canSend('not_started')).toBe(true)
+    expect(canSend('pending')).toBe(true)
+    expect(canSend('approved')).toBe(true)
+    expect(canSend(undefined)).toBe(true)
+  })
+})
+
+describe('kycBanner', () => {
+  it('returns a message for non-approved statuses and null for approved', () => {
+    expect(kycBanner('approved')).toBeNull()
+    expect(kycBanner('not_started')).toMatch(/verify/i)
+    expect(kycBanner('pending')).toMatch(/review/i)
+    expect(kycBanner('rejected')).toMatch(/failed/i)
   })
 })
 

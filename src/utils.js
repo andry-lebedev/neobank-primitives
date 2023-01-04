@@ -18,10 +18,17 @@ export function truncateAddress(address, chars = 4) {
   return `${address.slice(0, chars + 2)}…${address.slice(-chars)}`
 }
 
-export function resolveEmail(email, demoEmail, recipientWalletId) {
-  if (!email) return null
-  if (email.toLowerCase() === (demoEmail ?? '').toLowerCase()) return recipientWalletId
-  return null
+export function canSend(verificationStatus) {
+  return verificationStatus !== 'rejected'
+}
+
+export function kycBanner(verificationStatus) {
+  switch (verificationStatus) {
+    case 'approved': return null
+    case 'pending': return 'Verification under review — some limits may apply.'
+    case 'rejected': return 'Verification failed. Sending is disabled — contact support.'
+    default: return 'Verify your identity to lift limits.'
+  }
 }
 
 export function relativeTime(isoString) {

@@ -94,7 +94,6 @@ function StateSection({ title, data }) {
 }
 
 const TOPUP_AMOUNTS = ['100', '500', '1000', '5000']
-const SANDBOX_WALLET = import.meta.env.VITE_SANDBOX_WALLET_ID
 
 export default function DevPanel() {
   const navigate = useNavigate()
@@ -109,7 +108,7 @@ export default function DevPanel() {
   const { customer, wallet, transferLog, addTransfer, refreshWallet } = useApp()
 
   async function handleTopup() {
-    const walletId = SANDBOX_WALLET || wallet?.id
+    const walletId = wallet?.id
     if (!walletId) return
     setTopupState('loading')
     setTopupMsg('')
@@ -162,7 +161,9 @@ export default function DevPanel() {
   }
 
   const stateSnapshot = {
-    customer: customer ? { id: customer.id, name: `${customer.firstName} ${customer.lastName}`, status: customer.status } : null,
+    customer: customer
+      ? { id: customer.id, name: `${customer.personal?.firstName ?? ''} ${customer.personal?.lastName ?? ''}`.trim(), status: customer.verificationStatus }
+      : null,
     wallet: wallet ? { id: wallet.id, address: wallet.address?.slice(0, 10) + '…', balances: wallet.balances } : null,
     transferLog: transferLog.map(t => ({ id: t.id, type: t.type, state: t.state })),
   }
@@ -287,7 +288,7 @@ export default function DevPanel() {
               </div>
               <div>
                 <p className="text-[10px] text-gray-500 uppercase tracking-wide mb-1">Target wallet</p>
-                <p className="text-[11px] text-gray-400 font-mono truncate">{SANDBOX_WALLET || wallet?.id || '—'}</p>
+                <p className="text-[11px] text-gray-400 font-mono truncate">{wallet?.id || '—'}</p>
               </div>
               <button
                 onClick={handleTopup}
