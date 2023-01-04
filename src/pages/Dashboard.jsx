@@ -1,11 +1,10 @@
 import { useNavigate } from 'react-router-dom'
 import { Bell, ArrowDownLeft, Send, History, AlertTriangle } from 'lucide-react'
-import { useState } from 'react'
 import Card from '../components/Card'
 import Skeleton from '../components/Skeleton'
 import TransactionRow from '../components/TransactionRow'
 import CopyField from '../components/CopyField'
-import { useApp } from '../context/AppContext'
+import { useApp } from '../context/useApp'
 import { formatBalance, getVirtualAccount } from '../utils'
 
 function BalanceCard({ wallet }) {
@@ -61,7 +60,9 @@ export default function Dashboard() {
   const { customer, wallet, accounts, transferLog, loading, error } = useApp()
   const navigate = useNavigate()
   const virtualAccount = getVirtualAccount(accounts)
-  const recentTxns = transferLog.slice(0, 5)
+  const recentTxns = [...transferLog]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 5)
   const kycOk = customer?.status === 'approved'
 
   const hour = new Date().getHours()

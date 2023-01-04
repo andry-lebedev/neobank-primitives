@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
-import { X, Activity, Database, ChevronDown, ChevronRight, Terminal } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { X, Activity, Database, ChevronDown, ChevronRight, Terminal, Zap, UserPlus } from 'lucide-react'
 import { addDevListener, removeDevListener } from '../api/client'
-import { useApp } from '../context/AppContext'
+import { sandboxTopup } from '../api/transfers'
+import { useApp } from '../context/useApp'
 
 const METHOD_COLORS = {
   GET:    'bg-blue-500/20 text-blue-400',
@@ -91,13 +93,46 @@ function StateSection({ title, data }) {
   )
 }
 
+const TOPUP_AMOUNTS = ['100', '500', '1000', '5000']
+const SANDBOX_WALLET = import.meta.env.VITE_SANDBOX_WALLET_ID
+
 export default function DevPanel() {
+  const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [activeTab, setActiveTab] = useState('requests')
   const [requests, setRequests] = useState([])
   const [newIds, setNewIds] = useState(new Set())
   const [unread, setUnread] = useState(0)
-  const { customer, wallet, transferLog } = useApp()
+  const [topupAmount, setTopupAmount] = useState('1000')
+  const [topupState, setTopupState] = useState('idle') // idle | loading | success | error
+  const [topupMsg, setTopupMsg] = useState('')
+  const { customer, wallet, transferLog, addTransfer, refreshWallet } = useApp()
+
+  async function handleTopup() {
+    const walletId = SANDBOX_WALLET || wallet?.id
+    if (!walletId) return
+    setTopupState('loading')
+    setTopupMsg('')
+    try {
+      const result = await sandboxTopup({ walletId, amount: topupAmount, currency: 'USDC' })
+      addTransfer({
+        id: result.id,
+        type: 'onramp',
+        state: result.state,
+        from: { rail: result.from?.rail ?? 'sandbox', currency: 'USDC', amount: topupAmount },
+        to: { identifier: walletId },
+        createdAt: new Date().toISOString(),
+      })
+      refreshWallet()
+      setTopupState('success')
+      setTopupMsg(`+${topupAmount} USDC · tx ${result.id}`)
+      setTimeout(() => setTopupState('idle'), 3000)
+    } catch (e) {
+      setTopupState('error')
+      setTopupMsg(e?.response?.data?.message ?? e.message ?? 'Topup failed')
+      setTimeout(() => setTopupState('idle'), 4000)
+    }
+  }
 
   useEffect(() => {
     function handleEvent({ type, entry }) {
@@ -119,6 +154,11 @@ export default function DevPanel() {
   function handleOpen() {
     setOpen(true)
     setUnread(0)
+  }
+
+  function handleCreateCustomer() {
+    setOpen(false)
+    navigate('/onboarding')
   }
 
   const stateSnapshot = {
@@ -146,11 +186,11 @@ export default function DevPanel() {
       {/* Panel — desktop: right slide-in, mobile: bottom sheet */}
       <div
         className={`fixed z-40 bg-[#0F172A] border-[#374151] flex flex-col transition-transform duration-300 ease-in-out
-          md:top-0 md:right-0 md:h-full md:w-96 md:border-l
+          md:top-0 md:right-0 md:bottom-auto md:left-auto md:h-full md:w-96 md:border-l
           bottom-0 left-0 right-0 h-[65vh] rounded-t-2xl border-t md:rounded-none
           ${open
-            ? 'translate-y-0 md:translate-x-0'
-            : 'translate-y-full md:translate-y-0 md:translate-x-full'
+            ? 'max-md:translate-y-0 md:translate-x-0'
+            : 'max-md:translate-y-full md:translate-x-full'
           }
         `}
       >
@@ -174,6 +214,8 @@ export default function DevPanel() {
           {[
             { id: 'requests', label: 'Requests', icon: Activity },
             { id: 'state', label: 'State', icon: Database },
+            { id: 'topup', label: 'Topup', icon: Zap },
+            { id: 'actions', label: 'Actions', icon: UserPlus },
           ].map(({ id, label, icon: Icon }) => (
             <button
               key={id}
@@ -213,6 +255,65 @@ export default function DevPanel() {
               <StateSection title="Customer" data={stateSnapshot.customer} />
               <StateSection title="Wallet" data={stateSnapshot.wallet} />
               <StateSection title="Transfer Log" data={stateSnapshot.transferLog} />
+            </div>
+          )}
+          {activeTab === 'topup' && (
+            <div className="p-4 space-y-4">
+              <div>
+                <p className="text-[10px] text-gray-500 uppercase tracking-wide mb-2">Amount (USDC)</p>
+                <div className="grid grid-cols-4 gap-1.5 mb-3">
+                  {TOPUP_AMOUNTS.map(a => (
+                    <button
+                      key={a}
+                      onClick={() => setTopupAmount(a)}
+                      className={`py-1.5 rounded-lg text-xs font-medium transition-colors duration-150 cursor-pointer ${
+                        topupAmount === a
+                          ? 'bg-[#F97316] text-white'
+                          : 'bg-[#1F2937] text-gray-400 hover:text-white'
+                      }`}
+                    >
+                      {a}
+                    </button>
+                  ))}
+                </div>
+                <input
+                  type="number"
+                  value={topupAmount}
+                  onChange={e => setTopupAmount(e.target.value)}
+                  className="w-full bg-[#111827] border border-[#374151] rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-[#F97316] transition-colors duration-150"
+                  placeholder="Custom amount"
+                  min="1"
+                />
+              </div>
+              <div>
+                <p className="text-[10px] text-gray-500 uppercase tracking-wide mb-1">Target wallet</p>
+                <p className="text-[11px] text-gray-400 font-mono truncate">{SANDBOX_WALLET || wallet?.id || '—'}</p>
+              </div>
+              <button
+                onClick={handleTopup}
+                disabled={topupState === 'loading' || !topupAmount}
+                className="w-full flex items-center justify-center gap-2 bg-[#F97316] hover:bg-[#EA6C0A] disabled:opacity-50 text-white rounded-xl py-3 text-sm font-medium transition-colors duration-150 cursor-pointer"
+              >
+                <Zap size={14} />
+                {topupState === 'loading' ? 'Crediting…' : `Credit ${topupAmount} USDC`}
+              </button>
+              {topupMsg && (
+                <p className={`text-xs text-center font-mono ${topupState === 'error' ? 'text-red-400' : 'text-green-400'}`}>
+                  {topupMsg}
+                </p>
+              )}
+              <p className="text-[10px] text-gray-600 text-center">Sandbox only · no real funds move</p>
+            </div>
+          )}
+          {activeTab === 'actions' && (
+            <div className="p-4 space-y-4">
+              <button
+                onClick={handleCreateCustomer}
+                className="w-full flex items-center justify-center gap-2 bg-[#F97316] hover:bg-[#EA6C0A] text-white rounded-xl py-3 text-sm font-medium transition-colors duration-150 cursor-pointer"
+              >
+                <UserPlus size={14} />
+                Create customer
+              </button>
             </div>
           )}
         </div>
