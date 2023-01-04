@@ -22,6 +22,12 @@ export function canSend(verificationStatus) {
   return verificationStatus !== 'rejected'
 }
 
+// Can the customer start/restart identity verification right now?
+// pending = in review (wait), approved = done. Everything else can initiate.
+export function needsKyc(verificationStatus) {
+  return verificationStatus !== 'pending' && verificationStatus !== 'approved'
+}
+
 export function kycBanner(verificationStatus) {
   switch (verificationStatus) {
     case 'approved': return null
