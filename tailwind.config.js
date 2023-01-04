@@ -11,6 +11,11 @@ export default {
           DEFAULT: '#F97316',
           hover: '#EA6C0A',
         },
+        success: '#22C55E',
+        danger: '#EF4444',
+        info: '#3B82F6',
+        warning: '#F59E0B',
+        muted: '#9CA3AF',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
