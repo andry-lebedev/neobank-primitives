@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, LogOut, Shield } from 'lucide-react'
 import Card from '../components/Card'
@@ -5,7 +6,9 @@ import Badge from '../components/Badge'
 import CopyField from '../components/CopyField'
 import Button from '../components/Button'
 import { useApp } from '../context/useApp'
-import { getKycLabel, getVirtualAccount } from '../utils'
+import { getKycLabel, getVirtualAccount, needsKyc } from '../utils'
+import { initiateKyc } from '../api/customers'
+import { track, notify } from '../integrations'
 
 function Avatar({ firstName, lastName }) {
   const initials = [firstName?.[0], lastName?.[0]].filter(Boolean).join('').toUpperCase() || '?'
@@ -32,13 +35,29 @@ function LoggedOutScreen() {
 }
 
 export default function Profile() {
-  const { customer, wallet, accounts, loggedOut, setLoggedOut } = useApp()
+  const { customer, wallet, accounts, loggedOut, setLoggedOut, refreshCustomer } = useApp()
   const navigate = useNavigate()
   const verificationStatus = customer?.verificationStatus
   const firstName = customer?.personal?.firstName ?? ''
   const lastName = customer?.personal?.lastName ?? ''
   const kycInfo = getKycLabel(verificationStatus)
   const virtualAccount = getVirtualAccount(accounts)
+  const [kycLoading, setKycLoading] = useState(false)
+  const canVerify = needsKyc(verificationStatus)
+
+  async function handleVerify() {
+    if (!customer?.id) return
+    setKycLoading(true)
+    try {
+      const { verificationUrl } = await initiateKyc(customer.id, 'simplified')
+      track('kyc_initiated', { customerId: customer.id, level: 'simplified' })
+      window.open(verificationUrl, '_blank', 'noopener')
+    } catch (e) {
+      notify(e?.response?.data?.message ?? 'Could not start verification', 'error')
+    } finally {
+      setKycLoading(false)
+    }
+  }
 
   if (loggedOut) return <LoggedOutScreen />
 
@@ -88,6 +107,27 @@ export default function Profile() {
         <p className="text-xs text-gray-400 mt-1 leading-relaxed">
           {kycDescriptions[verificationStatus] ?? kycDescriptions.not_started}
         </p>
+        {canVerify && (
+          <Button
+            fullWidth
+            loading={kycLoading}
+            onClick={handleVerify}
+            className="mt-3"
+          >
+            <Shield size={15} />
+            Verify identity
+          </Button>
+        )}
+        {verificationStatus === 'pending' && (
+          <Button
+            variant="ghost"
+            fullWidth
+            onClick={refreshCustomer}
+            className="mt-3"
+          >
+            Refresh status
+          </Button>
+        )}
       </Card>
 
       {/* Account details */}
