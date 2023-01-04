@@ -6,11 +6,11 @@ import { sandboxTopup } from '../api/transfers'
 import { useApp } from '../context/useApp'
 
 const METHOD_COLORS = {
-  GET:    'bg-blue-500/20 text-blue-400',
-  POST:   'bg-orange-500/20 text-orange-400',
+  GET:    'bg-info/20 text-info',
+  POST:   'bg-accent/20 text-accent',
   PATCH:  'bg-purple-500/20 text-purple-400',
   PUT:    'bg-purple-500/20 text-purple-400',
-  DELETE: 'bg-red-500/20 text-red-400',
+  DELETE: 'bg-danger/20 text-danger',
 }
 
 function RequestEntry({ entry, isNew }) {
@@ -35,11 +35,11 @@ function RequestEntry({ entry, isNew }) {
         </span>
         <span className="flex-shrink-0 flex items-center gap-1.5">
           {entry.status === 'pending' ? (
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-warning animate-pulse" />
           ) : entry.status === 'success' ? (
-            <span className="text-[10px] text-green-400 font-mono">{entry.statusCode}</span>
+            <span className="text-[10px] text-success font-mono">{entry.statusCode}</span>
           ) : (
-            <span className="text-[10px] text-red-400 font-mono">{entry.statusCode ?? 'ERR'}</span>
+            <span className="text-[10px] text-danger font-mono">{entry.statusCode ?? 'ERR'}</span>
           )}
           {entry.durationMs != null && (
             <span className="text-[10px] text-gray-500 font-mono">{entry.durationMs}ms</span>
@@ -178,7 +178,7 @@ export default function DevPanel() {
       >
         {open ? <X size={20} /> : <Terminal size={20} />}
         {!open && unread > 0 && (
-          <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-danger text-white text-[10px] font-bold flex items-center justify-center">
             {unread > 9 ? '9+' : unread}
           </span>
         )}
@@ -299,7 +299,7 @@ export default function DevPanel() {
                 {topupState === 'loading' ? 'Crediting…' : `Credit ${topupAmount} USDC`}
               </button>
               {topupMsg && (
-                <p className={`text-xs text-center font-mono ${topupState === 'error' ? 'text-red-400' : 'text-green-400'}`}>
+                <p className={`text-xs text-center font-mono ${topupState === 'error' ? 'text-danger' : 'text-success'}`}>
                   {topupMsg}
                 </p>
               )}

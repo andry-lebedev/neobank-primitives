@@ -195,7 +195,7 @@ export default function Onboarding() {
             </ul>
             {provStep === 'error' && (
               <div className="space-y-3">
-                <p className="text-sm text-red-400">{provError}</p>
+                <p className="text-sm text-danger">{provError}</p>
                 <Button fullWidth onClick={() => provision(customer.id)}>Retry</Button>
               </div>
             )}

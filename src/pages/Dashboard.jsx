@@ -75,8 +75,8 @@ export default function Dashboard() {
       <div className="max-w-lg mx-auto px-4 pt-6 pb-28">
         <Card className="p-5 space-y-4">
           <div className="flex items-start gap-3">
-            <AlertTriangle size={18} className="text-amber-400 flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-amber-300">{error}</p>
+            <AlertTriangle size={18} className="text-warning flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-warning">{error}</p>
           </div>
           <Button fullWidth onClick={() => window.location.reload()}>Retry</Button>
         </Card>
@@ -115,9 +115,9 @@ export default function Dashboard() {
 
       {/* KYC banner */}
       {!loading && !kycOk && (
-        <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3">
-          <AlertTriangle size={16} className="text-amber-400 flex-shrink-0" />
-          <p className="text-sm text-amber-300">
+        <div className="flex items-center gap-2 bg-warning/10 border border-warning/30 rounded-xl px-4 py-3">
+          <AlertTriangle size={16} className="text-warning flex-shrink-0" />
+          <p className="text-sm text-warning">
             Your account is under review. Sending is disabled until verification is complete.
           </p>
         </div>

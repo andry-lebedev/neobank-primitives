@@ -52,7 +52,7 @@ function DetailPanel({ transfer, onClose }) {
       {transfer.failureReason && (
         <div className="flex justify-between">
           <span className="text-gray-500">Failure reason</span>
-          <span className="text-red-400">{transfer.failureReason}</span>
+          <span className="text-danger">{transfer.failureReason}</span>
         </div>
       )}
       <button onClick={onClose} className="text-gray-500 hover:text-gray-300 text-xs cursor-pointer transition-colors duration-150 pt-1">

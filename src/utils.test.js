@@ -135,8 +135,10 @@ describe('groupByDate', () => {
     expect(groupByDate([])).toEqual({})
   })
   it('sorts within a group newest first', () => {
-    const older = { id: '1', createdAt: new Date(Date.now() - 7200000).toISOString() }
-    const newer = { id: '2', createdAt: new Date(Date.now() - 3600000).toISOString() }
+    const middayToday = new Date()
+    middayToday.setHours(12, 0, 0, 0)
+    const older = { id: '1', createdAt: new Date(middayToday.getTime() - 7200000).toISOString() }
+    const newer = { id: '2', createdAt: new Date(middayToday.getTime() - 3600000).toISOString() }
     const groups = groupByDate([older, newer])
     expect(groups['Today'][0].id).toBe('2')
     expect(groups['Today'][1].id).toBe('1')

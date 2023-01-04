@@ -3,7 +3,7 @@ import { Loader2 } from 'lucide-react'
 const VARIANTS = {
   primary: 'bg-[#F97316] hover:bg-[#EA6C0A] text-white',
   ghost:   'bg-transparent hover:bg-[#374151] text-gray-300',
-  danger:  'bg-transparent hover:bg-red-500/10 text-red-400',
+  danger:  'bg-transparent hover:bg-danger/10 text-danger',
 }
 
 export default function Button({

@@ -50,9 +50,9 @@ export default function Profile() {
   }
 
   const kycBorderColors = {
-    green: 'border-green-500/30',
-    amber: 'border-amber-500/30',
-    red: 'border-red-500/30',
+    green: 'border-success/30',
+    amber: 'border-warning/30',
+    red: 'border-danger/30',
     gray: 'border-[#374151]',
   }
 
@@ -81,7 +81,7 @@ export default function Profile() {
       {/* KYC status */}
       <Card className={`p-5 border ${kycBorderColors[kycInfo.color] ?? 'border-[#374151]'}`}>
         <div className="flex items-center gap-2 mb-2">
-          <Shield size={16} className={kycInfo.color === 'green' ? 'text-green-400' : kycInfo.color === 'amber' ? 'text-amber-400' : kycInfo.color === 'red' ? 'text-red-400' : 'text-gray-400'} />
+          <Shield size={16} className={kycInfo.color === 'green' ? 'text-success' : kycInfo.color === 'amber' ? 'text-warning' : kycInfo.color === 'red' ? 'text-danger' : 'text-gray-400'} />
           <span className="text-sm font-semibold text-white">Identity verification</span>
         </div>
         <Badge status={verificationStatus ?? 'not_started'} className="mb-2" />
@@ -140,7 +140,7 @@ export default function Profile() {
         variant="danger"
         fullWidth
         onClick={() => setLoggedOut(true)}
-        className="border border-red-500/20"
+        className="border border-danger/20"
       >
         <LogOut size={15} />
         Log out
