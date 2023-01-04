@@ -5,12 +5,7 @@ import { AppProvider } from './context/AppContext'
 import BottomNav from './components/BottomNav'
 import ToastContainer from './components/Toast'
 import DevPanel from './components/DevPanel'
-import Dashboard from './pages/Dashboard'
-import AddMoney from './pages/AddMoney'
-import Send from './pages/Send'
-import History from './pages/History'
-import Profile from './pages/Profile'
-import Onboarding from './pages/Onboarding'
+import { routeItems } from './features'
 
 function OfflineBanner() {
   const [offline, setOffline] = useState(!navigator.onLine)
@@ -43,12 +38,9 @@ export default function App() {
         <OfflineBanner />
         <div className="min-h-screen bg-base font-sans">
           <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/add-money" element={<AddMoney />} />
-            <Route path="/send" element={<Send />} />
-            <Route path="/history" element={<History />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/onboarding" element={<Onboarding />} />
+            {routeItems.map(({ id, route, element: Element }) => (
+              <Route key={id} path={route} element={<Element />} />
+            ))}
           </Routes>
           <BottomNav />
           <ToastContainer />
