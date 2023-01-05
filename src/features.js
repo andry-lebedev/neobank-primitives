@@ -5,6 +5,7 @@ import Send from './pages/Send'
 import History from './pages/History'
 import Profile from './pages/Profile'
 import Onboarding from './pages/Onboarding'
+import Login from './pages/Login'
 
 // Single source of truth for pages + bottom-nav.
 // Client AI: drop a feature with `enabled: false`; add one by pushing an entry.
@@ -16,6 +17,7 @@ export const features = [
   { id: 'profile',   route: '/profile',   element: Profile,    enabled: true,  inNav: true,  navOrder: 3, navIcon: User,       navLabel: 'Profile',   end: false },
   { id: 'history',   route: '/history',   element: History,    enabled: true,  inNav: false, navOrder: 99 },
   { id: 'onboarding',route: '/onboarding',element: Onboarding, enabled: true,  inNav: false, navOrder: 99 },
+  { id: 'login',     route: '/login',     element: Login,      enabled: true,  inNav: false, navOrder: 99 },
 ]
 
 export const routeItems = features.filter(f => f.enabled)
