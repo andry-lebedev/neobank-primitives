@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { WifiOff } from 'lucide-react'
 import { AppProvider } from './context/AppContext'
@@ -6,6 +6,7 @@ import BottomNav from './components/BottomNav'
 import ToastContainer from './components/Toast'
 import DevPanel from './components/DevPanel'
 import { routeItems } from './features'
+import { resolveCustomerId } from './integrations'
 
 function OfflineBanner() {
   const [offline, setOffline] = useState(!navigator.onLine)
@@ -31,17 +32,27 @@ function OfflineBanner() {
   )
 }
 
+function CustomerGate({ children }) {
+  const { pathname } = useLocation()
+  const hasCustomer = Boolean(resolveCustomerId())
+  const isEntry = pathname === '/login' || pathname === '/onboarding'
+  if (!hasCustomer && !isEntry) return <Navigate to="/login" replace />
+  return children
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <AppProvider>
         <OfflineBanner />
         <div className="min-h-screen bg-base font-sans">
-          <Routes>
-            {routeItems.map(({ id, route, element: Element }) => (
-              <Route key={id} path={route} element={<Element />} />
-            ))}
-          </Routes>
+          <CustomerGate>
+            <Routes>
+              {routeItems.map(({ id, route, element: Element }) => (
+                <Route key={id} path={route} element={<Element />} />
+              ))}
+            </Routes>
+          </CustomerGate>
           <BottomNav />
           <ToastContainer />
           <DevPanel />
