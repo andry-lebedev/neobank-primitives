@@ -24,3 +24,9 @@ export function notify(message, kind = 'success') {
 export function resolveCustomerId() {
   return localStorage.getItem('swipelux_customer_id') ?? import.meta.env.VITE_CUSTOMER_ID
 }
+
+// Persist the session customer id where resolveCustomerId reads it.
+// Client: write to their own session store instead if they own identity.
+export function setCustomerId(id) {
+  localStorage.setItem('swipelux_customer_id', id)
+}
