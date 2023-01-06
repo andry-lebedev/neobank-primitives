@@ -1,0 +1,225 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Bell, ArrowDownLeft, Send, History, AlertTriangle } from 'lucide-react'
+import Card from '../components/Card'
+import Button from '../components/Button'
+import Skeleton from '../components/Skeleton'
+import TransactionRow from '../components/TransactionRow'
+import CopyField from '../components/CopyField'
+import { useApp } from '../context/useApp'
+import { canSend, formatBalance, getVirtualAccount, needsKyc } from '../utils'
+import { initiateKyc } from '../api/customers'
+import { track, notify } from '../integrations'
+import { brand } from '../brand'
+import axios from 'axios'
+import type { Account, Wallet } from '../types'
+
+function BalanceCard({ wallet }: { wallet: Wallet | null }) {
+  const balance = wallet?.balances?.[0]
+  return (
+    <Card className="p-5">
+      <p className="text-xs text-subtle mb-1">Total balance</p>
+      <p className="text-4xl font-bold text-fg-strong tracking-tight">
+        {balance ? formatBalance(balance.amount) : '0.00'}
+      </p>
+      <p className="text-sm text-muted mt-1">{balance?.currency ?? 'USDC'}</p>
+      <div className="mt-4 pt-4 border-t border-card-hover">
+        <CopyField label="Wallet ID" value={wallet?.id} />
+      </div>
+    </Card>
+  )
+}
+
+function AccountCard({ account }: { account: Account | null }) {
+  if (!account) return null
+  return (
+    <Card className="p-5">
+      <p className="text-xs text-subtle mb-3">Virtual bank account</p>
+      {account.type === 'sepa' ? (
+        <>
+          <CopyField label="IBAN" value={account.iban} />
+          <CopyField label="BIC" value={account.bic} />
+          {account.bankName && <CopyField label="Bank" value={account.bankName} />}
+          {account.paymentReference && <CopyField label="Reference" value={account.paymentReference} />}
+        </>
+      ) : (
+        <>
+          <CopyField label="Account number" value={account.accountNumber} />
+          <CopyField label="SWIFT" value={account.swiftCode} />
+          {account.bankName && <CopyField label="Bank" value={account.bankName} />}
+        </>
+      )}
+    </Card>
+  )
+}
+
+function SkeletonCard() {
+  return (
+    <div className="rounded-2xl bg-card border border-card-hover p-5 space-y-3">
+      <Skeleton className="h-3 w-20" />
+      <Skeleton className="h-10 w-40" />
+      <Skeleton className="h-3 w-12" />
+    </div>
+  )
+}
+
+export default function Dashboard() {
+  const { customer, wallet, accounts, transferLog, loading, error } = useApp()
+  const navigate = useNavigate()
+  const virtualAccount: Account | null = getVirtualAccount(accounts)
+  const recentTxns = [...transferLog]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 5)
+  const kycOk = canSend(customer?.verificationStatus)
+  const status = customer?.verificationStatus
+  const canVerify = needsKyc(status)
+  const [kycLoading, setKycLoading] = useState(false)
+
+  async function handleVerify() {
+    if (!customer?.id) return
+    setKycLoading(true)
+    try {
+      const { verificationUrl } = await initiateKyc(customer.id, 'simplified')
+      track('kyc_initiated', { customerId: customer.id, level: 'simplified' })
+      window.open(verificationUrl, '_blank', 'noopener')
+    } catch (e) {
+      const message = axios.isAxiosError<{ message?: string }>(e) ? e.response?.data?.message : undefined
+      notify(message ?? 'Could not start verification', 'error')
+    } finally {
+      setKycLoading(false)
+    }
+  }
+
+  const hour = new Date().getHours()
+  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
+  const firstName = customer?.personal?.firstName
+
+  if (!loading && error) {
+    return (
+      <div className="max-w-lg mx-auto px-4 pt-6 pb-28">
+        <Card className="p-5 space-y-4">
+          <div className="flex items-start gap-3">
+            <AlertTriangle size={18} className="text-warning flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-warning">{error}</p>
+          </div>
+          <Button fullWidth onClick={() => window.location.reload()}>Retry</Button>
+        </Card>
+      </div>
+    )
+  }
+
+  if (!loading && !wallet) {
+    return (
+      <div className="max-w-lg mx-auto px-4 pt-6 pb-28 min-h-screen flex items-center">
+        <div className="w-full text-center space-y-4">
+          <div>
+            <h1 className="text-xl font-bold text-fg-strong">Set up your account</h1>
+            <p className="text-sm text-muted mt-1">Create your wallet and bank account to get started.</p>
+          </div>
+          <Button fullWidth onClick={() => navigate('/onboarding')}>Set up account</Button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="max-w-lg mx-auto px-4 pt-6 pb-28 space-y-4">
+      <div className="flex items-center gap-2">
+        <img src={brand.logoSrc} alt={brand.name} className="w-6 h-6" />
+        <span className="text-sm font-semibold text-fg-strong">{brand.name}</span>
+      </div>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-2">
+        <div>
+          <p className="text-xs text-subtle">{greeting}</p>
+          <h1 className="text-xl font-bold text-fg-strong">
+            {loading ? 'Loading…' : firstName ?? 'Welcome'}
+          </h1>
+        </div>
+        <button className="p-2 rounded-full hover:bg-card transition-colors duration-150 cursor-pointer text-muted hover:text-fg-strong" aria-label="Notifications">
+          <Bell size={22} />
+        </button>
+      </div>
+
+      {/* KYC banner */}
+      {!loading && status !== 'approved' && (
+        <div className="bg-warning/10 border border-warning/30 rounded-xl px-4 py-3 space-y-2">
+          <div className="flex items-center gap-2">
+            <AlertTriangle size={16} className="text-warning flex-shrink-0" />
+            <p className="text-sm text-warning">
+              {canVerify
+                ? 'Verify your identity to create a bank account and send money.'
+                : 'Your identity is under review. This usually takes 1–2 business days.'}
+            </p>
+          </div>
+          {canVerify && (
+            <Button fullWidth loading={kycLoading} onClick={handleVerify}>
+              Verify identity
+            </Button>
+          )}
+        </div>
+      )}
+
+      {/* Balance card */}
+      {loading ? <SkeletonCard /> : <BalanceCard wallet={wallet} />}
+
+      {/* Virtual account card */}
+      {loading
+        ? <SkeletonCard />
+        : virtualAccount && <AccountCard account={virtualAccount} />}
+
+      {/* Quick actions */}
+      <div className="flex gap-3">
+        {[
+          { label: 'Add money', icon: ArrowDownLeft, to: '/add-money', always: true },
+          { label: 'Send', icon: Send, to: '/send', always: false },
+          { label: 'History', icon: History, to: '/history', always: true },
+        ].map(({ label, icon: Icon, to, always }) => (
+          <button
+            key={to}
+            onClick={() => navigate(to)}
+            disabled={!always && !kycOk}
+            className="flex-1 flex flex-col items-center gap-1.5 bg-card hover:bg-card-hover border border-card-hover rounded-2xl py-3 transition-colors duration-150 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <Icon size={20} className="text-accent" />
+            <span className="text-xs text-fg-muted">{label}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Recent activity */}
+      <div>
+        <h2 className="text-sm font-semibold text-muted mb-3">Recent activity</h2>
+        {loading ? (
+          <div className="space-y-3">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="flex items-center gap-3">
+                <Skeleton className="w-10 h-10 rounded-full" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-3 w-32" />
+                  <Skeleton className="h-2 w-20" />
+                </div>
+                <Skeleton className="h-3 w-16" />
+              </div>
+            ))}
+          </div>
+        ) : recentTxns.length === 0 ? (
+          <div className="text-center py-8 text-faint">
+            <History size={32} className="mx-auto mb-2 opacity-40" />
+            <p className="text-sm">No transactions yet. Add money to get started.</p>
+          </div>
+        ) : (
+          <div>
+            {recentTxns.map(t => (
+              <TransactionRow
+                key={t.id}
+                transfer={t}
+                onClick={() => navigate('/history')}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}

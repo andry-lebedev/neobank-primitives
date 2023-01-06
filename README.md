@@ -45,7 +45,7 @@ A mobile-style neobank front-end backed by the live Swipelux Wallet API (sandbox
 
 ## Stack
 
-React 19 + Vite + Tailwind 3 + React Router 7 + axios. Tests: Vitest. Lint: ESLint.
+React 19 + TypeScript + Vite + Tailwind 3 + React Router 7 + axios. Tests: Vitest. Lint: ESLint.
 
 ## Layout
 
@@ -54,8 +54,8 @@ AGENTS.md              Map for an AI agent: stack, layout, the three seams, hous
 PROMPT.md              The tailoring wizard an agent follows (interview, then build).
 TAILORED-SPEC.md       Template the wizard fills; the client approves it before any code.
 tailwind.config.js     Seam 1 — theme tokens (brand, neutral, status colors + font).
-src/brand.js           Seam 1 — brand name + logo (single edit point).
-src/features.js        Seam 2 — feature registry (drives routes and bottom nav).
+src/brand.ts           Seam 1 — brand name + logo (single edit point).
+src/features.ts        Seam 2 — feature registry (drives routes and bottom nav).
 src/integrations/      Seam 3 — named integration slots (analytics, session, notify, customer id).
 src/api/*              Swipelux Wallet API calls. The integration surface — do not change.
 src/context/           AppContext loads data from the sandbox; pages read it via useApp().
@@ -81,6 +81,7 @@ Other commands:
 
 ```bash
 npm run build      # production build (must pass)
+npm run typecheck  # tsc --noEmit (must stay green)
 npx vitest run     # tests (must stay green)
 npm run lint       # ESLint, incl. the Seam-1 color-token guard
 ```
@@ -92,9 +93,9 @@ binding, `.env`) stays on the Swipelux sandbox and must not change.
 
 | Seam | File(s) | Edit to... |
 |------|---------|------------|
-| 1. Brand / theme | `tailwind.config.js` (colors + font), `src/brand.js` (name + logo) | re-skin — zero component edits; a guard test + ESLint rule keep raw color literals out of components |
-| 2. Features | `src/features.js` | add or drop pages and bottom-nav tabs from one registry |
-| 3. Integrations | `src/integrations/index.js` | wire analytics (`track`), session (`onSession`), notifications (`notify`), and customer id (`resolveCustomerId` / `setCustomerId`) |
+| 1. Brand / theme | `tailwind.config.js` (colors + font), `src/brand.ts` (name + logo) | re-skin — zero component edits; a guard test + ESLint rule keep raw color literals out of components |
+| 2. Features | `src/features.ts` | add or drop pages and bottom-nav tabs from one registry |
+| 3. Integrations | `src/integrations/index.ts` | wire analytics (`track`), session (`onSession`), notifications (`notify`), and customer id (`resolveCustomerId` / `setCustomerId`) |
 
 ## Tailor it with an AI agent
 
@@ -122,7 +123,7 @@ Phase 2: fill in TAILORED-SPEC.md from my answers and STOP. Do not write any cod
 the spec.
 
 Phase 3 (only after I approve): create a new git branch and apply the changes against the three
-seams only (tailwind.config.js + src/brand.js, src/features.js, src/integrations/index.js). Keep
+seams only (tailwind.config.js + src/brand.ts, src/features.ts, src/integrations/index.ts). Keep
 `npx vitest run` green and `npx vite build` passing. Do not touch src/api/*, the AppContext data
 binding, or .env.
 
@@ -132,7 +133,7 @@ information that is not in this repo, ask me.
 
 To re-skin without the full interview, a shorter ask also works, for example: "Re-skin this demo
 for <Company>: primary color <hex>, accent <hex>, logo at <path>, name <Company>. Edit only Seam 1
-(`tailwind.config.js` + `src/brand.js`). Keep tests and build green."
+(`tailwind.config.js` + `src/brand.ts`). Keep tests and build green."
 
 ## API reference
 
