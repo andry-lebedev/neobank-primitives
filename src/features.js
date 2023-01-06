@@ -17,6 +17,7 @@ export const features = [
   { id: 'profile',   route: '/profile',   element: Profile,    enabled: true,  inNav: true,  navOrder: 3, navIcon: User,       navLabel: 'Profile',   end: false },
   { id: 'history',   route: '/history',   element: History,    enabled: true,  inNav: false, navOrder: 99 },
   { id: 'onboarding',route: '/onboarding',element: Onboarding, enabled: true,  inNav: false, navOrder: 99 },
+  // Session-entry surface only (collects/persists a customer id) — NOT real auth; do not wire login here.
   { id: 'login',     route: '/login',     element: Login,      enabled: true,  inNav: false, navOrder: 99 },
 ]
 
