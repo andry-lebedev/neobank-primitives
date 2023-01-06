@@ -3,6 +3,9 @@
 You are an AI agent helping a client adapt this Swipelux neobank demo to their brand and
 infrastructure. Read `AGENTS.md` first. Work in two phases with a review gate between them.
 
+Work **only from this repo** and the Swipelux API reference linked in `AGENTS.md`. Do not read or
+cite any document outside this repository; if you need something that isn't here, ask the client.
+
 ## Phase 1 — Interview (one topic at a time)
 Ask the client, waiting for each answer before the next:
 1. **Brand** — company name + logo (file/URL) → `src/brand.js`; primary/accent color, surface (background) preference, font → `tailwind.config.js`.
