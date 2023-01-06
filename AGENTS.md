@@ -9,6 +9,14 @@ If you are tailoring this demo for a client, read `PROMPT.md` and follow it.
 ## Stack
 React 19 + Vite + Tailwind 3 + React Router 7 + axios. Tests: Vitest.
 
+## API reference
+The integration surface (`src/api/*`) already wraps the **Swipelux Wallet API**. You do not need
+the raw spec to tailor the demo. If you ever extend it, consult the live reference — do **not**
+bundle a spec file into this repo (it goes stale):
+- API reference (OpenAPI, live): https://platform.swipelux.com/api-reference
+- Docs: https://docs.swipelux.com
+- Sandbox base URL: `https://platform.sbx.swipelux.com` (set in `.env`; see `.env.example`).
+
 ## Layout
 - `src/api/*` — Swipelux sandbox API calls (customers, wallets, accounts, recipients, transfers). **Do not change** — these are the integration surface.
 - `src/context/AppContext.jsx` — loads customer/wallet/accounts/transfers, exposes via `useApp()`.
