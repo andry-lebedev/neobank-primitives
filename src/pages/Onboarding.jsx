@@ -135,7 +135,7 @@ export default function Onboarding() {
         ...form,
         address,
         taxInfo,
-        metadata: { source: 'dummy-neobank-onboarding' },
+        metadata: { source: 'neobank-starter-onboarding' },
       })
       setCustomer(created)
       showToast('Customer created')

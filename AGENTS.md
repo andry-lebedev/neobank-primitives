@@ -1,4 +1,4 @@
-# Swipelux Neobank Demo — Agent Guide
+# Swipelux Neobank Starter — Agent Guide
 
 This repo is a **self-building integration starter-kit**. It is a working API-driven neobank
 demo on the Swipelux sandbox, structured so an AI agent can re-skin it and wire it into a
