@@ -21,11 +21,14 @@ React 19 + Vite + Tailwind 3 + React Router 7 + axios. Tests: Vitest.
 ## The three seams
 
 ### Seam 1 — Theme tokens (`tailwind.config.js`)
-All brand + status colors are Tailwind tokens: `accent` (+`accent.hover`), `base`, `card`,
-`card-hover`, `success`, `danger`, `info`, `warning`, `muted`. Re-skin = edit the `colors` block
-and swap the brand name/logo. Do NOT reintroduce raw hex (`bg-[#...]`) or color literals
-(`text-green-400`) in components. Exception: `DevPanel.jsx` keeps `purple-*`/`#0F172A` — it is an
-internal dev tool, not client-facing surface.
+All brand, neutral, and status colors are Tailwind tokens. Brand/surface: `accent`
+(+`accent.hover`), `base`, `card`, `card-hover`. Neutral text ramp (high→low emphasis):
+`fg-strong`, `fg`, `fg-muted`, `muted`, `subtle`, `faint`. Status: `success`, `danger`, `info`,
+`warning`. Re-skin = edit the `colors` block and swap the brand name/logo — **zero component
+edits**. Do NOT reintroduce raw hex (`bg-[#...]`), color-scale literals (`text-gray-500`,
+`text-green-400`), or bare `text-white`/`bg-black` in components — the `src/theme-tokens.test.js`
+guard fails the build if you do. Exception: `DevPanel.jsx` keeps `purple-*`/`gray-*`/`#0F172A` —
+it is an internal dev tool, not client-facing surface, and is exempt from the guard.
 
 ### Seam 2 — Feature registry (`src/features.js`)
 One array drives both routes (`App.jsx`) and the bottom nav (`BottomNav.jsx`). To remove a

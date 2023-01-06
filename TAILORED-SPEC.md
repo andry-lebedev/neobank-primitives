@@ -27,6 +27,7 @@
 | `onSession` | <store / none> | |
 | `notify` | <toast default / their system> | |
 | `resolveCustomerId` | <source> | |
+| `setCustomerId` | <session store / localStorage default> | |
 
 ## Copy / Locale
 - <changes or "none">

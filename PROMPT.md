@@ -12,6 +12,7 @@ Ask the client, waiting for each answer before the next:
    - `onSession` → which session/user store?
    - `notify` → in-app toast (default) or their system?
    - `resolveCustomerId` → how is the customer id obtained in their app?
+   - `setCustomerId` → where should the resolved id be persisted — their session store or the default `localStorage`?
 4. **Copy/locale** — any wording, currency, or language changes?
 
 ## Phase 2 — Write `TAILORED-SPEC.md`, then STOP
