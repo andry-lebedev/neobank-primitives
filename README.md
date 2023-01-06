@@ -1,16 +1,41 @@
-# React + Vite
+# Swipelux Neobank Demo — Self-Building Integration Kit
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A working, API-driven neobank demo running on the Swipelux sandbox, structured so an **AI agent
+can re-skin it and wire it into a client's infrastructure** by editing three well-defined seams —
+without touching the integration surface or the data flow.
 
-Currently, two official plugins are available:
+## What this is
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- A runnable reference neobank (Dashboard, Send, Add money, History, Profile, Onboarding, Login)
+  bound to the live Swipelux sandbox.
+- A **kit**: drop it in front of a client's AI agent, which interviews the client, writes a
+  tailored spec, gets approval, then builds a branded, integrated demo.
 
-## React Compiler
+## For AI agents — start here
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. Read **`AGENTS.md`** — the map: stack, layout, and the three seams (theme tokens, feature
+   registry, integration slots) with the rules for each.
+2. To tailor for a client, follow **`PROMPT.md`** — the two-phase, review-gated wizard. It writes
+   **`TAILORED-SPEC.md`** (the contract the client approves before any code).
 
-## Expanding the ESLint configuration
+## The three seams
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+| Seam | File | Edit to... |
+|------|------|------------|
+| 1. Theme tokens | `tailwind.config.js` | re-skin brand + neutral/status colors (zero component edits) |
+| 2. Feature registry | `src/features.js` | add/drop pages and bottom-nav tabs |
+| 3. Integration slots | `src/integrations/index.js` | wire analytics, session, notifications, customer id |
+
+Everything outside these seams (`src/api/*`, `AppContext` data binding, `.env`) stays on the
+Swipelux sandbox and must not change.
+
+## Develop
+
+```bash
+npm install
+npm run dev        # run against the sandbox
+npx vitest run     # tests (must stay green)
+npx vite build     # production build (must pass)
+```
+
+Stack: React 19 + Vite + Tailwind 3 + React Router 7 + axios. Tests: Vitest.
