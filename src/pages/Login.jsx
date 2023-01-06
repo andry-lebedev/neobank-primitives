@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { LogIn, UserPlus } from 'lucide-react'
+import { UserPlus } from 'lucide-react'
 import Card from '../components/Card'
 import Button from '../components/Button'
 import { getCustomer } from '../api/customers'
 import { setCustomerId } from '../integrations'
+import { brand } from '../brand'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -32,11 +33,9 @@ export default function Login() {
     <div className="min-h-screen bg-base flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-sm space-y-6">
         <div className="text-center">
-          <div className="w-14 h-14 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-3">
-            <LogIn size={24} className="text-accent" />
-          </div>
-          <h1 className="text-xl font-bold text-fg-strong">Open your account</h1>
-          <p className="text-sm text-muted mt-1">Enter your customer ID to continue.</p>
+          <img src={brand.logoSrc} alt={brand.name} className="w-14 h-14 mx-auto mb-3" />
+          <h1 className="text-xl font-bold text-fg-strong">{brand.name}</h1>
+          <p className="text-sm text-muted mt-1">Open your account — enter your customer ID to continue.</p>
         </div>
 
         <Card className="p-5">
