@@ -140,7 +140,7 @@ export default function DevPanel() {
     } catch (e: unknown) {
       const err = e as { response?: { data?: { message?: string } }; message?: string }
       setTopupState('error')
-      setTopupMsg(err?.response?.data?.message ?? err.message ?? 'Topup failed')
+      setTopupMsg(err?.response?.data?.message ?? err?.message ?? 'Topup failed')
       setTimeout(() => setTopupState('idle'), 4000)
     }
   }
