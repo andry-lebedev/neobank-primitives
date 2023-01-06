@@ -12,50 +12,50 @@ function DetailPanel({ transfer, onClose }) {
   return (
     <div className="mt-2 mb-3 bg-base rounded-xl p-4 space-y-2 text-xs">
       <div className="flex justify-between">
-        <span className="text-gray-500">Transaction ID</span>
-        <span className="text-gray-300 font-mono break-all max-w-[60%] text-right">{transfer.id}</span>
+        <span className="text-subtle">Transaction ID</span>
+        <span className="text-fg-muted font-mono break-all max-w-[60%] text-right">{transfer.id}</span>
       </div>
       <div className="flex justify-between">
-        <span className="text-gray-500">Type</span>
-        <span className="text-gray-300">{transfer.type}</span>
+        <span className="text-subtle">Type</span>
+        <span className="text-fg-muted">{transfer.type}</span>
       </div>
       <div className="flex justify-between">
-        <span className="text-gray-500">Status</span>
-        <span className="text-gray-300">{transfer.state}</span>
+        <span className="text-subtle">Status</span>
+        <span className="text-fg-muted">{transfer.state}</span>
       </div>
       {transfer.from?.rail && (
         <div className="flex justify-between">
-          <span className="text-gray-500">Rail</span>
-          <span className="text-gray-300 uppercase">{transfer.from.rail}</span>
+          <span className="text-subtle">Rail</span>
+          <span className="text-fg-muted uppercase">{transfer.from.rail}</span>
         </div>
       )}
       <div className="flex justify-between">
-        <span className="text-gray-500">Amount</span>
-        <span className="text-gray-300">{formatAmount(transfer.from?.amount, transfer.from?.currency)}</span>
+        <span className="text-subtle">Amount</span>
+        <span className="text-fg-muted">{formatAmount(transfer.from?.amount, transfer.from?.currency)}</span>
       </div>
       {transfer.from?.identifier && (
         <div className="flex justify-between">
-          <span className="text-gray-500">From</span>
-          <span className="text-gray-400 font-mono break-all max-w-[60%] text-right">{transfer.from.identifier}</span>
+          <span className="text-subtle">From</span>
+          <span className="text-muted font-mono break-all max-w-[60%] text-right">{transfer.from.identifier}</span>
         </div>
       )}
       {transfer.to?.identifier && (
         <div className="flex justify-between">
-          <span className="text-gray-500">To</span>
-          <span className="text-gray-400 font-mono break-all max-w-[60%] text-right">{transfer.to.identifier}</span>
+          <span className="text-subtle">To</span>
+          <span className="text-muted font-mono break-all max-w-[60%] text-right">{transfer.to.identifier}</span>
         </div>
       )}
       <div className="flex justify-between">
-        <span className="text-gray-500">Date</span>
-        <span className="text-gray-300">{new Date(transfer.createdAt).toLocaleString()}</span>
+        <span className="text-subtle">Date</span>
+        <span className="text-fg-muted">{new Date(transfer.createdAt).toLocaleString()}</span>
       </div>
       {transfer.failureReason && (
         <div className="flex justify-between">
-          <span className="text-gray-500">Failure reason</span>
+          <span className="text-subtle">Failure reason</span>
           <span className="text-danger">{transfer.failureReason}</span>
         </div>
       )}
-      <button onClick={onClose} className="text-gray-500 hover:text-gray-300 text-xs cursor-pointer transition-colors duration-150 pt-1">
+      <button onClick={onClose} className="text-subtle hover:text-fg-muted text-xs cursor-pointer transition-colors duration-150 pt-1">
         ↑ Collapse
       </button>
     </div>
@@ -97,10 +97,10 @@ export default function History() {
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-28 space-y-4">
       <div className="flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-xl hover:bg-card transition-colors duration-150 cursor-pointer text-gray-400 hover:text-white">
+        <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-xl hover:bg-card transition-colors duration-150 cursor-pointer text-muted hover:text-fg-strong">
           <ArrowLeft size={20} />
         </button>
-        <h1 className="text-xl font-bold text-white">Transaction history</h1>
+        <h1 className="text-xl font-bold text-fg-strong">Transaction history</h1>
       </div>
 
       {/* Direction filter */}
@@ -111,8 +111,8 @@ export default function History() {
             onClick={() => setDirFilter(f)}
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors duration-150 cursor-pointer border ${
               dirFilter === f
-                ? 'bg-accent border-accent text-white'
-                : 'border-card-hover text-gray-400 hover:text-gray-200'
+                ? 'bg-accent border-accent text-fg-strong'
+                : 'border-card-hover text-muted hover:text-fg'
             }`}
           >
             {f}
@@ -129,7 +129,7 @@ export default function History() {
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors duration-150 cursor-pointer border ${
               statusFilter === f
                 ? 'bg-card border-accent text-accent'
-                : 'border-card-hover text-gray-400 hover:text-gray-200'
+                : 'border-card-hover text-muted hover:text-fg'
             }`}
           >
             {f}
@@ -139,14 +139,14 @@ export default function History() {
 
       {/* List */}
       {filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-gray-600">
+        <div className="flex flex-col items-center justify-center py-16 text-faint">
           <Inbox size={40} className="mb-3 opacity-40" />
           <p className="text-sm">No transactions yet. Add money to get started.</p>
         </div>
       ) : (
         dateLabels.map(label => (
           <div key={label}>
-            <h2 className="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">{label}</h2>
+            <h2 className="text-xs font-semibold text-subtle mb-2 uppercase tracking-wide">{label}</h2>
             {grouped[label].map(t => (
               <div key={t.id}>
                 <TransactionRow

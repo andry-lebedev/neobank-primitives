@@ -140,16 +140,16 @@ function BankPayoutFlow({ wallet, addTransfer, refreshWallet, kycOk, customer })
           <CheckCircle2 size={32} className="text-success" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-white">Transfer initiated</h2>
-          <p className="text-sm text-gray-400 mt-1">Your bank payout is being processed</p>
+          <h2 className="text-xl font-bold text-fg-strong">Transfer initiated</h2>
+          <p className="text-sm text-muted mt-1">Your bank payout is being processed</p>
         </div>
         <Card className="p-4 text-left">
-          <p className="text-xs text-gray-500 mb-0.5">Transaction ID</p>
-          <p className="text-sm font-mono text-gray-200 break-all">{result.id}</p>
-          <p className="text-xs text-gray-500 mt-3 mb-0.5">Amount</p>
-          <p className="text-sm text-gray-200">{formatAmount(amount, 'USDC')}</p>
-          <p className="text-xs text-gray-500 mt-3 mb-0.5">Estimated arrival</p>
-          <p className="text-sm text-gray-200">1–2 business days</p>
+          <p className="text-xs text-subtle mb-0.5">Transaction ID</p>
+          <p className="text-sm font-mono text-fg break-all">{result.id}</p>
+          <p className="text-xs text-subtle mt-3 mb-0.5">Amount</p>
+          <p className="text-sm text-fg">{formatAmount(amount, 'USDC')}</p>
+          <p className="text-xs text-subtle mt-3 mb-0.5">Estimated arrival</p>
+          <p className="text-sm text-fg">1–2 business days</p>
         </Card>
         <Button fullWidth onClick={() => navigate('/')}>Back to home</Button>
       </div>
@@ -159,20 +159,20 @@ function BankPayoutFlow({ wallet, addTransfer, refreshWallet, kycOk, customer })
   if (step === 2) {
     return (
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-white">Review transfer</h2>
+        <h2 className="text-lg font-semibold text-fg-strong">Review transfer</h2>
         <Card className="p-5 space-y-3">
-          <div><p className="text-xs text-gray-500">From</p><p className="text-sm text-gray-200 font-mono">{wallet?.id}</p></div>
-          <div><p className="text-xs text-gray-500">To account</p><p className="text-sm text-gray-200 font-mono">{selectedAccountId}</p></div>
-          <div><p className="text-xs text-gray-500">Amount</p><p className="text-sm text-gray-200">{formatAmount(amount, 'USDC')}</p></div>
+          <div><p className="text-xs text-subtle">From</p><p className="text-sm text-fg font-mono">{wallet?.id}</p></div>
+          <div><p className="text-xs text-subtle">To account</p><p className="text-sm text-fg font-mono">{selectedAccountId}</p></div>
+          <div><p className="text-xs text-subtle">Amount</p><p className="text-sm text-fg">{formatAmount(amount, 'USDC')}</p></div>
           {quote && (
             <>
-              <div><p className="text-xs text-gray-500">Fee</p><p className="text-sm text-gray-200">{quote.fee ? `${quote.fee.amount} ${quote.fee.currency}` : '—'}</p></div>
-              <div><p className="text-xs text-gray-500">You receive</p><p className="text-sm font-semibold text-white">{quote.destination_amount} {toCurrency}</p></div>
-              <div><p className="text-xs text-gray-500">Rate</p><p className="text-sm text-gray-200">{quote.rate}</p></div>
+              <div><p className="text-xs text-subtle">Fee</p><p className="text-sm text-fg">{quote.fee ? `${quote.fee.amount} ${quote.fee.currency}` : '—'}</p></div>
+              <div><p className="text-xs text-subtle">You receive</p><p className="text-sm font-semibold text-fg-strong">{quote.destination_amount} {toCurrency}</p></div>
+              <div><p className="text-xs text-subtle">Rate</p><p className="text-sm text-fg">{quote.rate}</p></div>
             </>
           )}
-          <div><p className="text-xs text-gray-500">Estimated arrival</p><p className="text-sm text-gray-200">1–2 business days</p></div>
-          {memo && <div><p className="text-xs text-gray-500">Memo</p><p className="text-sm text-gray-200">{memo}</p></div>}
+          <div><p className="text-xs text-subtle">Estimated arrival</p><p className="text-sm text-fg">1–2 business days</p></div>
+          {memo && <div><p className="text-xs text-subtle">Memo</p><p className="text-sm text-fg">{memo}</p></div>}
         </Card>
         <div className="flex gap-3">
           <Button variant="ghost" onClick={() => setStep(1)} className="flex-1">Back</Button>
@@ -185,12 +185,12 @@ function BankPayoutFlow({ wallet, addTransfer, refreshWallet, kycOk, customer })
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-xs text-gray-500 mb-1.5" htmlFor="bank-recipient">Recipient</label>
+        <label className="block text-xs text-subtle mb-1.5" htmlFor="bank-recipient">Recipient</label>
         <select
           id="bank-recipient"
           value={selectedRecipientId}
           onChange={e => handleSelectRecipient(e.target.value)}
-          className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent transition-colors duration-150"
+          className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-fg-strong focus:outline-none focus:border-accent transition-colors duration-150"
         >
           <option value="">Select recipient</option>
           {recipients.map(r => (
@@ -201,12 +201,12 @@ function BankPayoutFlow({ wallet, addTransfer, refreshWallet, kycOk, customer })
 
       {selectedRecipientId && (
         <div>
-          <label className="block text-xs text-gray-500 mb-1.5" htmlFor="bank-recipient-account">Recipient account</label>
+          <label className="block text-xs text-subtle mb-1.5" htmlFor="bank-recipient-account">Recipient account</label>
           <select
             id="bank-recipient-account"
             value={selectedAccountId}
             onChange={e => setSelectedAccountId(e.target.value)}
-            className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent transition-colors duration-150"
+            className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-fg-strong focus:outline-none focus:border-accent transition-colors duration-150"
           >
             <option value="">Select account</option>
             {recipientAccounts.map(a => (
@@ -227,22 +227,22 @@ function BankPayoutFlow({ wallet, addTransfer, refreshWallet, kycOk, customer })
       {showAddForm && (
         <Card className="p-4 space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="First name" className="bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent" />
-            <input value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Last name" className="bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent" />
+            <input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="First name" className="bg-card border border-card-hover rounded-xl px-4 py-3 text-fg-strong placeholder-faint focus:outline-none focus:border-accent" />
+            <input value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Last name" className="bg-card border border-card-hover rounded-xl px-4 py-3 text-fg-strong placeholder-faint focus:outline-none focus:border-accent" />
           </div>
-          <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" type="email" className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent" />
-          <input value={iban} onChange={e => setIban(e.target.value)} placeholder="IBAN" className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent font-mono" />
-          <input value={accountHolderName} onChange={e => setAccountHolderName(e.target.value)} placeholder="Account holder name" className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent" />
+          <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" type="email" className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-fg-strong placeholder-faint focus:outline-none focus:border-accent" />
+          <input value={iban} onChange={e => setIban(e.target.value)} placeholder="IBAN" className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-fg-strong placeholder-faint focus:outline-none focus:border-accent font-mono" />
+          <input value={accountHolderName} onChange={e => setAccountHolderName(e.target.value)} placeholder="Account holder name" className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-fg-strong placeholder-faint focus:outline-none focus:border-accent" />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <input value={country} onChange={e => setCountry(e.target.value.toUpperCase())} placeholder="Country" className="bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent" />
-            <input value={currency} onChange={e => setCurrency(e.target.value.toUpperCase())} placeholder="Currency" className="bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent" />
+            <input value={country} onChange={e => setCountry(e.target.value.toUpperCase())} placeholder="Country" className="bg-card border border-card-hover rounded-xl px-4 py-3 text-fg-strong placeholder-faint focus:outline-none focus:border-accent" />
+            <input value={currency} onChange={e => setCurrency(e.target.value.toUpperCase())} placeholder="Currency" className="bg-card border border-card-hover rounded-xl px-4 py-3 text-fg-strong placeholder-faint focus:outline-none focus:border-accent" />
           </div>
           <Button fullWidth onClick={handleAddRecipient} loading={loading}>Save recipient</Button>
         </Card>
       )}
 
       <div>
-        <label className="block text-xs text-gray-500 mb-1.5" htmlFor="bank-amount">Amount</label>
+        <label className="block text-xs text-subtle mb-1.5" htmlFor="bank-amount">Amount</label>
         <div className="relative">
           <input
             id="bank-amount"
@@ -252,21 +252,21 @@ function BankPayoutFlow({ wallet, addTransfer, refreshWallet, kycOk, customer })
             placeholder="0.00"
             value={amount}
             onChange={e => setAmount(e.target.value)}
-            className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent transition-colors duration-150 pr-16"
+            className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-fg-strong placeholder-faint focus:outline-none focus:border-accent transition-colors duration-150 pr-16"
           />
-          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-gray-400">USDC</span>
+          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-muted">USDC</span>
         </div>
       </div>
 
       <div>
-        <label className="block text-xs text-gray-500 mb-1.5" htmlFor="bank-memo">Memo (optional)</label>
+        <label className="block text-xs text-subtle mb-1.5" htmlFor="bank-memo">Memo (optional)</label>
         <input
           id="bank-memo"
           type="text"
           placeholder="Payment reference"
           value={memo}
           onChange={e => setMemo(e.target.value)}
-          className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent transition-colors duration-150"
+          className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-fg-strong placeholder-faint focus:outline-none focus:border-accent transition-colors duration-150"
         />
       </div>
 
@@ -333,14 +333,14 @@ function P2PFlow({ wallet, addTransfer, refreshWallet, kycOk }) {
           <CheckCircle2 size={32} className="text-success" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-white">Transfer sent</h2>
-          <p className="text-sm text-gray-400 mt-1">Your P2P transfer is being processed</p>
+          <h2 className="text-xl font-bold text-fg-strong">Transfer sent</h2>
+          <p className="text-sm text-muted mt-1">Your P2P transfer is being processed</p>
         </div>
         <Card className="p-4 text-left">
-          <p className="text-xs text-gray-500 mb-0.5">Transaction ID</p>
-          <p className="text-sm font-mono text-gray-200 break-all">{result.id}</p>
-          <p className="text-xs text-gray-500 mt-3 mb-0.5">Amount</p>
-          <p className="text-sm text-gray-200">{formatAmount(amount, 'USDC')}</p>
+          <p className="text-xs text-subtle mb-0.5">Transaction ID</p>
+          <p className="text-sm font-mono text-fg break-all">{result.id}</p>
+          <p className="text-xs text-subtle mt-3 mb-0.5">Amount</p>
+          <p className="text-sm text-fg">{formatAmount(amount, 'USDC')}</p>
         </Card>
         <Button fullWidth onClick={() => navigate('/')}>Back to home</Button>
       </div>
@@ -350,11 +350,11 @@ function P2PFlow({ wallet, addTransfer, refreshWallet, kycOk }) {
   if (step === 2) {
     return (
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-white">Review transfer</h2>
+        <h2 className="text-lg font-semibold text-fg-strong">Review transfer</h2>
         <Card className="p-5 space-y-3">
-          <div><p className="text-xs text-gray-500">To wallet</p><p className="text-sm font-mono text-gray-400 text-xs">{destWalletId}</p></div>
-          <div><p className="text-xs text-gray-500">Amount</p><p className="text-sm font-semibold text-white">{formatAmount(amount, 'USDC')}</p></div>
-          {note && <div><p className="text-xs text-gray-500">Note</p><p className="text-sm text-gray-200">{note}</p></div>}
+          <div><p className="text-xs text-subtle">To wallet</p><p className="text-sm font-mono text-muted text-xs">{destWalletId}</p></div>
+          <div><p className="text-xs text-subtle">Amount</p><p className="text-sm font-semibold text-fg-strong">{formatAmount(amount, 'USDC')}</p></div>
+          {note && <div><p className="text-xs text-subtle">Note</p><p className="text-sm text-fg">{note}</p></div>}
         </Card>
         <div className="flex gap-3">
           <Button variant="ghost" onClick={() => setStep(1)} className="flex-1">Back</Button>
@@ -367,20 +367,20 @@ function P2PFlow({ wallet, addTransfer, refreshWallet, kycOk }) {
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-xs text-gray-500 mb-1.5" htmlFor="p2p-wallet">Recipient wallet ID</label>
+        <label className="block text-xs text-subtle mb-1.5" htmlFor="p2p-wallet">Recipient wallet ID</label>
         <input
           id="p2p-wallet"
           type="text"
           placeholder="wal_..."
           value={destWalletId}
           onChange={e => setDestWalletId(e.target.value.trim())}
-          className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent transition-colors duration-150 font-mono"
+          className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-fg-strong placeholder-faint focus:outline-none focus:border-accent transition-colors duration-150 font-mono"
         />
         {destWalletId && !walletIdValid && <p className="text-xs text-danger mt-1">Enter a valid wallet ID (wal_...)</p>}
       </div>
 
       <div>
-        <label className="block text-xs text-gray-500 mb-1.5" htmlFor="p2p-amount">Amount</label>
+        <label className="block text-xs text-subtle mb-1.5" htmlFor="p2p-amount">Amount</label>
         <div className="relative">
           <input
             id="p2p-amount"
@@ -390,21 +390,21 @@ function P2PFlow({ wallet, addTransfer, refreshWallet, kycOk }) {
             placeholder="0.00"
             value={amount}
             onChange={e => setAmount(e.target.value)}
-            className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent transition-colors duration-150 pr-16"
+            className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-fg-strong placeholder-faint focus:outline-none focus:border-accent transition-colors duration-150 pr-16"
           />
-          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-gray-400">USDC</span>
+          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-muted">USDC</span>
         </div>
       </div>
 
       <div>
-        <label className="block text-xs text-gray-500 mb-1.5" htmlFor="p2p-note">Note (optional)</label>
+        <label className="block text-xs text-subtle mb-1.5" htmlFor="p2p-note">Note (optional)</label>
         <input
           id="p2p-note"
           type="text"
           placeholder="What's this for?"
           value={note}
           onChange={e => setNote(e.target.value)}
-          className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent transition-colors duration-150"
+          className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-fg-strong placeholder-faint focus:outline-none focus:border-accent transition-colors duration-150"
         />
       </div>
 
@@ -430,10 +430,10 @@ export default function Send() {
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-28 space-y-5">
       <div className="flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-xl hover:bg-card transition-colors duration-150 cursor-pointer text-gray-400 hover:text-white">
+        <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-xl hover:bg-card transition-colors duration-150 cursor-pointer text-muted hover:text-fg-strong">
           <ArrowLeft size={20} />
         </button>
-        <h1 className="text-xl font-bold text-white">Send</h1>
+        <h1 className="text-xl font-bold text-fg-strong">Send</h1>
       </div>
 
       <div className="flex gap-1 bg-card rounded-xl p-1">
@@ -446,8 +446,8 @@ export default function Send() {
             onClick={() => setMode(id)}
             className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium rounded-lg transition-colors duration-150 cursor-pointer ${
               mode === id
-                ? 'bg-card-hover text-white'
-                : 'text-gray-500 hover:text-gray-300'
+                ? 'bg-card-hover text-fg-strong'
+                : 'text-subtle hover:text-fg-muted'
             }`}
           >
             <Icon size={15} />

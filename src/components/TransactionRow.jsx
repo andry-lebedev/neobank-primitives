@@ -38,8 +38,8 @@ export default function TransactionRow({ transfer, onClick }) {
           : <ArrowUpRight size={18} className="text-danger" />}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-gray-200 truncate">{getDescription(transfer)}</p>
-        <p className="text-xs text-gray-500 mt-0.5">{relativeTime(transfer.createdAt)}</p>
+        <p className="text-sm font-medium text-fg truncate">{getDescription(transfer)}</p>
+        <p className="text-xs text-subtle mt-0.5">{relativeTime(transfer.createdAt)}</p>
       </div>
       <div className="text-right flex-shrink-0">
         <p className={`text-sm font-semibold ${isIn ? 'text-success' : 'text-danger'}`}>

@@ -15,11 +15,11 @@ function BalanceCard({ wallet }) {
   const balance = wallet?.balances?.[0]
   return (
     <Card className="p-5">
-      <p className="text-xs text-gray-500 mb-1">Total balance</p>
-      <p className="text-4xl font-bold text-white tracking-tight">
+      <p className="text-xs text-subtle mb-1">Total balance</p>
+      <p className="text-4xl font-bold text-fg-strong tracking-tight">
         {balance ? formatBalance(balance.amount) : '0.00'}
       </p>
-      <p className="text-sm text-gray-400 mt-1">{balance?.currency ?? 'USDC'}</p>
+      <p className="text-sm text-muted mt-1">{balance?.currency ?? 'USDC'}</p>
       <div className="mt-4 pt-4 border-t border-card-hover">
         <CopyField label="Wallet ID" value={wallet?.id} />
       </div>
@@ -31,7 +31,7 @@ function AccountCard({ account }) {
   if (!account) return null
   return (
     <Card className="p-5">
-      <p className="text-xs text-gray-500 mb-3">Virtual bank account</p>
+      <p className="text-xs text-subtle mb-3">Virtual bank account</p>
       {account.type === 'sepa' ? (
         <>
           <CopyField label="IBAN" value={account.iban} />
@@ -109,8 +109,8 @@ export default function Dashboard() {
       <div className="max-w-lg mx-auto px-4 pt-6 pb-28 min-h-screen flex items-center">
         <div className="w-full text-center space-y-4">
           <div>
-            <h1 className="text-xl font-bold text-white">Set up your account</h1>
-            <p className="text-sm text-gray-400 mt-1">Create your wallet and bank account to get started.</p>
+            <h1 className="text-xl font-bold text-fg-strong">Set up your account</h1>
+            <p className="text-sm text-muted mt-1">Create your wallet and bank account to get started.</p>
           </div>
           <Button fullWidth onClick={() => navigate('/onboarding')}>Set up account</Button>
         </div>
@@ -123,12 +123,12 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
         <div>
-          <p className="text-xs text-gray-500">{greeting}</p>
-          <h1 className="text-xl font-bold text-white">
+          <p className="text-xs text-subtle">{greeting}</p>
+          <h1 className="text-xl font-bold text-fg-strong">
             {loading ? 'Loading…' : firstName ?? 'Welcome'}
           </h1>
         </div>
-        <button className="p-2 rounded-full hover:bg-card transition-colors duration-150 cursor-pointer text-gray-400 hover:text-white" aria-label="Notifications">
+        <button className="p-2 rounded-full hover:bg-card transition-colors duration-150 cursor-pointer text-muted hover:text-fg-strong" aria-label="Notifications">
           <Bell size={22} />
         </button>
       </div>
@@ -174,14 +174,14 @@ export default function Dashboard() {
             className="flex-1 flex flex-col items-center gap-1.5 bg-card hover:bg-card-hover border border-card-hover rounded-2xl py-3 transition-colors duration-150 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <Icon size={20} className="text-accent" />
-            <span className="text-xs text-gray-300">{label}</span>
+            <span className="text-xs text-fg-muted">{label}</span>
           </button>
         ))}
       </div>
 
       {/* Recent activity */}
       <div>
-        <h2 className="text-sm font-semibold text-gray-400 mb-3">Recent activity</h2>
+        <h2 className="text-sm font-semibold text-muted mb-3">Recent activity</h2>
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map(i => (
@@ -196,7 +196,7 @@ export default function Dashboard() {
             ))}
           </div>
         ) : recentTxns.length === 0 ? (
-          <div className="text-center py-8 text-gray-600">
+          <div className="text-center py-8 text-faint">
             <History size={32} className="mx-auto mb-2 opacity-40" />
             <p className="text-sm">No transactions yet. Add money to get started.</p>
           </div>
