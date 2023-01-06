@@ -11,11 +11,18 @@ export default {
           DEFAULT: '#F97316',
           hover: '#EA6C0A',
         },
+        // Neutral text ramp — semantic emphasis levels (Seam 1).
+        // Components use these, never raw `*-gray-*` or `text-white`.
+        'fg-strong': '#FFFFFF',
+        fg: '#E5E7EB',
+        'fg-muted': '#D1D5DB',
+        muted: '#9CA3AF',
+        subtle: '#6B7280',
+        faint: '#4B5563',
         success: '#22C55E',
         danger: '#EF4444',
         info: '#3B82F6',
         warning: '#F59E0B',
-        muted: '#9CA3AF',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
