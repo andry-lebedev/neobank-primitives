@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { Zap } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
@@ -50,10 +50,10 @@ export function AppShell({ nav, children }: { nav: NavItem[]; children: ReactNod
       {/* Top bar */}
       <header className="sticky top-0 z-20 border-b bg-background/90 backdrop-blur md:pl-16">
         <div className="mx-auto flex h-14 w-full max-w-md items-center justify-between px-4">
-          <span className="flex items-center gap-2 font-bold md:hidden">
+          <Link to="/" className="flex items-center gap-2 font-bold md:hidden" aria-label={`${brand.name} home`}>
             <img src={brand.logoSrc} alt="" className="size-6 rounded-md" /> {brand.name}
-          </span>
-          <span className="hidden items-center gap-2 font-bold md:flex">{brand.name}</span>
+          </Link>
+          <Link to="/" className="hidden items-center gap-2 font-bold md:flex" aria-label={`${brand.name} home`}>{brand.name}</Link>
           <div className="flex items-center gap-2">
             {mode === 'live' && (
               <span className="flex items-center gap-1.5 rounded-full bg-success/10 px-2.5 py-1 text-[10px] font-semibold text-success">

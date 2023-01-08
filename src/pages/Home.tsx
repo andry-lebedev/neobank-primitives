@@ -62,16 +62,16 @@ export default function Home() {
       </div>
 
       {account?.iban && (
-        <Card>
-          <CardContent className="py-3">
+        <Card className="py-0">
+          <CardContent className="px-4 py-1">
             <CopyField label={account.label ?? 'Your IBAN'} value={account.iban} />
           </CardContent>
         </Card>
       )}
 
-      <Card>
-        <CardContent className="py-2">
-          <div className="flex items-center justify-between px-2 pt-2">
+      <Card className="py-0">
+        <CardContent className="px-2 py-2">
+          <div className="flex items-center justify-between px-2 pt-1">
             <h2 className="text-sm font-bold">Recent activity</h2>
             {brand.features.activity && (
               <Link to="/activity" className="text-xs font-semibold text-muted-foreground hover:text-foreground">View all</Link>

@@ -52,10 +52,13 @@ export default function AddMoney() {
         <Card>
           <CardHeader className="pb-1">
             <CardTitle className="text-sm">Crypto deposit</CardTitle>
-            <CardDescription>Send USDC on {wallet.chain ?? 'polygon'} to your wallet address.</CardDescription>
+            <CardDescription>
+              Send USDC on {wallet.chain ?? 'polygon'} to your wallet address.
+              {mode === 'demo' && ' This is a demo address — funds are simulated, do not send real crypto.'}
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <CopyField label="Wallet address" value={wallet.address} />
+            <CopyField label={mode === 'demo' ? 'Wallet address (demo)' : 'Wallet address'} value={wallet.address} />
           </CardContent>
         </Card>
       )}
