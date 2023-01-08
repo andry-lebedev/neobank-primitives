@@ -5,7 +5,7 @@ import type { TransferState } from './data/types'
 // may rewrite titles/details to match the client's own wording. Keyed off
 // action events so it works identically in demo and live mode.
 
-export type FlowKey = 'onboarding' | 'payout' | 'p2p' | 'topup' | 'deposit'
+export type FlowKey = 'onboarding' | 'payout' | 'p2p' | 'topup'
 
 export interface ExplainerStep {
   id: string
@@ -58,16 +58,6 @@ export const explainers: Record<FlowKey, ExplainerFlow> = {
   },
   topup: {
     key: 'topup',
-    title: 'Behind a deposit',
-    subtitle: 'Fiat in, stablecoin balance out',
-    docsUrl: 'https://docs.swipelux.com',
-    steps: [
-      { id: 'receive', title: 'Funds received', detail: 'Money arrives at the virtual IBAN (or on-chain to the wallet address).' },
-      { id: 'credit', title: 'Balance credited', detail: 'Converted and credited to the customer wallet automatically — webhook fired to your backend.' },
-    ],
-  },
-  deposit: {
-    key: 'deposit',
     title: 'Behind a deposit',
     subtitle: 'Fiat in, stablecoin balance out',
     docsUrl: 'https://docs.swipelux.com',
