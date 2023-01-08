@@ -21,7 +21,7 @@ export default function Profile() {
     setBusy(true)
     try {
       const session = await source.initiateKyc(customerId)
-      if (session.verificationUrl) window.open(session.verificationUrl, '_blank')
+      if (session.verificationUrl) window.open(session.verificationUrl, '_blank', 'noopener,noreferrer')
       notify('Verification started')
       setTimeout(refreshCustomer, 5000)
     } catch (err) {

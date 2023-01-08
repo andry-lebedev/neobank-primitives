@@ -7,14 +7,22 @@ export function Toaster() {
   const [toasts, setToasts] = useState<Toast[]>([])
   useEffect(() => {
     let id = 0
+    const timers = new Set<ReturnType<typeof setTimeout>>()
     const onToast = (e: Event) => {
       const { message, kind } = (e as CustomEvent<{ message: string; kind: 'success' | 'error' }>).detail
       const toast = { id: ++id, message, kind }
       setToasts(prev => [...prev, toast])
-      setTimeout(() => setToasts(prev => prev.filter(t => t.id !== toast.id)), 4000)
+      const handle = setTimeout(() => {
+        timers.delete(handle)
+        setToasts(prev => prev.filter(t => t.id !== toast.id))
+      }, 4000)
+      timers.add(handle)
     }
     window.addEventListener('app-toast', onToast)
-    return () => window.removeEventListener('app-toast', onToast)
+    return () => {
+      window.removeEventListener('app-toast', onToast)
+      timers.forEach(clearTimeout)
+    }
   }, [])
   return (
     <div className="pointer-events-none fixed bottom-20 left-1/2 z-50 flex w-full max-w-sm -translate-x-1/2 flex-col gap-2 px-4 md:bottom-6">

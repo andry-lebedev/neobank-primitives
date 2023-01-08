@@ -9,6 +9,7 @@ import { useApp } from '@/context/useApp'
 import { notify, setCustomerId, track } from '@/integrations'
 import { brand } from '../brand.config'
 import { cn } from '@/lib/utils'
+import type { Customer, Wallet } from '@/data/types'
 
 const STEPS = ['Customer', 'Verification', 'Wallet', 'Bank account'] as const
 
@@ -19,24 +20,38 @@ export default function Onboarding() {
   const [email, setEmail] = useState('')
   const [step, setStep] = useState(-1) // -1 = form, 0..3 = provisioning, 4 = done
   const [error, setError] = useState<string | null>(null)
+  // Resume state: entities already created survive a mid-chain failure, so a
+  // retry continues from the failed step instead of creating duplicates.
+  const [customer, setCustomer] = useState<Customer | null>(null)
+  const [wallet, setWallet] = useState<Wallet | null>(null)
 
   async function run() {
     setError(null)
+    let current = 0
     try {
-      setStep(0)
-      const customer = await source.createCustomer({ firstName, lastName, email })
-      setStep(1)
-      await source.initiateKyc(customer.id)
-      setStep(2)
-      const wallet = await source.createWallet(customer.id)
-      setStep(3)
-      await source.createAccount(customer.id, { type: 'sepa', currency: 'EUR', country: 'IE', targetWallet: wallet.id, label: 'Main EUR account' })
+      let cust = customer
+      if (!cust) {
+        current = 0; setStep(0)
+        cust = await source.createCustomer({ firstName, lastName, email })
+        setCustomer(cust)
+      }
+      current = 1; setStep(1)
+      await source.initiateKyc(cust.id)
+      let wal = wallet
+      if (!wal) {
+        current = 2; setStep(2)
+        wal = await source.createWallet(cust.id)
+        setWallet(wal)
+      }
+      current = 3; setStep(3)
+      await source.createAccount(cust.id, { type: 'sepa', currency: 'EUR', country: 'IE', targetWallet: wal.id, label: 'Main EUR account' })
       setStep(4)
       track('onboarding.completed', {})
-      if (mode === 'live') setCustomerId(customer.id)
+      if (mode === 'live') setCustomerId(cust.id)
       notify('Account created')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Onboarding failed.')
+      const reason = err instanceof Error ? err.message : 'Onboarding failed.'
+      setError(`${STEPS[current]} step failed: ${reason} Retry to resume from here.`)
       setStep(-1)
     }
   }
@@ -103,8 +118,8 @@ export default function Onboarding() {
             <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} />
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
-          <Button className="w-full" disabled={!firstName || !lastName || !email} onClick={run}>
-            Create account
+          <Button className="w-full" disabled={!customer && (!firstName || !lastName || !email)} onClick={run}>
+            {customer ? 'Retry setup' : 'Create account'}
           </Button>
         </CardContent>
       </Card>
