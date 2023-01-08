@@ -17,6 +17,7 @@ type Tab = 'bank' | 'crypto'
 export default function Send() {
   const { source, customerId, wallet, addTransfer } = useApp()
   const [tab, setTab] = useState<Tab>('bank')
+  const defaultCurrency = wallet?.balances?.[0]?.currency ?? 'EUR'
 
   // bank flow state
   const [recipients, setRecipients] = useState<Recipient[]>([])
@@ -25,7 +26,7 @@ export default function Send() {
   const [newName, setNewName] = useState('')
   const [newIban, setNewIban] = useState('')
   const [amount, setAmount] = useState('')
-  const [currency, setCurrency] = useState('EUR')
+  const [currency, setCurrency] = useState<string | null>(null)
   const [quote, setQuote] = useState<Quote | null>(null)
   const [busy, setBusy] = useState(false)
   const [sent, setSent] = useState(false)
@@ -33,11 +34,22 @@ export default function Send() {
 
   // crypto flow state
   const [address, setAddress] = useState('')
+  const selectedCurrency = currency ?? defaultCurrency
+  const amountNum = Number(amount)
+  const validAmount = Number.isFinite(amountNum) && amountNum > 0
+  const freshQuote = Boolean(quote && Number(quote.from?.amount) === amountNum && quote.from?.currency === selectedCurrency)
 
   useEffect(() => {
     if (!customerId) return
     source.listRecipients(customerId).then(setRecipients).catch(() => {})
   }, [source, customerId])
+
+  useEffect(() => {
+    if (!wallet) return
+    const hasCurrency = currency ? wallet.balances?.some(b => b.currency === currency) : true
+    if (!hasCurrency) setCurrency(null)
+    setQuote(null)
+  }, [wallet, currency])
 
   async function pickRecipient(recipient: Recipient) {
     setError(null)
@@ -71,14 +83,14 @@ export default function Send() {
   }
 
   async function getQuote() {
-    if (!wallet || !selected || !amount) return
+    if (!wallet || !selected || !validAmount) return
     setBusy(true); setError(null)
     try {
       const q = await source.createPayoutQuote({
-        fromWalletId: wallet.id, amount: Number(amount), currency,
+        fromWalletId: wallet.id, amount: amountNum, currency: selectedCurrency,
         toAccountId: selected.account.id, toCurrency: selected.account.currency ?? 'EUR',
       })
-      setQuote(q)
+      setQuote({ ...q, from: { ...q.from, amount: amountNum, currency: selectedCurrency } })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Quote failed.')
     } finally {
@@ -87,15 +99,16 @@ export default function Send() {
   }
 
   async function confirm() {
-    if (!wallet || !selected) return
+    if (!wallet || !selected || !validAmount || !freshQuote) return
     setBusy(true); setError(null)
     try {
       const transfer = await source.createPayout({
-        fromWalletId: wallet.id, amount: Number(amount), currency,
+        fromWalletId: wallet.id, amount: amountNum, currency: selectedCurrency,
         toId: selected.account.id, toCurrency: selected.account.currency ?? 'EUR',
+        kind: 'bank',
       })
       addTransfer(transfer)
-      track('send.bank', { amount, currency })
+      track('send.bank', { amount, currency: selectedCurrency })
       notify('Payout created')
       setSent(true)
     } catch (err) {
@@ -106,12 +119,13 @@ export default function Send() {
   }
 
   async function sendCrypto() {
-    if (!wallet || !address.trim() || !amount) return
+    if (!wallet || !address.trim() || !validAmount) return
     setBusy(true); setError(null)
     try {
       const transfer = await source.createPayout({
-        fromWalletId: wallet.id, amount: Number(amount), currency: 'USDC',
+        fromWalletId: wallet.id, amount: amountNum, currency: 'USDC',
         toId: address.trim(), toCurrency: 'USDC',
+        kind: 'wallet',
       })
       addTransfer(transfer)
       track('send.crypto', { amount })
@@ -145,8 +159,8 @@ export default function Send() {
       <h1 className="text-xl font-extrabold tracking-tight">Send</h1>
 
       <div className="flex rounded-lg bg-muted p-1">
-        <button type="button" className={tabClass('bank')} onClick={() => setTab('bank')}>Bank transfer</button>
-        <button type="button" className={tabClass('crypto')} onClick={() => setTab('crypto')}>Crypto wallet</button>
+        <button type="button" className={tabClass('bank')} onClick={() => { setTab('bank'); setQuote(null) }}>Bank transfer</button>
+        <button type="button" className={tabClass('crypto')} onClick={() => { setTab('crypto'); setQuote(null) }}>Crypto wallet</button>
       </div>
 
       {tab === 'bank' && (
@@ -187,10 +201,10 @@ export default function Send() {
                 <div className="flex gap-2">
                   <Input id="amount" inputMode="decimal" placeholder="0.00" value={amount} onChange={e => { setAmount(e.target.value); setQuote(null) }} />
                   <select
-                    aria-label="Currency" value={currency} onChange={e => { setCurrency(e.target.value); setQuote(null) }}
+                    aria-label="Currency" value={selectedCurrency} onChange={e => { setCurrency(e.target.value); setQuote(null) }}
                     className="rounded-md border bg-card px-2 text-sm font-semibold"
                   >
-                    {(wallet?.balances ?? [{ currency: 'EUR' }]).map(b => <option key={b.currency}>{b.currency}</option>)}
+                    {(wallet?.balances ?? [{ currency: defaultCurrency }]).map(b => <option key={b.currency}>{b.currency}</option>)}
                   </select>
                 </div>
               </div>
@@ -207,11 +221,11 @@ export default function Send() {
               {error && <p className="text-sm text-destructive">{error}</p>}
 
               {quote ? (
-                <Button className="w-full" disabled={busy} onClick={confirm}>
+                <Button className="w-full" disabled={busy || !freshQuote} onClick={confirm}>
                   {busy && <Loader2 className="size-4 animate-spin" />} Confirm payout
                 </Button>
               ) : (
-                <Button className="w-full" disabled={!selected || !Number(amount) || busy} onClick={getQuote}>
+                <Button className="w-full" disabled={!selected || !validAmount || busy} onClick={getQuote}>
                   {busy && <Loader2 className="size-4 animate-spin" />} Get quote
                 </Button>
               )}
@@ -229,10 +243,10 @@ export default function Send() {
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="crypto-amount">Amount (USDC)</Label>
-              <Input id="crypto-amount" inputMode="decimal" placeholder="0.00" value={amount} onChange={e => setAmount(e.target.value)} />
+              <Input id="crypto-amount" inputMode="decimal" placeholder="0.00" value={amount} onChange={e => { setAmount(e.target.value); setQuote(null) }} />
             </div>
             {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button className="w-full" disabled={!address.trim() || !Number(amount) || busy} onClick={sendCrypto}>
+            <Button className="w-full" disabled={!address.trim() || !validAmount || busy} onClick={sendCrypto}>
               {busy && <Loader2 className="size-4 animate-spin" />} Send
             </Button>
           </CardContent>

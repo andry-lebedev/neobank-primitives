@@ -11,6 +11,8 @@ function compact(obj: Record<string, unknown>): Record<string, unknown> {
   )
 }
 
+const LIVE_SANDBOX_TOPUP_CURRENCY = 'USDC'
+
 // INTEGRATION SURFACE — do not change paths or payload shapes when tailoring.
 export const liveSource: DataSource = {
   getCustomer: (id): Promise<Customer> =>
@@ -75,6 +77,6 @@ export const liveSource: DataSource = {
 
   topup: (input: TopupInput): Promise<Transfer> =>
     client.post('/v1/sandbox/topup', {
-      wallet: input.walletId, amount: String(input.amount ?? 1000), currency: input.currency ?? 'USDC',
+      wallet: input.walletId, amount: String(input.amount ?? 1000), currency: LIVE_SANDBOX_TOPUP_CURRENCY,
     }).then(r => r.data),
 }
