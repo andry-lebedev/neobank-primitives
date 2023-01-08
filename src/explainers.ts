@@ -40,8 +40,8 @@ export const explainers: Record<FlowKey, ExplainerFlow> = {
     subtitle: '4 steps behind one API call',
     docsUrl: 'https://docs.swipelux.com',
     steps: [
-      { id: 'quote', title: 'Quote locked', detail: 'Stablecoin→fiat rate fixed before you commit — you never hold FX risk.' },
-      { id: 'screen', title: 'Compliance screened', detail: 'Recipient and transaction checked automatically (AML / sanctions).' },
+      { id: 'quote', title: 'Quote locked', detail: 'Stablecoin→fiat rate locked for 5 minutes before you commit — you never hold FX risk.' },
+      { id: 'screen', title: 'Compliance checked', detail: 'Recipient and transaction run through compliance checks automatically before funds move.' },
       { id: 'convert', title: 'Stablecoin converted', detail: 'USDC sold, fiat settled on the Swipelux ledger.' },
       { id: 'send', title: 'Bank payout sent', detail: 'Funds leave via SEPA/SWIFT — typically same day.' },
     ],
@@ -52,8 +52,8 @@ export const explainers: Record<FlowKey, ExplainerFlow> = {
     subtitle: 'Instant, on-ledger',
     docsUrl: 'https://docs.swipelux.com',
     steps: [
-      { id: 'screen', title: 'Compliance screened', detail: 'Both sides checked automatically before funds move.' },
-      { id: 'settle', title: 'Settled on-chain', detail: 'Stablecoins move wallet-to-wallet in seconds, 24/7 — no banking hours.' },
+      { id: 'screen', title: 'Compliance checked', detail: 'Both sides run through compliance checks automatically before funds move.' },
+      { id: 'settle', title: 'Settled instantly', detail: 'Funds move wallet-to-wallet on the Swipelux ledger in seconds, 24/7 — no banking hours.' },
     ],
   },
   topup: {

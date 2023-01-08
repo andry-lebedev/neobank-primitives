@@ -16,6 +16,7 @@ export function createDemoSource({ latencyMs = 300 }: { latencyMs?: number } = {
     })
 
   return {
+    listCustomers: () => later(() => demoStore.listCustomers()),
     getCustomer: id => later(() => demoStore.getCustomer(id)),
     createCustomer: input => later(() => demoStore.createCustomer(input)),
     initiateKyc: customerId => later(() => demoStore.initiateKyc(customerId)),

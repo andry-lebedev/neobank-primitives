@@ -3,6 +3,7 @@ import { Zap } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
+import { CustomerSwitcher } from './CustomerSwitcher'
 import { DemoBanner } from './DemoBanner'
 import { ExplainerDrawer } from './ExplainerDrawer'
 import { Toaster } from './Toaster'
@@ -63,9 +64,13 @@ export function AppShell({ nav, children }: { nav: NavItem[]; children: ReactNod
             <Button variant={open ? 'default' : 'outline'} size="sm" className="h-7 gap-1 rounded-full px-3 text-xs" onClick={toggle}>
               <Zap className="size-3" /> How it works
             </Button>
-            <span className="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-              {initials}
-            </span>
+            <CustomerSwitcher
+              trigger={
+                <button type="button" aria-label="Switch customer" className="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                  {initials}
+                </button>
+              }
+            />
           </div>
         </div>
       </header>

@@ -19,6 +19,15 @@ describe('demo source', () => {
 
   it('rejects (not throws sync) on store errors', async () => {
     const source = createDemoSource({ latencyMs: 0 })
-    await expect(source.getCustomer('nope')).rejects.toThrow(/not found/i)
+    // getCustomer tolerates unknown ids (falls back to the default persona);
+    // getTransfer still throws for a missing id, which must surface as a rejection.
+    await expect(source.getTransfer('nope')).rejects.toThrow(/not found/i)
+  })
+
+  it('lists all seeded customers', async () => {
+    const source = createDemoSource({ latencyMs: 0 })
+    const customers = await source.listCustomers()
+    expect(customers.length).toBeGreaterThanOrEqual(3)
+    expect(customers.map(c => c.id)).toContain(DEMO_CUSTOMER_ID)
   })
 })

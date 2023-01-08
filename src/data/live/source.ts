@@ -15,6 +15,9 @@ const LIVE_SANDBOX_TOPUP_CURRENCY = 'USDC'
 
 // INTEGRATION SURFACE — do not change paths or payload shapes when tailoring.
 export const liveSource: DataSource = {
+  listCustomers: (): Promise<Customer[]> =>
+    client.get('/v1/customers', { params: { limit: 50 } }).then(r => r.data?.customers ?? []),
+
   getCustomer: (id): Promise<Customer> =>
     client.get(`/v1/customers/${id}`).then(r => r.data),
 
