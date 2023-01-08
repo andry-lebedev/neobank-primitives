@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Check, CircleDot, ExternalLink, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useExplainer } from '@/context/ExplainerContext'
+import { useExplainer } from '@/context/useExplainer'
 import { onAction } from '@/lib/events'
 import { explainers, EVENT_FLOW, stepsDone, type FlowKey } from '../explainers'
 import { cn } from '@/lib/utils'
