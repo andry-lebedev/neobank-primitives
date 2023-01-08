@@ -23,6 +23,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(Boolean(customerId))
   const [error, setError] = useState<string | null>(null)
   const sessionSent = useRef(false)
+  const transferLogRef = useRef(transferLog)
 
   const reload = useCallback(() => {
     sessionSent.current = false
@@ -70,11 +71,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }), [])
 
+  useEffect(() => { transferLogRef.current = transferLog }, [transferLog])
+
   // Live mode: poll non-terminal transfers so the explainer animates there too.
   useEffect(() => {
     if (mode !== 'live') return
     const id = setInterval(() => {
-      transferLog.filter(t => !TERMINAL.has(t.state)).forEach(t => {
+      transferLogRef.current.filter(t => !TERMINAL.has(t.state)).forEach(t => {
         source.getTransfer(t.id).then(fresh => {
           if (fresh.state !== t.state) {
             setTransferLog(prev => prev.map(x => (x.id === fresh.id ? fresh : x)))
@@ -84,7 +87,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       })
     }, POLL_MS)
     return () => clearInterval(id)
-  }, [mode, source, transferLog])
+  }, [mode, source])
 
   const addTransfer = useCallback((t: Transfer) => setTransferLog(prev => [t, ...prev]), [])
 
