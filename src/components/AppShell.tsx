@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { CustomerSwitcher } from './CustomerSwitcher'
 import { DemoBanner } from './DemoBanner'
 import { ExplainerDrawer } from './ExplainerDrawer'
+import { MakeItYoursFab } from './MakeItYoursFab'
 import { Toaster } from './Toaster'
 import { useApp } from '@/context/useApp'
 import { useExplainer } from '@/context/useExplainer'
@@ -94,6 +95,7 @@ export function AppShell({ nav, children }: { nav: NavItem[]; children: ReactNod
       </nav>
 
       <ExplainerDrawer />
+      <MakeItYoursFab />
       <Toaster />
     </div>
   )
