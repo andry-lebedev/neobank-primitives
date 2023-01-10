@@ -29,13 +29,16 @@ sandbox data. Optionally set `VITE_API_TOKEN` in `.env` instead (see
 
 ## Make it yours (AI re-brand)
 
-Open this repo in an AI coding agent (Claude Code, Cursor, Codex, …) and paste:
+Paste this into any AI coding agent (Claude Code, Cursor, Codex, …) — it clones the
+repo, sets up, and re-brands in one pass:
 
-    Read AGENTS.md, then follow PROMPT.md to re-brand this neobank demo for me.
-    I'm <Company>. [Optional: my website is <url> / brand notes: <colors, vibe, audience>]
-    Derive my brand (or choose tastefully if I gave you little), apply it on a new git branch by
-    editing only src/theme.css and src/brand.config.ts, keep all tests and the build green, then
-    show me the result and what you chose.
+    Clone and set up the Swipelux neobank starter, then re-brand it as mine:
+      git clone https://github.com/swipelux/neobank-starter && cd neobank-starter && npm install
+    Read AGENTS.md, then follow PROMPT.md to re-brand this neobank demo into my product.
+    Start by asking me my company name and any brand notes (website, colors, vibe, audience);
+    derive the rest from there, or choose tastefully if I give you little. Apply it on a new git
+    branch by editing only src/theme.css and src/brand.config.ts, keep all tests and the build
+    green, then run it (npm run dev) and show me the result and what you chose.
 
 No website? Describe your brand in a sentence — or give just the name and let
 the agent propose something. Iterate in plain words afterwards.
