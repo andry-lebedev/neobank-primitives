@@ -67,7 +67,7 @@ export default function AddMoney() {
         <CardHeader className="pb-1">
           <CardTitle className="flex items-center gap-2 text-sm"><Sparkles className="size-4" /> Try it now</CardTitle>
           <CardDescription>
-            {mode === 'demo' ? 'Simulate an incoming deposit and watch it settle.' : 'Sandbox top-up: credits test funds to your wallet.'}
+            {mode === 'demo' ? 'Simulate an incoming deposit and watch it settle.' : 'Top-up: credits test funds to your wallet.'}
           </CardDescription>
         </CardHeader>
         <CardContent>

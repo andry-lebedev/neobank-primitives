@@ -19,7 +19,7 @@ export function GoLiveDialog({ trigger }: { trigger: ReactNode }) {
     const ok = await validateApiKey(key.trim())
     setBusy(false)
     if (!ok) {
-      setError('That key was rejected by the Swipelux sandbox. Check it and try again.')
+      setError('That key was rejected by Swipelux. Check it and try again.')
       return
     }
     const id = customerId.trim()
@@ -36,7 +36,7 @@ export function GoLiveDialog({ trigger }: { trigger: ReactNode }) {
         <DialogHeader>
           <DialogTitle>Go live</DialogTitle>
           <DialogDescription>
-            Paste your Swipelux sandbox API key — the whole app switches to live data. No rebuild, no config files.
+            Paste your Swipelux API key — the whole app switches to live data. No rebuild, no config files.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
