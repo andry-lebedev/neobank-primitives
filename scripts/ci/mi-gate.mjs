@@ -2,8 +2,10 @@
 // Per-file Maintainability Index gate.
 //
 // Strips TypeScript types via the compiler API, then runs typhonjs-escomplex
-// over the resulting ES module to obtain Halstead V + cyclomatic + SLoC -> MI
-// on the Microsoft 0-100 scale.
+// over the resulting ES module to obtain Halstead V + cyclomatic + SLoC -> MI.
+// escomplex returns the original SEI Maintainability Index (uncapped, ~0-171),
+// not the clamped 0-100 variant — simple files can score above 100. The 75
+// floor is applied on that scale.
 //
 // Usage:
 //   node scripts/ci/mi-gate.mjs <file.ts> [file.ts ...]

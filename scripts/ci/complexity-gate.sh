@@ -19,14 +19,18 @@ BASE_SHA="${BASE_SHA:-origin/master}"
 HEAD_SHA="${HEAD_SHA:-HEAD}"
 MIN_MI="${MIN_MI:-75}"
 
-# Production code only. Tests are excluded — the gate measures behavioural code.
+# Production code only. Tests and .d.ts are excluded — the gate measures
+# behavioural code. The :(glob) pathspec magic makes `**` match zero-or-more
+# directories, so top-level files (e.g. src/App.tsx) are caught too; git's
+# default pathspec would require at least one directory after `**`.
 CHANGED_LIST=$(
   git diff --name-only --diff-filter=AM "$BASE_SHA" "$HEAD_SHA" -- \
-    'src/**/*.ts' 'src/**/*.tsx' \
-    ':(exclude)src/**/*.spec.ts' \
-    ':(exclude)src/**/*.test.ts' \
-    ':(exclude)src/**/*.spec.tsx' \
-    ':(exclude)src/**/*.test.tsx'
+    ':(glob)src/**/*.ts' ':(glob)src/**/*.tsx' \
+    ':(glob,exclude)src/**/*.spec.ts' \
+    ':(glob,exclude)src/**/*.test.ts' \
+    ':(glob,exclude)src/**/*.spec.tsx' \
+    ':(glob,exclude)src/**/*.test.tsx' \
+    ':(glob,exclude)src/**/*.d.ts'
 )
 
 if [ -z "$CHANGED_LIST" ]; then
@@ -40,9 +44,12 @@ echo "$CHANGED_LIST" | sed 's/^/  /'
 echo
 
 # IFS=newline so the unquoted "$CHANGED_LIST" expands to one arg per file.
+# set -f disables globbing so a filename with a glob metachar isn't expanded.
 IFS=$'\n'
+set -f
 # shellcheck disable=SC2086
 set -- $CHANGED_LIST
+set +f
 unset IFS
 
 FAILED=0
