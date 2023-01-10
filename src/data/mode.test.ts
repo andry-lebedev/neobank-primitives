@@ -20,12 +20,17 @@ describe('mode', () => {
     expect(getMode()).toBe('demo')
   })
 
-  it('disconnect overrides a VITE_API_TOKEN env key (returns to demo)', () => {
+  it('ignores a VITE_API_TOKEN env key — the key is in-app only', () => {
     vi.stubEnv('VITE_API_TOKEN', 'sk_from_env')
-    expect(getMode()).toBe('live') // env key alone → live
+    expect(getApiKey()).toBe('') // env is never read
+    expect(getMode()).toBe('demo')
+  })
+
+  it('disconnect forgets the active customer', () => {
+    localStorage.setItem('swipelux_customer_id', 'cust_old')
+    setApiKey('sk_test')
     clearApiKey()
-    expect(getApiKey()).toBe('')
-    expect(getMode()).toBe('demo') // explicit disconnect beats the env fallback
+    expect(localStorage.getItem('swipelux_customer_id')).toBeNull()
   })
 
   it('emits mode.changed on set/clear', () => {

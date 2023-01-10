@@ -32,3 +32,9 @@ export function resolveCustomerId(): string {
 export function setCustomerId(id: string): void {
   localStorage.setItem('swipelux_customer_id', id)
 }
+
+// Forget the active customer. Called when the key changes (Go live with a blank
+// customer / Disconnect) so a new key never inherits the prior key's customer.
+export function clearCustomerId(): void {
+  localStorage.removeItem('swipelux_customer_id')
+}
