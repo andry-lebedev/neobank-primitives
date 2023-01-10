@@ -67,3 +67,14 @@
   * { @apply border-border outline-ring/50; }
   body { @apply bg-background text-foreground font-sans antialiased; }
 }
+
+/* Custom animations. Bare `@import "tailwindcss"` ships no enter/exit utilities,
+ * so register them here. `animate-fab-in` = the floating CTA's one-time slide-up
+ * + fade-in, delayed ~4s after load (`both` holds it hidden until then). */
+@theme {
+  --animate-fab-in: fab-in 0.5s ease-out 4s both;
+  @keyframes fab-in {
+    from { opacity: 0; transform: translateY(0.75rem); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+}
