@@ -9,6 +9,7 @@
     "typecheck": "tsc -b --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
+    "gate": "bash scripts/ci/complexity-gate.sh",
     "preview": "vite preview"
   },
   "dependencies": {
