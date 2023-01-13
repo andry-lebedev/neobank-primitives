@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { renderWithProviders } from '@/test/utils'
 import { setSourceOverride } from '@/data'
@@ -22,6 +22,17 @@ describe('Send', () => {
     await user.click(screen.getByRole('button', { name: /confirm/i }))
 
     expect(await screen.findByText(/on its way/i)).toBeInTheDocument()
+  })
+
+  it('auto-selects the first recipient so quoting needs no extra click', async () => {
+    const user = userEvent.setup()
+    renderWithProviders(<Send />)
+    // do NOT click a recipient — the first seeded one should already be selected
+    await user.type(await screen.findByLabelText(/amount/i), '50')
+    const quote = screen.getByRole('button', { name: /get quote/i })
+    await waitFor(() => expect(quote).toBeEnabled())
+    await user.click(quote)
+    expect(await screen.findByText(/recipient gets/i)).toBeInTheDocument()
   })
 
   it('shows an error notice for insufficient funds', async () => {

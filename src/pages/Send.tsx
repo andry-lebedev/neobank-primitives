@@ -44,6 +44,18 @@ export default function Send() {
     source.listRecipients(customerId).then(setRecipients).catch(() => {})
   }, [source, customerId])
 
+  // auto-select the first usable recipient so the form is ready without an extra click
+  useEffect(() => {
+    if (selected || !customerId || !recipients.length) return
+    let cancelled = false
+    source.listRecipientAccounts(customerId, recipients[0].id)
+      .then(accounts => {
+        if (!cancelled && accounts.length) setSelected({ recipient: recipients[0], account: accounts[0] })
+      })
+      .catch(() => {})
+    return () => { cancelled = true }
+  }, [recipients, selected, customerId, source])
+
   useEffect(() => {
     if (!wallet) return
     const hasCurrency = currency ? wallet.balances?.some(b => b.currency === currency) : true
