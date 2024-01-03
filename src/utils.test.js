@@ -94,3 +94,46 @@ describe('getVirtualAccount', () => {
     expect(getVirtualAccount(accounts)).toBeNull()
   })
 })
+
+describe('relativeTime', () => {
+  it('returns "just now" for recent timestamps', () => {
+    const recent = new Date(Date.now() - 30000).toISOString() // 30 seconds ago
+    expect(relativeTime(recent)).toBe('just now')
+  })
+  it('returns minutes ago', () => {
+    const fiveMinAgo = new Date(Date.now() - 5 * 60000).toISOString()
+    expect(relativeTime(fiveMinAgo)).toBe('5m ago')
+  })
+  it('returns hours ago', () => {
+    const twoHoursAgo = new Date(Date.now() - 2 * 3600000).toISOString()
+    expect(relativeTime(twoHoursAgo)).toBe('2h ago')
+  })
+  it('returns days ago', () => {
+    const threeDaysAgo = new Date(Date.now() - 3 * 86400000).toISOString()
+    expect(relativeTime(threeDaysAgo)).toBe('3d ago')
+  })
+})
+
+describe('groupByDate', () => {
+  it('groups today transfers under Today', () => {
+    const t = { id: '1', createdAt: new Date().toISOString() }
+    const groups = groupByDate([t])
+    expect(Object.keys(groups)).toContain('Today')
+    expect(groups['Today']).toHaveLength(1)
+  })
+  it('groups yesterday transfers under Yesterday', () => {
+    const t = { id: '1', createdAt: new Date(Date.now() - 86400000).toISOString() }
+    const groups = groupByDate([t])
+    expect(Object.keys(groups)).toContain('Yesterday')
+  })
+  it('returns empty object for empty array', () => {
+    expect(groupByDate([])).toEqual({})
+  })
+  it('sorts within a group newest first', () => {
+    const older = { id: '1', createdAt: new Date(Date.now() - 7200000).toISOString() }
+    const newer = { id: '2', createdAt: new Date(Date.now() - 3600000).toISOString() }
+    const groups = groupByDate([older, newer])
+    expect(groups['Today'][0].id).toBe('2')
+    expect(groups['Today'][1].id).toBe('1')
+  })
+})
