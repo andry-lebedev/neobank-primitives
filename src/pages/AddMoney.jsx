@@ -84,15 +84,26 @@ export default function AddMoney() {
   function handleShare() {
     const account = activeTab === 'SEPA' ? sepaAccount : swiftAccount
     if (!account && activeTab !== 'Stablecoin') return
-    let text = ''
+    let lines = []
     if (activeTab === 'SEPA' && account) {
-      text = `IBAN: ${account.iban}\nBIC: ${account.bic}\nBank: ${account.bankName ?? ''}\nReference: ${account.paymentReference ?? ''}`
+      if (account.iban) lines.push(`IBAN: ${account.iban}`)
+      if (account.bic) lines.push(`BIC: ${account.bic}`)
+      if (account.bankName) lines.push(`Bank: ${account.bankName}`)
+      if (account.accountHolderName) lines.push(`Account holder: ${account.accountHolderName}`)
+      if (account.paymentReference) lines.push(`Reference: ${account.paymentReference}`)
+      if (account.currency) lines.push(`Currency: ${account.currency}`)
     } else if (activeTab === 'SWIFT' && account) {
-      text = `Account: ${account.accountNumber}\nSWIFT: ${account.swiftCode}\nBank: ${account.bankName ?? ''}`
+      if (account.accountNumber) lines.push(`Account: ${account.accountNumber}`)
+      if (account.swiftCode) lines.push(`SWIFT: ${account.swiftCode}`)
+      if (account.bankName) lines.push(`Bank: ${account.bankName}`)
+      if (account.accountHolderName) lines.push(`Account holder: ${account.accountHolderName}`)
+      if (account.routingNumber) lines.push(`Routing: ${account.routingNumber}`)
+      if (account.bankAddress) lines.push(`Address: ${account.bankAddress}`)
     } else {
-      text = `Wallet address: ${wallet?.address ?? ''}\nNetwork: ${wallet?.chain?.toUpperCase() ?? ''}`
+      if (wallet?.address) lines.push(`Wallet address: ${wallet.address}`)
+      if (wallet?.chain) lines.push(`Network: ${wallet.chain.toUpperCase()}`)
     }
-    navigator.clipboard.writeText(text)
+    navigator.clipboard.writeText(lines.join('\n'))
     showToast('Account details copied to clipboard')
   }
 
