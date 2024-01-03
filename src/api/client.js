@@ -68,7 +68,7 @@ client.interceptors.response.use(
   },
   error => {
     const id = error.config?._devId
-    const durationMs = error.config?._devStart
+    const durationMs = error.config?._devStart !== undefined
       ? Math.round(performance.now() - error.config._devStart)
       : null
     notify({
