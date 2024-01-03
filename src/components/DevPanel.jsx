@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { X, Activity, Database, ChevronDown, ChevronRight, Terminal } from 'lucide-react'
 import { addDevListener, removeDevListener } from '../api/client'
 import { useApp } from '../context/AppContext'
