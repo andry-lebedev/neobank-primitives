@@ -1,25 +1,84 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, CheckCircle2, User, Building2 } from 'lucide-react'
 import Card from '../components/Card'
 import Button from '../components/Button'
 import { useApp } from '../context/useApp'
 import { createPayoutQuote, createPayout } from '../api/transfers'
-import { resolveEmail, formatAmount } from '../utils'
+import { listRecipients, createRecipient, listRecipientAccounts, createRecipientAccount } from '../api/recipients'
+import { formatAmount, canSend, kycBanner } from '../utils'
 import { showToast } from '../components/showToast'
 
-// ─── Bank Payout ────────────────────────────────────────────────────────────
-
-function BankPayoutFlow({ wallet, addTransfer, refreshWallet, kycOk }) {
+function BankPayoutFlow({ wallet, addTransfer, refreshWallet, kycOk, customer }) {
   const [step, setStep] = useState(1)
   const [amount, setAmount] = useState('')
   const [memo, setMemo] = useState('')
   const [quote, setQuote] = useState(null)
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
-
-  const recipientAccountId = import.meta.env.VITE_RECIPIENT_ACCOUNT_ID
+  const [recipients, setRecipients] = useState([])
+  const [recipientAccounts, setRecipientAccounts] = useState([])
+  const [selectedRecipientId, setSelectedRecipientId] = useState('')
+  const [selectedAccountId, setSelectedAccountId] = useState('')
+  const [showAddForm, setShowAddForm] = useState(false)
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
+  const [iban, setIban] = useState('')
+  const [accountHolderName, setAccountHolderName] = useState('')
+  const [country, setCountry] = useState('EE')
+  const [currency, setCurrency] = useState('EUR')
   const navigate = useNavigate()
+  const customerId = customer?.id
+  const selectedAccount = recipientAccounts.find(a => a.id === selectedAccountId)
+  const toCurrency = selectedAccount?.details?.currency ?? selectedAccount?.currency ?? 'EUR'
+
+  useEffect(() => {
+    if (!customerId) return
+    listRecipients(customerId)
+      .then(data => {
+        const list = data?.recipients ?? (Array.isArray(data) ? data : [])
+        setRecipients(list)
+        setShowAddForm(list.length === 0)
+      })
+      .catch(() => {})
+  }, [customerId])
+
+  useEffect(() => {
+    if (!customerId || !selectedRecipientId) return
+    listRecipientAccounts(customerId, selectedRecipientId)
+      .then(data => setRecipientAccounts(data?.accounts ?? (Array.isArray(data) ? data : [])))
+      .catch(() => {})
+  }, [customerId, selectedRecipientId])
+
+  function handleSelectRecipient(recipientId) {
+    setSelectedRecipientId(recipientId)
+    setRecipientAccounts([])
+    setSelectedAccountId('')
+  }
+
+  async function handleAddRecipient() {
+    if (!customerId) return
+    setLoading(true)
+    try {
+      const rec = await createRecipient(customerId, { type: 'individual', firstName, lastName, email })
+      const account = await createRecipientAccount(customerId, rec.id, {
+        rail: 'sepa',
+        details: { iban, accountHolderName, country, currency },
+      })
+      const data = await listRecipients(customerId)
+      const list = data?.recipients ?? (Array.isArray(data) ? data : [])
+      setRecipients(list)
+      setSelectedRecipientId(rec.id)
+      setRecipientAccounts(account ? [account] : [])
+      setSelectedAccountId(account?.id ?? '')
+      setShowAddForm(false)
+    } catch {
+      // Error toast already fired
+    } finally {
+      setLoading(false)
+    }
+  }
 
   async function handleReview() {
     if (!amount || isNaN(Number(amount)) || Number(amount) < 0.1) {
@@ -32,8 +91,8 @@ function BankPayoutFlow({ wallet, addTransfer, refreshWallet, kycOk }) {
         fromWalletId: wallet.id,
         amount: Number(amount),
         currency: 'USDC',
-        toAccountId: recipientAccountId,
-        toCurrency: 'EUR',
+        toAccountId: selectedAccountId,
+        toCurrency,
       })
       setQuote(q)
       setStep(2)
@@ -51,15 +110,15 @@ function BankPayoutFlow({ wallet, addTransfer, refreshWallet, kycOk }) {
         fromWalletId: wallet.id,
         amount: Number(amount),
         currency: 'USDC',
-        toId: recipientAccountId,
-        toCurrency: 'EUR',
+        toId: selectedAccountId,
+        toCurrency,
       })
       const transfer = {
         id: tx.id ?? `txn_${Date.now()}`,
         type: 'offramp',
         state: tx.state ?? 'pending',
         from: { identifier: wallet.id, amount, currency: 'USDC' },
-        to: { identifier: recipientAccountId },
+        to: { identifier: selectedAccountId },
         createdAt: new Date().toISOString(),
       }
       addTransfer(transfer)
@@ -103,11 +162,12 @@ function BankPayoutFlow({ wallet, addTransfer, refreshWallet, kycOk }) {
         <h2 className="text-lg font-semibold text-white">Review transfer</h2>
         <Card className="p-5 space-y-3">
           <div><p className="text-xs text-gray-500">From</p><p className="text-sm text-gray-200 font-mono">{wallet?.id}</p></div>
+          <div><p className="text-xs text-gray-500">To account</p><p className="text-sm text-gray-200 font-mono">{selectedAccountId}</p></div>
           <div><p className="text-xs text-gray-500">Amount</p><p className="text-sm text-gray-200">{formatAmount(amount, 'USDC')}</p></div>
           {quote && (
             <>
               <div><p className="text-xs text-gray-500">Fee</p><p className="text-sm text-gray-200">{quote.fee ? `${quote.fee.amount} ${quote.fee.currency}` : '—'}</p></div>
-              <div><p className="text-xs text-gray-500">You receive</p><p className="text-sm font-semibold text-white">{quote.destination_amount} EUR</p></div>
+              <div><p className="text-xs text-gray-500">You receive</p><p className="text-sm font-semibold text-white">{quote.destination_amount} {toCurrency}</p></div>
               <div><p className="text-xs text-gray-500">Rate</p><p className="text-sm text-gray-200">{quote.rate}</p></div>
             </>
           )}
@@ -124,17 +184,62 @@ function BankPayoutFlow({ wallet, addTransfer, refreshWallet, kycOk }) {
 
   return (
     <div className="space-y-4">
-      <Card className="p-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-[#374151] flex items-center justify-center flex-shrink-0">
-            <Building2 size={18} className="text-gray-400" />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-gray-200">Demo Recipient</p>
-            <p className="text-xs text-gray-500 font-mono">{recipientAccountId ? `${recipientAccountId.slice(0, 12)}…` : 'racc_demo'}</p>
-          </div>
+      <div>
+        <label className="block text-xs text-gray-500 mb-1.5" htmlFor="bank-recipient">Recipient</label>
+        <select
+          id="bank-recipient"
+          value={selectedRecipientId}
+          onChange={e => handleSelectRecipient(e.target.value)}
+          className="w-full bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#F97316] transition-colors duration-150"
+        >
+          <option value="">Select recipient</option>
+          {recipients.map(r => (
+            <option key={r.id} value={r.id}>{`${r.firstName ?? r.companyName ?? ''} ${r.lastName ?? ''}`.trim() || r.id}</option>
+          ))}
+        </select>
+      </div>
+
+      {selectedRecipientId && (
+        <div>
+          <label className="block text-xs text-gray-500 mb-1.5" htmlFor="bank-recipient-account">Recipient account</label>
+          <select
+            id="bank-recipient-account"
+            value={selectedAccountId}
+            onChange={e => setSelectedAccountId(e.target.value)}
+            className="w-full bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#F97316] transition-colors duration-150"
+          >
+            <option value="">Select account</option>
+            {recipientAccounts.map(a => (
+              <option key={a.id} value={a.id}>{a.details?.iban ?? a.iban ?? a.id}</option>
+            ))}
+          </select>
         </div>
-      </Card>
+      )}
+
+      <button
+        type="button"
+        onClick={() => setShowAddForm(show => !show)}
+        className="text-sm text-[#F97316] hover:text-[#EA6C0A] cursor-pointer"
+      >
+        + Add recipient
+      </button>
+
+      {showAddForm && (
+        <Card className="p-4 space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="First name" className="bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#F97316]" />
+            <input value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Last name" className="bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#F97316]" />
+          </div>
+          <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" type="email" className="w-full bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#F97316]" />
+          <input value={iban} onChange={e => setIban(e.target.value)} placeholder="IBAN" className="w-full bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#F97316] font-mono" />
+          <input value={accountHolderName} onChange={e => setAccountHolderName(e.target.value)} placeholder="Account holder name" className="w-full bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#F97316]" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <input value={country} onChange={e => setCountry(e.target.value.toUpperCase())} placeholder="Country" className="bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#F97316]" />
+            <input value={currency} onChange={e => setCurrency(e.target.value.toUpperCase())} placeholder="Currency" className="bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#F97316]" />
+          </div>
+          <Button fullWidth onClick={handleAddRecipient} loading={loading}>Save recipient</Button>
+        </Card>
+      )}
 
       <div>
         <label className="block text-xs text-gray-500 mb-1.5" htmlFor="bank-amount">Amount</label>
@@ -169,45 +274,23 @@ function BankPayoutFlow({ wallet, addTransfer, refreshWallet, kycOk }) {
         fullWidth
         onClick={handleReview}
         loading={loading}
-        disabled={!kycOk || !amount}
+        disabled={!kycOk || !amount || !selectedAccountId || !wallet}
       >
         Review
       </Button>
-      {!kycOk && (
-        <p className="text-xs text-amber-400 text-center">Verification required to send funds</p>
-      )}
     </div>
   )
 }
 
-// ─── P2P Transfer ────────────────────────────────────────────────────────────
-
 function P2PFlow({ wallet, addTransfer, refreshWallet, kycOk }) {
   const [step, setStep] = useState(1)
-  const [email, setEmail] = useState('')
-  const [resolvedWalletId, setResolvedWalletId] = useState(null)
+  const [destWalletId, setDestWalletId] = useState('')
   const [amount, setAmount] = useState('')
   const [note, setNote] = useState('')
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
-
-  const demoEmail = import.meta.env.VITE_DEMO_EMAIL
-  const recipientWalletId = import.meta.env.VITE_RECIPIENT_WALLET_ID
-
-  function handleEmailChange(e) {
-    const val = e.target.value
-    setEmail(val)
-    const resolved = resolveEmail(val, demoEmail, recipientWalletId)
-    setResolvedWalletId(resolved)
-  }
-
-  function handleEmailBlur() {
-    if (email && !resolvedWalletId) {
-      showToast('User not found. Try ' + (demoEmail ?? 'the demo email'), 'error')
-      setEmail('')
-    }
-  }
+  const walletIdValid = /^wal_[a-zA-Z0-9]+$/.test(destWalletId)
 
   async function handleConfirm() {
     if (!amount || isNaN(Number(amount)) || Number(amount) < 0.1) {
@@ -220,7 +303,7 @@ function P2PFlow({ wallet, addTransfer, refreshWallet, kycOk }) {
         fromWalletId: wallet.id,
         amount: Number(amount),
         currency: 'USDC',
-        toId: resolvedWalletId,
+        toId: destWalletId,
         toCurrency: 'USDC',
       })
       const transfer = {
@@ -228,7 +311,7 @@ function P2PFlow({ wallet, addTransfer, refreshWallet, kycOk }) {
         type: 'wallet_to_wallet',
         state: tx.state ?? 'pending',
         from: { identifier: wallet.id, amount, currency: 'USDC' },
-        to: { identifier: resolvedWalletId },
+        to: { identifier: destWalletId },
         createdAt: new Date().toISOString(),
       }
       addTransfer(transfer)
@@ -269,8 +352,7 @@ function P2PFlow({ wallet, addTransfer, refreshWallet, kycOk }) {
       <div className="space-y-4">
         <h2 className="text-lg font-semibold text-white">Review transfer</h2>
         <Card className="p-5 space-y-3">
-          <div><p className="text-xs text-gray-500">To</p><p className="text-sm text-gray-200">{email}</p></div>
-          <div><p className="text-xs text-gray-500">Wallet</p><p className="text-sm font-mono text-gray-400 text-xs">{resolvedWalletId}</p></div>
+          <div><p className="text-xs text-gray-500">To wallet</p><p className="text-sm font-mono text-gray-400 text-xs">{destWalletId}</p></div>
           <div><p className="text-xs text-gray-500">Amount</p><p className="text-sm font-semibold text-white">{formatAmount(amount, 'USDC')}</p></div>
           {note && <div><p className="text-xs text-gray-500">Note</p><p className="text-sm text-gray-200">{note}</p></div>}
         </Card>
@@ -285,31 +367,17 @@ function P2PFlow({ wallet, addTransfer, refreshWallet, kycOk }) {
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-xs text-gray-500 mb-1.5" htmlFor="p2p-email">Recipient email</label>
+        <label className="block text-xs text-gray-500 mb-1.5" htmlFor="p2p-wallet">Recipient wallet ID</label>
         <input
-          id="p2p-email"
-          type="email"
-          placeholder={demoEmail ?? 'email@example.com'}
-          value={email}
-          onChange={handleEmailChange}
-          onBlur={handleEmailBlur}
-          className="w-full bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#F97316] transition-colors duration-150"
+          id="p2p-wallet"
+          type="text"
+          placeholder="wal_..."
+          value={destWalletId}
+          onChange={e => setDestWalletId(e.target.value.trim())}
+          className="w-full bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#F97316] transition-colors duration-150 font-mono"
         />
+        {destWalletId && !walletIdValid && <p className="text-xs text-red-400 mt-1">Enter a valid wallet ID (wal_...)</p>}
       </div>
-
-      {resolvedWalletId && (
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-[#F97316]/20 flex items-center justify-center flex-shrink-0">
-              <span className="text-sm font-bold text-[#F97316]">AK</span>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-200">Arthur K.</p>
-              <p className="text-xs text-green-400">✓ User found</p>
-            </div>
-          </div>
-        </Card>
-      )}
 
       <div>
         <label className="block text-xs text-gray-500 mb-1.5" htmlFor="p2p-amount">Amount</label>
@@ -343,24 +411,21 @@ function P2PFlow({ wallet, addTransfer, refreshWallet, kycOk }) {
       <Button
         fullWidth
         onClick={() => setStep(2)}
-        disabled={!kycOk || !resolvedWalletId || !amount}
+        disabled={!kycOk || !walletIdValid || !amount || !wallet}
       >
         Review
       </Button>
-      {!kycOk && (
-        <p className="text-xs text-amber-400 text-center">Verification required to send funds</p>
-      )}
     </div>
   )
 }
-
-// ─── Send page ───────────────────────────────────────────────────────────────
 
 export default function Send() {
   const { wallet, addTransfer, refreshWallet, customer } = useApp()
   const navigate = useNavigate()
   const [mode, setMode] = useState('bank')
-  const kycOk = customer?.status === 'approved'
+  const status = customer?.verificationStatus
+  const kycOk = canSend(status)
+  const banner = kycBanner(status)
 
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-28 space-y-5">
@@ -371,7 +436,6 @@ export default function Send() {
         <h1 className="text-xl font-bold text-white">Send</h1>
       </div>
 
-      {/* Segmented control */}
       <div className="flex gap-1 bg-[#1F2937] rounded-xl p-1">
         {[
           { id: 'bank', label: 'Bank payout', icon: Building2 },
@@ -392,8 +456,12 @@ export default function Send() {
         ))}
       </div>
 
+      {banner && (
+        <p className={`text-xs text-center ${status === 'rejected' ? 'text-red-400' : 'text-amber-400'}`}>{banner}</p>
+      )}
+
       {mode === 'bank'
-        ? <BankPayoutFlow wallet={wallet} addTransfer={addTransfer} refreshWallet={refreshWallet} kycOk={kycOk} />
+        ? <BankPayoutFlow wallet={wallet} addTransfer={addTransfer} refreshWallet={refreshWallet} kycOk={kycOk} customer={customer} />
         : <P2PFlow wallet={wallet} addTransfer={addTransfer} refreshWallet={refreshWallet} kycOk={kycOk} />}
     </div>
   )

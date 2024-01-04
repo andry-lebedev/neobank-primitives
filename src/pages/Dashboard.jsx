@@ -1,11 +1,12 @@
 import { useNavigate } from 'react-router-dom'
 import { Bell, ArrowDownLeft, Send, History, AlertTriangle } from 'lucide-react'
 import Card from '../components/Card'
+import Button from '../components/Button'
 import Skeleton from '../components/Skeleton'
 import TransactionRow from '../components/TransactionRow'
 import CopyField from '../components/CopyField'
 import { useApp } from '../context/useApp'
-import { formatBalance, getVirtualAccount } from '../utils'
+import { canSend, formatBalance, getVirtualAccount } from '../utils'
 
 function BalanceCard({ wallet }) {
   const balance = wallet?.balances?.[0]
@@ -63,10 +64,39 @@ export default function Dashboard() {
   const recentTxns = [...transferLog]
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, 5)
-  const kycOk = customer?.status === 'approved'
+  const kycOk = canSend(customer?.verificationStatus)
 
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
+  const firstName = customer?.personal?.firstName
+
+  if (!loading && error) {
+    return (
+      <div className="max-w-lg mx-auto px-4 pt-6 pb-28">
+        <Card className="p-5 space-y-4">
+          <div className="flex items-start gap-3">
+            <AlertTriangle size={18} className="text-amber-400 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-amber-300">{error}</p>
+          </div>
+          <Button fullWidth onClick={() => window.location.reload()}>Retry</Button>
+        </Card>
+      </div>
+    )
+  }
+
+  if (!loading && !wallet) {
+    return (
+      <div className="max-w-lg mx-auto px-4 pt-6 pb-28 min-h-screen flex items-center">
+        <div className="w-full text-center space-y-4">
+          <div>
+            <h1 className="text-xl font-bold text-white">Set up your account</h1>
+            <p className="text-sm text-gray-400 mt-1">Create your wallet and bank account to get started.</p>
+          </div>
+          <Button fullWidth onClick={() => navigate('/onboarding')}>Set up account</Button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-28 space-y-4">
@@ -75,21 +105,13 @@ export default function Dashboard() {
         <div>
           <p className="text-xs text-gray-500">{greeting}</p>
           <h1 className="text-xl font-bold text-white">
-            {loading ? 'Loading…' : customer?.firstName ?? 'Welcome'}
+            {loading ? 'Loading…' : firstName ?? 'Welcome'}
           </h1>
         </div>
         <button className="p-2 rounded-full hover:bg-[#1F2937] transition-colors duration-150 cursor-pointer text-gray-400 hover:text-white" aria-label="Notifications">
           <Bell size={22} />
         </button>
       </div>
-
-      {/* Boot error banner */}
-      {error && (
-        <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3">
-          <AlertTriangle size={16} className="text-amber-400 flex-shrink-0" />
-          <p className="text-sm text-amber-300">{error}</p>
-        </div>
-      )}
 
       {/* KYC banner */}
       {!loading && !kycOk && (

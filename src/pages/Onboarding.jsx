@@ -1,15 +1,18 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, ChevronDown, CheckCircle2 } from 'lucide-react'
-import Badge from '../components/Badge'
+import { ArrowLeft, ChevronDown } from 'lucide-react'
 import Button from '../components/Button'
 import Card from '../components/Card'
-import CopyField from '../components/CopyField'
 import { showToast } from '../components/showToast'
 import { createCustomer } from '../api/customers'
+import { createWallet } from '../api/wallets'
+import { createAccount } from '../api/accounts'
 
 const ADDRESS_FIELDS = ['country', 'streetLine1', 'streetLine2', 'city', 'state', 'postalCode']
 const TAX_TYPES = ['ssn', 'itin', 'ein', 'tin', 'vat', 'cpf', 'other']
+const PROVISION_CHAIN = 'polygon'
+const PROVISION_COUNTRY = 'EE'
+const PROVISION_CURRENCY = 'EUR'
 
 const EMPTY_FORM = {
   firstName: '',
@@ -86,6 +89,9 @@ export default function Onboarding() {
   const [taxInfo, setTaxInfo] = useState(EMPTY_TAX_INFO)
   const [customer, setCustomer] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [provStep, setProvStep] = useState(null)
+  const [provError, setProvError] = useState('')
+  const [createdWallet, setCreatedWallet] = useState(null)
 
   function updateForm(key, value) {
     setForm(prev => ({ ...prev, [key]: value }))
@@ -133,6 +139,7 @@ export default function Onboarding() {
       })
       setCustomer(created)
       showToast('Customer created')
+      await provision(created.id)
     } catch {
       // Error toast already fired by axios interceptor
     } finally {
@@ -140,42 +147,29 @@ export default function Onboarding() {
     }
   }
 
-  function handleUseCustomer() {
-    localStorage.setItem('swipelux_customer_id', customer.id)
-    navigate('/')
-  }
-
-  if (customer) {
-    return (
-      <div className="max-w-lg mx-auto px-4 pt-6 pb-28 space-y-5">
-        <div className="flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-xl hover:bg-[#1F2937] transition-colors duration-150 cursor-pointer text-gray-400 hover:text-white">
-            <ArrowLeft size={20} />
-          </button>
-          <h1 className="text-xl font-bold text-white">Create customer</h1>
-        </div>
-
-        <div className="text-center py-8 space-y-4">
-          <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mx-auto">
-            <CheckCircle2 size={32} className="text-green-400" />
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-white">Customer created</h2>
-            <p className="text-sm text-gray-400 mt-1">Use this customer for the demo session</p>
-          </div>
-          <Card className="p-4 text-left">
-            <CopyField label="Customer ID" value={customer.id} />
-            <div className="flex items-center justify-between py-2.5">
-              <div>
-                <p className="text-xs text-gray-500 mb-0.5">Verification status</p>
-                <Badge status={customer.verificationStatus} />
-              </div>
-            </div>
-          </Card>
-          <Button fullWidth onClick={handleUseCustomer}>Use this customer</Button>
-        </div>
-      </div>
-    )
+  async function provision(customerId) {
+    setProvError('')
+    try {
+      let wallet = createdWallet
+      if (!wallet) {
+        setProvStep('wallet')
+        wallet = await createWallet(customerId, PROVISION_CHAIN)
+        setCreatedWallet(wallet)
+      }
+      setProvStep('account')
+      await createAccount(customerId, {
+        type: 'sepa',
+        country: PROVISION_COUNTRY,
+        currency: PROVISION_CURRENCY,
+        targetWallet: wallet.id,
+      })
+      setProvStep('done')
+      localStorage.setItem('swipelux_customer_id', customerId)
+      navigate('/')
+    } catch (err) {
+      setProvStep('error')
+      setProvError(err?.response?.data?.message ?? err?.message ?? 'Provisioning failed')
+    }
   }
 
   return (
@@ -187,7 +181,29 @@ export default function Onboarding() {
         <h1 className="text-xl font-bold text-white">Create customer</h1>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      {provStep && (
+        <Card className="p-5">
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-white">Setting up your account</h2>
+            <ul className="space-y-2 text-sm">
+              <li className={provStep === 'wallet' ? 'text-[#F97316]' : 'text-gray-400'}>
+                {createdWallet ? '✓' : '•'} Creating wallet
+              </li>
+              <li className={provStep === 'account' ? 'text-[#F97316]' : 'text-gray-400'}>
+                {provStep === 'done' ? '✓' : '•'} Opening bank account
+              </li>
+            </ul>
+            {provStep === 'error' && (
+              <div className="space-y-3">
+                <p className="text-sm text-red-400">{provError}</p>
+                <Button fullWidth onClick={() => provision(customer.id)}>Retry</Button>
+              </div>
+            )}
+          </div>
+        </Card>
+      )}
+
+      {!provStep && <form onSubmit={handleSubmit} className="space-y-4">
         <Card className="p-5 space-y-4">
           <TextField
             id="customer-email"
@@ -307,7 +323,7 @@ export default function Onboarding() {
         </FieldGroup>
 
         <Button fullWidth type="submit" loading={loading}>Create customer</Button>
-      </form>
+      </form>}
     </div>
   )
 }
