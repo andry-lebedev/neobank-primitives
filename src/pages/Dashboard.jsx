@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Bell, ArrowDownLeft, Send, History, AlertTriangle } from 'lucide-react'
 import Card from '../components/Card'
@@ -6,7 +7,9 @@ import Skeleton from '../components/Skeleton'
 import TransactionRow from '../components/TransactionRow'
 import CopyField from '../components/CopyField'
 import { useApp } from '../context/useApp'
-import { canSend, formatBalance, getVirtualAccount } from '../utils'
+import { canSend, formatBalance, getVirtualAccount, needsKyc } from '../utils'
+import { initiateKyc } from '../api/customers'
+import { track, notify } from '../integrations'
 
 function BalanceCard({ wallet }) {
   const balance = wallet?.balances?.[0]
@@ -65,6 +68,23 @@ export default function Dashboard() {
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, 5)
   const kycOk = canSend(customer?.verificationStatus)
+  const status = customer?.verificationStatus
+  const canVerify = needsKyc(status)
+  const [kycLoading, setKycLoading] = useState(false)
+
+  async function handleVerify() {
+    if (!customer?.id) return
+    setKycLoading(true)
+    try {
+      const { verificationUrl } = await initiateKyc(customer.id, 'simplified')
+      track('kyc_initiated', { customerId: customer.id, level: 'simplified' })
+      window.open(verificationUrl, '_blank', 'noopener')
+    } catch (e) {
+      notify(e?.response?.data?.message ?? 'Could not start verification', 'error')
+    } finally {
+      setKycLoading(false)
+    }
+  }
 
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
@@ -114,12 +134,21 @@ export default function Dashboard() {
       </div>
 
       {/* KYC banner */}
-      {!loading && !kycOk && (
-        <div className="flex items-center gap-2 bg-warning/10 border border-warning/30 rounded-xl px-4 py-3">
-          <AlertTriangle size={16} className="text-warning flex-shrink-0" />
-          <p className="text-sm text-warning">
-            Your account is under review. Sending is disabled until verification is complete.
-          </p>
+      {!loading && status !== 'approved' && (
+        <div className="bg-warning/10 border border-warning/30 rounded-xl px-4 py-3 space-y-2">
+          <div className="flex items-center gap-2">
+            <AlertTriangle size={16} className="text-warning flex-shrink-0" />
+            <p className="text-sm text-warning">
+              {canVerify
+                ? 'Verify your identity to create a bank account and send money.'
+                : 'Your identity is under review. This usually takes 1–2 business days.'}
+            </p>
+          </div>
+          {canVerify && (
+            <Button fullWidth loading={kycLoading} onClick={handleVerify}>
+              Verify identity
+            </Button>
+          )}
         </div>
       )}
 
