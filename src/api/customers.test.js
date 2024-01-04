@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import client from './client'
-import { createCustomer } from './customers'
+import { createCustomer, initiateKyc } from './customers'
 
 vi.mock('./client', () => ({
   default: {
@@ -61,5 +61,18 @@ describe('createCustomer', () => {
         value: '1234',
       },
     })
+  })
+
+  it('initiateKyc posts level to the kyc endpoint and returns data', async () => {
+    client.post.mockResolvedValueOnce({ data: { verificationUrl: 'https://sumsub.test/abc' } })
+    const res = await initiateKyc('cus_1', 'simplified')
+    expect(client.post).toHaveBeenCalledWith('/v1/customers/cus_1/kyc', { level: 'simplified' })
+    expect(res.verificationUrl).toBe('https://sumsub.test/abc')
+  })
+
+  it('initiateKyc defaults to simplified level', async () => {
+    client.post.mockResolvedValueOnce({ data: { verificationUrl: 'x' } })
+    await initiateKyc('cus_2')
+    expect(client.post).toHaveBeenCalledWith('/v1/customers/cus_2/kyc', { level: 'simplified' })
   })
 })
