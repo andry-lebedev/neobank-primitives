@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Inbox } from 'lucide-react'
 import TransactionRow from '../components/TransactionRow'
-import { useApp } from '../context/AppContext'
+import { useApp } from '../context/useApp'
 import { groupByDate, formatAmount } from '../utils'
 
 const DIRECTION_FILTERS = ['All', 'In', 'Out']
@@ -84,9 +84,15 @@ export default function History() {
     return true
   }
 
-  const filtered = transferLog.filter(t => matchesDirection(t) && matchesStatus(t))
+  const filtered = [...transferLog]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .filter(t => matchesDirection(t) && matchesStatus(t))
   const grouped = groupByDate(filtered)
-  const dateLabels = Object.keys(grouped)
+  const dateLabels = Object.keys(grouped).sort((a, b) => {
+    const newestA = Math.max(...grouped[a].map(t => new Date(t.createdAt).getTime()))
+    const newestB = Math.max(...grouped[b].map(t => new Date(t.createdAt).getTime()))
+    return newestB - newestA
+  })
 
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-28 space-y-4">

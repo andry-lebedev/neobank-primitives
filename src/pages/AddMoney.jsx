@@ -3,10 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Share2, QrCode } from 'lucide-react'
 import Card from '../components/Card'
 import CopyField from '../components/CopyField'
-import { useApp } from '../context/AppContext'
-import { showToast } from '../components/Toast'
-
-const TABS = ['SEPA', 'SWIFT', 'Stablecoin']
+import { useApp } from '../context/useApp'
+import { showToast } from '../components/showToast'
 
 function SepaTab({ account }) {
   if (!account) return <p className="text-sm text-gray-500 p-4">No SEPA account available.</p>

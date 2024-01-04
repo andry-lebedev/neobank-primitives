@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, CheckCircle2, User, Building2 } from 'lucide-react'
 import Card from '../components/Card'
 import Button from '../components/Button'
-import { useApp } from '../context/AppContext'
+import { useApp } from '../context/useApp'
 import { createPayoutQuote, createPayout } from '../api/transfers'
 import { resolveEmail, formatAmount } from '../utils'
-import { showToast } from '../components/Toast'
+import { showToast } from '../components/showToast'
 
 // ─── Bank Payout ────────────────────────────────────────────────────────────
 
-function BankPayoutFlow({ wallet, addTransfer, kycOk }) {
+function BankPayoutFlow({ wallet, addTransfer, refreshWallet, kycOk }) {
   const [step, setStep] = useState(1)
   const [amount, setAmount] = useState('')
   const [memo, setMemo] = useState('')
@@ -63,6 +63,7 @@ function BankPayoutFlow({ wallet, addTransfer, kycOk }) {
         createdAt: new Date().toISOString(),
       }
       addTransfer(transfer)
+      refreshWallet()
       setResult(transfer)
       showToast('Transfer initiated successfully')
       setStep(3)
@@ -181,7 +182,7 @@ function BankPayoutFlow({ wallet, addTransfer, kycOk }) {
 
 // ─── P2P Transfer ────────────────────────────────────────────────────────────
 
-function P2PFlow({ wallet, addTransfer, kycOk }) {
+function P2PFlow({ wallet, addTransfer, refreshWallet, kycOk }) {
   const [step, setStep] = useState(1)
   const [email, setEmail] = useState('')
   const [resolvedWalletId, setResolvedWalletId] = useState(null)
@@ -231,6 +232,7 @@ function P2PFlow({ wallet, addTransfer, kycOk }) {
         createdAt: new Date().toISOString(),
       }
       addTransfer(transfer)
+      refreshWallet()
       setResult(transfer)
       showToast('P2P transfer initiated')
       setStep(3)
@@ -355,7 +357,7 @@ function P2PFlow({ wallet, addTransfer, kycOk }) {
 // ─── Send page ───────────────────────────────────────────────────────────────
 
 export default function Send() {
-  const { wallet, addTransfer, customer } = useApp()
+  const { wallet, addTransfer, refreshWallet, customer } = useApp()
   const navigate = useNavigate()
   const [mode, setMode] = useState('bank')
   const kycOk = customer?.status === 'approved'
@@ -391,8 +393,8 @@ export default function Send() {
       </div>
 
       {mode === 'bank'
-        ? <BankPayoutFlow wallet={wallet} addTransfer={addTransfer} kycOk={kycOk} />
-        : <P2PFlow wallet={wallet} addTransfer={addTransfer} kycOk={kycOk} />}
+        ? <BankPayoutFlow wallet={wallet} addTransfer={addTransfer} refreshWallet={refreshWallet} kycOk={kycOk} />
+        : <P2PFlow wallet={wallet} addTransfer={addTransfer} refreshWallet={refreshWallet} kycOk={kycOk} />}
     </div>
   )
 }

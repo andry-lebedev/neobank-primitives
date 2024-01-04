@@ -10,6 +10,7 @@ import AddMoney from './pages/AddMoney'
 import Send from './pages/Send'
 import History from './pages/History'
 import Profile from './pages/Profile'
+import Onboarding from './pages/Onboarding'
 
 function OfflineBanner() {
   const [offline, setOffline] = useState(!navigator.onLine)
@@ -47,6 +48,7 @@ export default function App() {
             <Route path="/send" element={<Send />} />
             <Route path="/history" element={<History />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/onboarding" element={<Onboarding />} />
           </Routes>
           <BottomNav />
           <ToastContainer />

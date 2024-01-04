@@ -56,8 +56,3 @@ export default function ToastContainer() {
     </div>
   )
 }
-
-// Call this anywhere to show a toast without prop drilling
-export function showToast(message, type = 'success') {
-  window.dispatchEvent(new CustomEvent(`api-${type}`, { detail: { message } }))
-}
