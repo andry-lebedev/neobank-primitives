@@ -23,7 +23,7 @@ export default function CopyField({ label, value }) {
         aria-label={`Copy ${label}`}
       >
         {copied
-          ? <Check size={15} className="text-green-400 transition-colors duration-150" />
+          ? <Check size={15} className="text-success transition-colors duration-150" />
           : <Copy size={15} className="text-gray-400" />}
       </button>
     </div>

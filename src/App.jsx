@@ -29,9 +29,9 @@ function OfflineBanner() {
   if (!offline) return null
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[200] flex items-center justify-center gap-2 bg-amber-500/20 border-b border-amber-500/30 py-2 px-4">
-      <WifiOff size={14} className="text-amber-400" />
-      <p className="text-xs text-amber-300">No internet connection</p>
+    <div className="fixed top-0 left-0 right-0 z-[200] flex items-center justify-center gap-2 bg-warning/20 border-b border-warning/30 py-2 px-4">
+      <WifiOff size={14} className="text-warning" />
+      <p className="text-xs text-warning">No internet connection</p>
     </div>
   )
 }

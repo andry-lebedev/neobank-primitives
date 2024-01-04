@@ -1,11 +1,11 @@
 const VARIANTS = {
-  pending:        'bg-amber-500/20 text-amber-400',
-  in_progress:    'bg-amber-500/20 text-amber-400',
-  awaiting_funds: 'bg-amber-500/20 text-amber-400',
-  completed:      'bg-green-500/20 text-green-400',
-  approved:       'bg-green-500/20 text-green-400',
-  failed:         'bg-red-500/20 text-red-400',
-  rejected:       'bg-red-500/20 text-red-400',
+  pending:        'bg-warning/20 text-warning',
+  in_progress:    'bg-warning/20 text-warning',
+  awaiting_funds: 'bg-warning/20 text-warning',
+  completed:      'bg-success/20 text-success',
+  approved:       'bg-success/20 text-success',
+  failed:         'bg-danger/20 text-danger',
+  rejected:       'bg-danger/20 text-danger',
   not_started:    'bg-gray-500/20 text-gray-400',
 }
 

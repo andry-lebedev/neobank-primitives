@@ -136,8 +136,8 @@ function BankPayoutFlow({ wallet, addTransfer, refreshWallet, kycOk, customer })
   if (step === 3 && result) {
     return (
       <div className="text-center py-8 space-y-4">
-        <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mx-auto">
-          <CheckCircle2 size={32} className="text-green-400" />
+        <div className="w-16 h-16 rounded-full bg-success/20 flex items-center justify-center mx-auto">
+          <CheckCircle2 size={32} className="text-success" />
         </div>
         <div>
           <h2 className="text-xl font-bold text-white">Transfer initiated</h2>
@@ -329,8 +329,8 @@ function P2PFlow({ wallet, addTransfer, refreshWallet, kycOk }) {
   if (step === 3 && result) {
     return (
       <div className="text-center py-8 space-y-4">
-        <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mx-auto">
-          <CheckCircle2 size={32} className="text-green-400" />
+        <div className="w-16 h-16 rounded-full bg-success/20 flex items-center justify-center mx-auto">
+          <CheckCircle2 size={32} className="text-success" />
         </div>
         <div>
           <h2 className="text-xl font-bold text-white">Transfer sent</h2>
@@ -376,7 +376,7 @@ function P2PFlow({ wallet, addTransfer, refreshWallet, kycOk }) {
           onChange={e => setDestWalletId(e.target.value.trim())}
           className="w-full bg-[#1F2937] border border-[#374151] rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#F97316] transition-colors duration-150 font-mono"
         />
-        {destWalletId && !walletIdValid && <p className="text-xs text-red-400 mt-1">Enter a valid wallet ID (wal_...)</p>}
+        {destWalletId && !walletIdValid && <p className="text-xs text-danger mt-1">Enter a valid wallet ID (wal_...)</p>}
       </div>
 
       <div>
@@ -457,7 +457,7 @@ export default function Send() {
       </div>
 
       {banner && (
-        <p className={`text-xs text-center ${status === 'rejected' ? 'text-red-400' : 'text-amber-400'}`}>{banner}</p>
+        <p className={`text-xs text-center ${status === 'rejected' ? 'text-danger' : 'text-warning'}`}>{banner}</p>
       )}
 
       {mode === 'bank'
