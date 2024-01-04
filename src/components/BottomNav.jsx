@@ -1,21 +1,14 @@
 import { NavLink } from 'react-router-dom'
-import { Home, Send, PlusCircle, User } from 'lucide-react'
-
-const tabs = [
-  { to: '/', icon: Home, label: 'Home', end: true },
-  { to: '/send', icon: Send, label: 'Send', end: false },
-  { to: '/add-money', icon: PlusCircle, label: 'Add money', end: false },
-  { to: '/profile', icon: User, label: 'Profile', end: false },
-]
+import { navItems } from '../features'
 
 export default function BottomNav() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-base border-t border-card-hover md:hidden">
       <div className="flex pb-safe">
-        {tabs.map(({ to, icon: Icon, label, end }) => (
+        {navItems.map(({ id, route, navIcon: Icon, navLabel, end }) => (
           <NavLink
-            key={to}
-            to={to}
+            key={id}
+            to={route}
             end={end}
             className={({ isActive }) =>
               `flex-1 flex flex-col items-center gap-1 py-3 transition-colors duration-150 ${
@@ -24,7 +17,7 @@ export default function BottomNav() {
             }
           >
             <Icon size={22} />
-            <span className="text-[10px] font-medium">{label}</span>
+            <span className="text-[10px] font-medium">{navLabel}</span>
           </NavLink>
         ))}
       </div>
