@@ -17,7 +17,7 @@ function BalanceCard({ wallet }) {
         {balance ? formatBalance(balance.amount) : '0.00'}
       </p>
       <p className="text-sm text-gray-400 mt-1">{balance?.currency ?? 'USDC'}</p>
-      <div className="mt-4 pt-4 border-t border-[#374151]">
+      <div className="mt-4 pt-4 border-t border-card-hover">
         <CopyField label="Wallet ID" value={wallet?.id} />
       </div>
     </Card>
@@ -49,7 +49,7 @@ function AccountCard({ account }) {
 
 function SkeletonCard() {
   return (
-    <div className="rounded-2xl bg-[#1F2937] border border-[#374151] p-5 space-y-3">
+    <div className="rounded-2xl bg-card border border-card-hover p-5 space-y-3">
       <Skeleton className="h-3 w-20" />
       <Skeleton className="h-10 w-40" />
       <Skeleton className="h-3 w-12" />
@@ -108,7 +108,7 @@ export default function Dashboard() {
             {loading ? 'Loading…' : firstName ?? 'Welcome'}
           </h1>
         </div>
-        <button className="p-2 rounded-full hover:bg-[#1F2937] transition-colors duration-150 cursor-pointer text-gray-400 hover:text-white" aria-label="Notifications">
+        <button className="p-2 rounded-full hover:bg-card transition-colors duration-150 cursor-pointer text-gray-400 hover:text-white" aria-label="Notifications">
           <Bell size={22} />
         </button>
       </div>
@@ -142,9 +142,9 @@ export default function Dashboard() {
             key={to}
             onClick={() => navigate(to)}
             disabled={!always && !kycOk}
-            className="flex-1 flex flex-col items-center gap-1.5 bg-[#1F2937] hover:bg-[#374151] border border-[#374151] rounded-2xl py-3 transition-colors duration-150 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            className="flex-1 flex flex-col items-center gap-1.5 bg-card hover:bg-card-hover border border-card-hover rounded-2xl py-3 transition-colors duration-150 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            <Icon size={20} className="text-[#F97316]" />
+            <Icon size={20} className="text-accent" />
             <span className="text-xs text-gray-300">{label}</span>
           </button>
         ))}

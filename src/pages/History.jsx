@@ -10,7 +10,7 @@ const STATUS_FILTERS = ['All', 'Completed', 'Pending', 'Failed']
 
 function DetailPanel({ transfer, onClose }) {
   return (
-    <div className="mt-2 mb-3 bg-[#111827] rounded-xl p-4 space-y-2 text-xs">
+    <div className="mt-2 mb-3 bg-base rounded-xl p-4 space-y-2 text-xs">
       <div className="flex justify-between">
         <span className="text-gray-500">Transaction ID</span>
         <span className="text-gray-300 font-mono break-all max-w-[60%] text-right">{transfer.id}</span>
@@ -97,7 +97,7 @@ export default function History() {
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-28 space-y-4">
       <div className="flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-xl hover:bg-[#1F2937] transition-colors duration-150 cursor-pointer text-gray-400 hover:text-white">
+        <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-xl hover:bg-card transition-colors duration-150 cursor-pointer text-gray-400 hover:text-white">
           <ArrowLeft size={20} />
         </button>
         <h1 className="text-xl font-bold text-white">Transaction history</h1>
@@ -111,8 +111,8 @@ export default function History() {
             onClick={() => setDirFilter(f)}
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors duration-150 cursor-pointer border ${
               dirFilter === f
-                ? 'bg-[#F97316] border-[#F97316] text-white'
-                : 'border-[#374151] text-gray-400 hover:text-gray-200'
+                ? 'bg-accent border-accent text-white'
+                : 'border-card-hover text-gray-400 hover:text-gray-200'
             }`}
           >
             {f}
@@ -128,8 +128,8 @@ export default function History() {
             onClick={() => setStatusFilter(f)}
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors duration-150 cursor-pointer border ${
               statusFilter === f
-                ? 'bg-[#1F2937] border-[#F97316] text-[#F97316]'
-                : 'border-[#374151] text-gray-400 hover:text-gray-200'
+                ? 'bg-card border-accent text-accent'
+                : 'border-card-hover text-gray-400 hover:text-gray-200'
             }`}
           >
             {f}

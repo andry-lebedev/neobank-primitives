@@ -26,7 +26,7 @@ export default function TransactionRow({ transfer, onClick }) {
   return (
     <button
       onClick={onClick}
-      className="w-full flex items-center gap-3 py-3 rounded-xl hover:bg-[#1F2937] px-2 -mx-2 transition-colors duration-150 cursor-pointer text-left"
+      className="w-full flex items-center gap-3 py-3 rounded-xl hover:bg-card px-2 -mx-2 transition-colors duration-150 cursor-pointer text-left"
     >
       <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
         isIn ? 'bg-success/15' : direction === 'p2p' ? 'bg-info/15' : 'bg-danger/15'

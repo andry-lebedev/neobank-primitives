@@ -12,14 +12,14 @@ export default function CopyField({ label, value }) {
   }
 
   return (
-    <div className="flex items-center justify-between py-2.5 border-b border-[#374151] last:border-0">
+    <div className="flex items-center justify-between py-2.5 border-b border-card-hover last:border-0">
       <div className="min-w-0 flex-1">
         <p className="text-xs text-gray-500 mb-0.5">{label}</p>
         <p className="text-sm text-gray-200 font-mono truncate">{value ?? '—'}</p>
       </div>
       <button
         onClick={handleCopy}
-        className="ml-3 flex-shrink-0 p-1.5 rounded-lg hover:bg-[#374151] transition-colors duration-150 cursor-pointer"
+        className="ml-3 flex-shrink-0 p-1.5 rounded-lg hover:bg-card-hover transition-colors duration-150 cursor-pointer"
         aria-label={`Copy ${label}`}
       >
         {copied

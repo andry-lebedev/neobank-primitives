@@ -9,6 +9,6 @@
     background-color: #111827;
   }
   * {
-    @apply border-[#374151];
+    @apply border-card-hover;
   }
 }

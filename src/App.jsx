@@ -41,7 +41,7 @@ export default function App() {
     <BrowserRouter>
       <AppProvider>
         <OfflineBanner />
-        <div className="min-h-screen bg-[#111827] font-sans">
+        <div className="min-h-screen bg-base font-sans">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/add-money" element={<AddMoney />} />
