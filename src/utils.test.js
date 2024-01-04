@@ -9,6 +9,7 @@ import {
   getVirtualAccount,
   canSend,
   kycBanner,
+  needsKyc,
 } from './utils'
 
 describe('formatBalance', () => {
@@ -97,6 +98,18 @@ describe('kycBanner', () => {
     expect(kycBanner('not_started')).toMatch(/verify/i)
     expect(kycBanner('pending')).toMatch(/review/i)
     expect(kycBanner('rejected')).toMatch(/failed/i)
+  })
+})
+
+describe('needsKyc', () => {
+  it('is true when verification can be started', () => {
+    expect(needsKyc(undefined)).toBe(true)
+    expect(needsKyc('not_started')).toBe(true)
+    expect(needsKyc('rejected')).toBe(true)
+  })
+  it('is false while pending or approved', () => {
+    expect(needsKyc('pending')).toBe(false)
+    expect(needsKyc('approved')).toBe(false)
   })
 })
 
