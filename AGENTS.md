@@ -34,8 +34,8 @@ and create its page in `src/pages/`. Never hardwire routes/tabs outside the regi
 
 ### Seam 3 — Integration slots (`src/integrations/index.js`)
 A fixed, named set: `track(event, props)`, `onSession(customer)`, `notify(message, kind)`,
-`resolveCustomerId()`. Reference ships safe stubs. Fill the bodies to wire client infra. Do NOT
-rename or remove these exports — call sites depend on them.
+`resolveCustomerId()`, `setCustomerId(id)`. Reference ships safe stubs. Fill the bodies to wire
+client infra. Do NOT rename or remove these exports — call sites depend on them.
 
 ## Out of scope (do not change)
 - `src/api/*` and `AppContext` data binding — stays on the Swipelux sandbox.
