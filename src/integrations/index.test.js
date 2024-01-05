@@ -30,4 +30,11 @@ describe('integration slots', () => {
     localStorage.setItem('swipelux_customer_id', 'cust_stored')
     expect(resolveCustomerId()).toBe('cust_stored')
   })
+
+  it('setCustomerId persists where resolveCustomerId reads it', async () => {
+    const { setCustomerId, resolveCustomerId } = await import('./index')
+    setCustomerId('cus_abc')
+    expect(localStorage.getItem('swipelux_customer_id')).toBe('cus_abc')
+    expect(resolveCustomerId()).toBe('cus_abc')
+  })
 })
