@@ -23,6 +23,6 @@ describe('feature registry', () => {
 
   it('includes the core neobank routes', () => {
     const routes = routeItems.map(f => f.route)
-    expect(routes).toEqual(expect.arrayContaining(['/', '/send', '/add-money', '/profile', '/history', '/onboarding']))
+    expect(routes).toEqual(expect.arrayContaining(['/', '/send', '/add-money', '/profile', '/history', '/onboarding', '/login']))
   })
 })
