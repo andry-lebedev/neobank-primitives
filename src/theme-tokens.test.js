@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
-import { readFileSync, readdirSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import { dirname, join } from 'node:path'
+import { basename, dirname, join } from 'node:path'
 
 // Seam 1 guard: components must use semantic tokens, never raw color literals.
 // DevPanel is the documented exception (internal dev tool, not client surface).
@@ -24,12 +24,16 @@ function walk(dir) {
   })
 }
 
-const files = walk(SRC).filter(
-  (p) =>
-    /\.jsx?$/.test(p) &&
-    !/\.test\.jsx?$/.test(p) &&
-    !EXEMPT.has(p.split('/').pop()),
-)
+const files = ['components', 'pages']
+  .map((dir) => join(SRC, dir))
+  .filter((dir) => existsSync(dir))
+  .flatMap((dir) => walk(dir))
+  .filter(
+    (p) =>
+      /\.jsx?$/.test(p) &&
+      !/\.test\.jsx?$/.test(p) &&
+      !EXEMPT.has(basename(p)),
+  )
 
 describe('Seam 1 — no raw color literals in src', () => {
   for (const file of files) {
