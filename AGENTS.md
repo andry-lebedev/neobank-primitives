@@ -64,6 +64,10 @@ stays out of scope. To change how the id is obtained/persisted, fill those two s
 - Auth/identity beyond `resolveCustomerId()` (see "Session entry" above — `/login` is not auth).
 
 ## House rules
+- **Stay self-contained.** Ground every decision ONLY in this repo's files plus the linked
+  Swipelux API reference (see "API reference"). Do NOT pull context from outside the repo — no
+  second brain, company wiki, sibling repos, or other workspaces — and do NOT add such references
+  to the kit. If a tailoring answer needs information not in this repo, ask the client for it.
 - Do NOT modify `.env`. Do NOT add dependencies without need. Keep the demo runnable against the
   sandbox. Keep `npx vitest run` green and `npx vite build` passing.
 - Do all tailoring work on a NEW git branch, never on `main`/`master`.

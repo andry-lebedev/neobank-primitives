@@ -26,3 +26,7 @@ dist-ssr
 
 # Local-only OpenAPI dumps (read from the live reference instead — see AGENTS.md)
 api-docs/
+
+# Internal design history + local tooling — not part of the shipped kit
+docs/superpowers/
+.claude/
