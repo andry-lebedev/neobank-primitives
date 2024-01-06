@@ -2,20 +2,11 @@ import { describe, it, expect } from 'vitest'
 import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { basename, dirname, join } from 'node:path'
+import { FORBIDDEN, EXEMPT, UI_DIRS } from './theme-forbidden'
 
 // Seam 1 guard: components must use semantic tokens, never raw color literals.
 // DevPanel is the documented exception (internal dev tool, not client surface).
 const SRC = dirname(fileURLToPath(import.meta.url))
-const EXEMPT = new Set(['DevPanel.jsx'])
-
-const FORBIDDEN = [
-  // Tailwind color-scale utilities: text-gray-500, bg-purple-500/20, placeholder-gray-600, ...
-  /\b(?:text|bg|border|ring|from|to|via|divide|placeholder|fill|stroke|outline|shadow|ring-offset)-(?:gray|slate|zinc|neutral|stone|green|red|blue|purple|amber|yellow|emerald|orange|teal|cyan|pink|indigo|violet|rose|lime|sky|fuchsia)-\d/,
-  // Bare white/black utilities: text-white, bg-black, border-white
-  /\b(?:text|bg|border|ring|placeholder|fill|stroke|divide)-(?:white|black)\b/,
-  // Arbitrary hex values in classes: bg-[#0F172A]
-  /-\[#[0-9a-fA-F]{3,8}\]/,
-]
 
 function walk(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
@@ -24,7 +15,7 @@ function walk(dir) {
   })
 }
 
-const files = ['components', 'pages']
+const files = UI_DIRS
   .map((dir) => join(SRC, dir))
   .filter((dir) => existsSync(dir))
   .flatMap((dir) => walk(dir))
