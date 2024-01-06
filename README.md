@@ -11,16 +11,16 @@ It serves two purposes at once:
 
 ## Try it with Claude
 
-[![Open in Claude](https://img.shields.io/badge/Open%20in-Claude-da7756?logo=anthropic&logoColor=white)](https://claude.ai/new?q=Clone%20the%20Swipelux%20neobank%20self-building%20integration%20kit%20from%20REPO_URL%20and%20cd%20into%20it.%20Then%20read%20AGENTS.md%20and%20follow%20PROMPT.md%20to%20tailor%20it%20for%20me%3A%20interview%20me%20one%20topic%20at%20a%20time%20%28brand%2C%20features%2C%20integrations%2C%20copy%29%2C%20write%20TAILORED-SPEC.md%2C%20and%20stop%20for%20my%20approval%20before%20writing%20any%20code.%20After%20I%20approve%2C%20build%20the%20tailored%20demo%20on%20a%20new%20git%20branch%20and%20keep%20%60npx%20vitest%20run%60%20green%20and%20%60npx%20vite%20build%60%20passing.%20Work%20only%20from%20this%20repository%20and%20the%20Swipelux%20API%20reference%20it%20links.)
+[![Open in Claude](https://img.shields.io/badge/Open%20in-Claude-da7756?logo=anthropic&logoColor=white)](https://claude.ai/new?q=Clone%20the%20Swipelux%20neobank%20self-building%20integration%20kit%20from%20https%3A%2F%2Fgithub.com%2Fswipelux%2Fneobank-starter.git%20and%20cd%20into%20it.%20Then%20read%20AGENTS.md%20and%20follow%20PROMPT.md%20to%20tailor%20it%20for%20me%3A%20interview%20me%20one%20topic%20at%20a%20time%20%28brand%2C%20features%2C%20integrations%2C%20copy%29%2C%20write%20TAILORED-SPEC.md%2C%20and%20stop%20for%20my%20approval%20before%20writing%20any%20code.%20After%20I%20approve%2C%20build%20the%20tailored%20demo%20on%20a%20new%20git%20branch%20and%20keep%20%60npx%20vitest%20run%60%20green%20and%20%60npx%20vite%20build%60%20passing.%20Work%20only%20from%20this%20repository%20and%20the%20Swipelux%20API%20reference%20it%20links.)
 
 The button opens Claude with the kickoff prompt below prefilled. Run it where Claude can clone and
-build the repo (Claude Code, or a Claude session with shell access). Replace `REPO_URL` in the link
-and in the prompt with this repo's git URL before sharing.
+build the repo (Claude Code, or a Claude session with shell access).
 
 Kickoff prompt (clone-first):
 
 ```
-Clone the Swipelux neobank self-building integration kit from REPO_URL and cd into it. Then read
+Clone the Swipelux neobank self-building integration kit from
+https://github.com/swipelux/neobank-starter.git and cd into it. Then read
 AGENTS.md and follow PROMPT.md to tailor it for me: interview me one topic at a time (brand,
 features, integrations, copy), write TAILORED-SPEC.md, and stop for my approval before writing any
 code. After I approve, build the tailored demo on a new git branch and keep `npx vitest run` green
