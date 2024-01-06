@@ -35,20 +35,20 @@ export default function Login() {
           <div className="w-14 h-14 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-3">
             <LogIn size={24} className="text-accent" />
           </div>
-          <h1 className="text-xl font-bold text-white">Open your account</h1>
-          <p className="text-sm text-gray-400 mt-1">Enter your customer ID to continue.</p>
+          <h1 className="text-xl font-bold text-fg-strong">Open your account</h1>
+          <p className="text-sm text-muted mt-1">Enter your customer ID to continue.</p>
         </div>
 
         <Card className="p-5">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs text-gray-500 mb-1.5" htmlFor="login-customer-id">Customer ID</label>
+              <label className="block text-xs text-subtle mb-1.5" htmlFor="login-customer-id">Customer ID</label>
               <input
                 id="login-customer-id"
                 value={id}
                 onChange={e => setId(e.target.value)}
                 placeholder="cus_..."
-                className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-white font-mono placeholder-gray-600 focus:outline-none focus:border-accent transition-colors duration-150"
+                className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-fg-strong font-mono placeholder-faint focus:outline-none focus:border-accent transition-colors duration-150"
               />
               {error && <p className="text-xs text-danger mt-1.5">{error}</p>}
             </div>

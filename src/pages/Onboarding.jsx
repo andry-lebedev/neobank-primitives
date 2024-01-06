@@ -41,7 +41,7 @@ const EMPTY_TAX_INFO = {
 function TextField({ id, label, type = 'text', value, onChange, placeholder }) {
   return (
     <div>
-      <label className="block text-xs text-gray-500 mb-1.5" htmlFor={id}>
+      <label className="block text-xs text-subtle mb-1.5" htmlFor={id}>
         {label}
       </label>
       <input
@@ -50,7 +50,7 @@ function TextField({ id, label, type = 'text', value, onChange, placeholder }) {
         placeholder={placeholder}
         value={value}
         onChange={e => onChange(e.target.value)}
-        className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent transition-colors duration-150"
+        className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-fg-strong placeholder-faint focus:outline-none focus:border-accent transition-colors duration-150"
       />
     </div>
   )
@@ -60,8 +60,8 @@ function FieldGroup({ title, children }) {
   return (
     <details className="group rounded-2xl border border-card-hover bg-card">
       <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none">
-        <span className="text-sm font-medium text-gray-200">{title}</span>
-        <ChevronDown size={16} className="text-gray-500 transition-transform duration-150 group-open:rotate-180" />
+        <span className="text-sm font-medium text-fg">{title}</span>
+        <ChevronDown size={16} className="text-subtle transition-transform duration-150 group-open:rotate-180" />
       </summary>
       <div className="px-4 pb-4 pt-1 space-y-4">
         {children}
@@ -175,21 +175,21 @@ export default function Onboarding() {
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-28 space-y-5">
       <div className="flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-xl hover:bg-card transition-colors duration-150 cursor-pointer text-gray-400 hover:text-white">
+        <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-xl hover:bg-card transition-colors duration-150 cursor-pointer text-muted hover:text-fg-strong">
           <ArrowLeft size={20} />
         </button>
-        <h1 className="text-xl font-bold text-white">Create customer</h1>
+        <h1 className="text-xl font-bold text-fg-strong">Create customer</h1>
       </div>
 
       {provStep && (
         <Card className="p-5">
           <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-white">Setting up your account</h2>
+            <h2 className="text-lg font-semibold text-fg-strong">Setting up your account</h2>
             <ul className="space-y-2 text-sm">
-              <li className={provStep === 'wallet' ? 'text-accent' : 'text-gray-400'}>
+              <li className={provStep === 'wallet' ? 'text-accent' : 'text-muted'}>
                 {createdWallet ? '✓' : '•'} Creating wallet
               </li>
-              <li className={provStep === 'account' ? 'text-accent' : 'text-gray-400'}>
+              <li className={provStep === 'account' ? 'text-accent' : 'text-muted'}>
                 {provStep === 'done' ? '✓' : '•'} Opening bank account
               </li>
             </ul>
@@ -300,12 +300,12 @@ export default function Onboarding() {
               onChange={value => updateTaxInfo('country', value)}
             />
             <div>
-              <label className="block text-xs text-gray-500 mb-1.5" htmlFor="customer-tax-type">Type</label>
+              <label className="block text-xs text-subtle mb-1.5" htmlFor="customer-tax-type">Type</label>
               <select
                 id="customer-tax-type"
                 value={taxInfo.type}
                 onChange={e => updateTaxInfo('type', e.target.value)}
-                className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent transition-colors duration-150"
+                className="w-full bg-card border border-card-hover rounded-xl px-4 py-3 text-fg-strong focus:outline-none focus:border-accent transition-colors duration-150"
               >
                 <option value="">Select type</option>
                 {TAX_TYPES.map(type => (

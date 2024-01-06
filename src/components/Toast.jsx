@@ -12,10 +12,10 @@ function ToastItem({ id, message, type, onDismiss }) {
       {type === 'error'
         ? <AlertCircle size={18} className="text-danger mt-0.5 flex-shrink-0" />
         : <CheckCircle2 size={18} className="text-success mt-0.5 flex-shrink-0" />}
-      <p className="text-sm text-gray-200 flex-1 leading-relaxed">{message}</p>
+      <p className="text-sm text-fg flex-1 leading-relaxed">{message}</p>
       <button
         onClick={() => onDismiss(id)}
-        className="text-gray-500 hover:text-gray-300 cursor-pointer transition-colors duration-150 flex-shrink-0"
+        className="text-subtle hover:text-fg-muted cursor-pointer transition-colors duration-150 flex-shrink-0"
         aria-label="Dismiss notification"
       >
         <X size={15} />

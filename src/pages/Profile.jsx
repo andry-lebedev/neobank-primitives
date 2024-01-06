@@ -14,7 +14,7 @@ function Avatar({ firstName, lastName }) {
   const initials = [firstName?.[0], lastName?.[0]].filter(Boolean).join('').toUpperCase() || '?'
   return (
     <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center">
-      <span className="text-xl font-bold text-white">{initials}</span>
+      <span className="text-xl font-bold text-fg-strong">{initials}</span>
     </div>
   )
 }
@@ -23,11 +23,11 @@ function LoggedOutScreen() {
   return (
     <div className="min-h-screen bg-base flex flex-col items-center justify-center gap-6 px-4">
       <div className="w-16 h-16 rounded-full bg-card flex items-center justify-center">
-        <LogOut size={28} className="text-gray-400" />
+        <LogOut size={28} className="text-muted" />
       </div>
       <div className="text-center">
-        <h2 className="text-xl font-bold text-white">You've been signed out</h2>
-        <p className="text-sm text-gray-400 mt-1">Your session has ended.</p>
+        <h2 className="text-xl font-bold text-fg-strong">You've been signed out</h2>
+        <p className="text-sm text-muted mt-1">Your session has ended.</p>
       </div>
       <Button onClick={() => window.location.reload()}>Sign back in</Button>
     </div>
@@ -79,32 +79,32 @@ export default function Profile() {
     <div className="max-w-lg mx-auto px-4 pt-6 pb-28 space-y-5">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-xl hover:bg-card transition-colors duration-150 cursor-pointer text-gray-400 hover:text-white">
+        <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-xl hover:bg-card transition-colors duration-150 cursor-pointer text-muted hover:text-fg-strong">
           <ArrowLeft size={20} />
         </button>
-        <h1 className="text-xl font-bold text-white">Profile</h1>
+        <h1 className="text-xl font-bold text-fg-strong">Profile</h1>
       </div>
 
       {/* Identity */}
       <div className="flex items-center gap-4">
         <Avatar firstName={firstName} lastName={lastName} />
         <div>
-          <p className="text-lg font-bold text-white">
+          <p className="text-lg font-bold text-fg-strong">
             {customer ? `${firstName} ${lastName}`.trim() || '—' : '—'}
           </p>
-          <p className="text-sm text-gray-400">{customer?.personal?.email ?? '—'}</p>
-          {customer?.personal?.phone && <p className="text-sm text-gray-500">{customer.personal.phone}</p>}
+          <p className="text-sm text-muted">{customer?.personal?.email ?? '—'}</p>
+          {customer?.personal?.phone && <p className="text-sm text-subtle">{customer.personal.phone}</p>}
         </div>
       </div>
 
       {/* KYC status */}
       <Card className={`p-5 border ${kycBorderColors[kycInfo.color] ?? 'border-card-hover'}`}>
         <div className="flex items-center gap-2 mb-2">
-          <Shield size={16} className={kycInfo.color === 'green' ? 'text-success' : kycInfo.color === 'amber' ? 'text-warning' : kycInfo.color === 'red' ? 'text-danger' : 'text-gray-400'} />
-          <span className="text-sm font-semibold text-white">Identity verification</span>
+          <Shield size={16} className={kycInfo.color === 'green' ? 'text-success' : kycInfo.color === 'amber' ? 'text-warning' : kycInfo.color === 'red' ? 'text-danger' : 'text-muted'} />
+          <span className="text-sm font-semibold text-fg-strong">Identity verification</span>
         </div>
         <Badge status={verificationStatus ?? 'not_started'} className="mb-2" />
-        <p className="text-xs text-gray-400 mt-1 leading-relaxed">
+        <p className="text-xs text-muted mt-1 leading-relaxed">
           {kycDescriptions[verificationStatus] ?? kycDescriptions.not_started}
         </p>
         {canVerify && (
@@ -132,12 +132,12 @@ export default function Profile() {
 
       {/* Account details */}
       <Card className="p-5">
-        <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-3">Account details</p>
+        <p className="text-xs text-subtle font-semibold uppercase tracking-wide mb-3">Account details</p>
         <CopyField label="Customer ID" value={customer?.id} />
         {customer?.type && (
           <div className="py-2.5 border-b border-card-hover last:border-0">
-            <p className="text-xs text-gray-500 mb-0.5">Account type</p>
-            <span className="text-xs bg-card-hover text-gray-300 rounded-full px-2 py-0.5 capitalize">
+            <p className="text-xs text-subtle mb-0.5">Account type</p>
+            <span className="text-xs bg-card-hover text-fg-muted rounded-full px-2 py-0.5 capitalize">
               {customer.type}
             </span>
           </div>
@@ -147,7 +147,7 @@ export default function Profile() {
       {/* Wallet */}
       {wallet && (
         <Card className="p-5">
-          <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-3">Wallet</p>
+          <p className="text-xs text-subtle font-semibold uppercase tracking-wide mb-3">Wallet</p>
           <CopyField label="Wallet ID" value={wallet.id} />
           <CopyField label="Address" value={wallet.address} />
           {wallet.chain && <CopyField label="Network" value={wallet.chain.toUpperCase()} />}
@@ -157,7 +157,7 @@ export default function Profile() {
       {/* Virtual account */}
       {virtualAccount && (
         <Card className="p-5">
-          <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-3">Virtual bank account</p>
+          <p className="text-xs text-subtle font-semibold uppercase tracking-wide mb-3">Virtual bank account</p>
           {virtualAccount.type === 'sepa' ? (
             <>
               <CopyField label="IBAN" value={virtualAccount.iban} />

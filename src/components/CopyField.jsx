@@ -14,8 +14,8 @@ export default function CopyField({ label, value }) {
   return (
     <div className="flex items-center justify-between py-2.5 border-b border-card-hover last:border-0">
       <div className="min-w-0 flex-1">
-        <p className="text-xs text-gray-500 mb-0.5">{label}</p>
-        <p className="text-sm text-gray-200 font-mono truncate">{value ?? '—'}</p>
+        <p className="text-xs text-subtle mb-0.5">{label}</p>
+        <p className="text-sm text-fg font-mono truncate">{value ?? '—'}</p>
       </div>
       <button
         onClick={handleCopy}
@@ -24,7 +24,7 @@ export default function CopyField({ label, value }) {
       >
         {copied
           ? <Check size={15} className="text-success transition-colors duration-150" />
-          : <Copy size={15} className="text-gray-400" />}
+          : <Copy size={15} className="text-muted" />}
       </button>
     </div>
   )
