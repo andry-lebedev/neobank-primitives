@@ -25,7 +25,9 @@ All brand, neutral, and status colors are Tailwind tokens. Brand/surface: `accen
 (+`accent.hover`), `base`, `card`, `card-hover`. Neutral text ramp (high→low emphasis):
 `fg-strong`, `fg`, `fg-muted`, `muted`, `subtle`, `faint`. Status: `success`, `danger`, `info`,
 `warning`. Re-skin = edit the `colors` block and swap the brand name/logo — **zero component
-edits**. Do NOT reintroduce raw hex in classes (`bg-[#...]`), color-scale literals (`text-gray-500`,
+edits**. Brand identity lives in two files: **colors + font** in `tailwind.config.js`, and
+**name + logo** in `src/brand.js` (exports a `brand` object `{ name, logoSrc, tagline? }` — the
+single place a client sets the brand name and logo). Do NOT reintroduce raw hex in classes (`bg-[#...]`), color-scale literals (`text-gray-500`,
 `text-green-400`), or bare `text-white`/`bg-black` in `src/components`/`src/pages` — the
 `src/theme-tokens.test.js` guard fails the build if you do (it scans those two dirs; bare hex in
 JS style objects is outside its reach, so still avoid it). Exception: `DevPanel.jsx` keeps
@@ -42,9 +44,16 @@ A fixed, named set: `track(event, props)`, `onSession(customer)`, `notify(messag
 `resolveCustomerId()`, `setCustomerId(id)`. Reference ships safe stubs. Fill the bodies to wire
 client infra. Do NOT rename or remove these exports — call sites depend on them.
 
+## Session entry (not authentication)
+The `/login` page and the `CustomerGate` wrapper (`App.jsx`) are the **session-entry surface**:
+they collect and persist a customer id via `resolveCustomerId()` / `setCustomerId()` (Seam 3),
+then gate the app on whether one is set. This is **NOT** real authentication. A client AI must
+**not** wire passwords, OAuth, or any real auth flow here — identity beyond `resolveCustomerId()`
+stays out of scope. To change how the id is obtained/persisted, fill those two slots, not `/login`.
+
 ## Out of scope (do not change)
 - `src/api/*` and `AppContext` data binding — stays on the Swipelux sandbox.
-- Auth/identity beyond `resolveCustomerId()`.
+- Auth/identity beyond `resolveCustomerId()` (see "Session entry" above — `/login` is not auth).
 
 ## House rules
 - Do NOT modify `.env`. Do NOT add dependencies without need. Keep the demo runnable against the
