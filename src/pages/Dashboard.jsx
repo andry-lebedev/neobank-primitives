@@ -10,6 +10,7 @@ import { useApp } from '../context/useApp'
 import { canSend, formatBalance, getVirtualAccount, needsKyc } from '../utils'
 import { initiateKyc } from '../api/customers'
 import { track, notify } from '../integrations'
+import { brand } from '../brand'
 
 function BalanceCard({ wallet }) {
   const balance = wallet?.balances?.[0]
@@ -120,6 +121,10 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-28 space-y-4">
+      <div className="flex items-center gap-2">
+        <img src={brand.logoSrc} alt={brand.name} className="w-6 h-6" />
+        <span className="text-sm font-semibold text-fg-strong">{brand.name}</span>
+      </div>
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
         <div>
