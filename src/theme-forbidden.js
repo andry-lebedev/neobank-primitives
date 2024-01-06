@@ -13,6 +13,6 @@ export const FORBIDDEN = [
   /-\[#[0-9a-fA-F]{3,8}\]/,
 ]
 
-export const EXEMPT = new Set(['DevPanel.jsx'])
+export const EXEMPT = new Set(['DevPanel.tsx'])
 
 export const UI_DIRS = ['components', 'pages']

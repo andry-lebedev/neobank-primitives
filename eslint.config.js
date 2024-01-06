@@ -3,6 +3,7 @@ import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import { defineConfig, globalIgnores } from 'eslint/config'
+import tseslint from 'typescript-eslint'
 import { FORBIDDEN, EXEMPT, UI_DIRS } from './src/theme-forbidden.js'
 
 // Seam 1 editor-time guard: flag raw Tailwind color literals inside className
@@ -15,7 +16,7 @@ const colorLiteralRules = FORBIDDEN.map((re) => ({
 export default defineConfig([
   globalIgnores(['dist']),
   {
-    files: ['**/*.{js,jsx}'],
+    files: ['**/*.{js,jsx,ts,tsx}'],
     extends: [
       js.configs.recommended,
       reactHooks.configs.flat.recommended,
@@ -23,11 +24,20 @@ export default defineConfig([
     ],
     languageOptions: {
       globals: globals.browser,
+      parser: tseslint.parser,
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
   },
   {
-    files: UI_DIRS.map((dir) => `src/${dir}/**/*.{js,jsx}`),
+    files: ['**/*.{ts,tsx}'],
+    plugins: { '@typescript-eslint': tseslint.plugin },
+    rules: {
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': 'error',
+    },
+  },
+  {
+    files: UI_DIRS.map((dir) => `src/${dir}/**/*.{ts,tsx}`),
     ignores: [...EXEMPT].map((name) => `**/${name}`),
     rules: {
       'no-restricted-syntax': ['error', ...colorLiteralRules],

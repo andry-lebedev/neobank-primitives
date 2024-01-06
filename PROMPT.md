@@ -8,9 +8,9 @@ cite any document outside this repository; if you need something that isn't here
 
 ## Phase 1 — Interview (one topic at a time)
 Ask the client, waiting for each answer before the next:
-1. **Brand** — company name + logo (file/URL) → `src/brand.js`; primary/accent color, surface (background) preference, font → `tailwind.config.js`.
-2. **Features** — review `src/features.js`. Which to keep, which to drop, which to add? For each new feature: name, route, what it does.
-3. **Integrations** — which named slots in `src/integrations/index.js` to wire, and to what:
+1. **Brand** — company name + logo (file/URL) → `src/brand.ts`; primary/accent color, surface (background) preference, font → `tailwind.config.js`.
+2. **Features** — review `src/features.ts`. Which to keep, which to drop, which to add? For each new feature: name, route, what it does.
+3. **Integrations** — which named slots in `src/integrations/index.ts` to wire, and to what:
    - `track` → which analytics provider?
    - `onSession` → which session/user store?
    - `notify` → in-app toast (default) or their system?
@@ -25,22 +25,22 @@ Fill the `TAILORED-SPEC.md` template with the answers. Present it to the client.
 ## Phase 3 — Implement (after approval)
 1. Create a new git branch: `git checkout -b tailored/<client-slug>`.
 2. Apply changes against the three seams ONLY:
-   - Brand → colors/font in `tailwind.config.js` token `colors` block; name/logo in `src/brand.js` (`{ name, logoSrc, tagline? }`).
-   - Features → `src/features.js` (+ new page components — see template below).
-   - Integrations → fill slot bodies in `src/integrations/index.js`.
+   - Brand → colors/font in `tailwind.config.js` token `colors` block; name/logo in `src/brand.ts` (`{ name, logoSrc, tagline? }`).
+   - Features → `src/features.ts` (+ new page components — see template below).
+   - Integrations → fill slot bodies in `src/integrations/index.ts`.
 3. Keep `npx vitest run` green and `npx vite build` passing.
 4. Do NOT touch `src/api/*`, `AppContext` data binding, or `.env`.
 5. Hand back the running demo + the branch diff — this is the client's onboarding skeleton.
 
 ### Adding a feature — copy-paste template
-A feature is a page component + one `src/features.js` entry. Read demo data with `useApp()` and
+A feature is a page component + one `src/features.ts` entry. Read demo data with `useApp()` and
 style with semantic tokens only (no raw color literals like `text-gray-500`/`bg-[#...]`/`text-white`).
 `useApp()` exposes: `customer`, `wallet`, `accounts`, `transferLog`, `loading`, `error`,
 `addTransfer`, `refreshWallet`, `refreshCustomer`, `loggedOut`, `setLoggedOut`.
 
-`src/pages/Rewards.jsx` (new page):
+`src/pages/Rewards.tsx` (new page — typed; `useApp()` is fully typed, so destructured values carry their types):
 
-```jsx
+```tsx
 import Card from '../components/Card'
 import { useApp } from '../context/useApp'
 
@@ -64,9 +64,9 @@ export default function Rewards() {
 }
 ```
 
-`src/features.js` (import the page, then push an entry into the `features` array):
+`src/features.ts` (import the page, then push an entry into the typed `features: Feature[]` array):
 
-```js
+```ts
 import Rewards from './pages/Rewards'
 import { Gift } from 'lucide-react'
 // …
