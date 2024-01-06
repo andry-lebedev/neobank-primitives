@@ -59,7 +59,9 @@ export default function Profile() {
     try {
       const { verificationUrl } = await initiateKyc(customer.id, 'simplified')
       track('kyc_initiated', { customerId: customer.id, level: 'simplified' })
-      window.open(verificationUrl, '_blank', 'noopener')
+      if (verificationUrl) {
+        window.open(verificationUrl, '_blank', 'noopener')
+      }
     } catch (e) {
       const message = axios.isAxiosError<{ message?: string }>(e) ? e.response?.data?.message : undefined
       notify(message ?? 'Could not start verification', 'error')
