@@ -1,4 +1,4 @@
-# Swipelux Neobank Demo — Self-Building Integration Kit
+# Swipelux Neobank Starter — Self-Building Integration Kit
 
 A working, API-driven neobank demo running on the Swipelux sandbox, structured so an AI agent can
 re-skin it and wire it into a client's infrastructure by editing three well-defined seams — without
