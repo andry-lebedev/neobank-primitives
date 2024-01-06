@@ -25,10 +25,12 @@ All brand, neutral, and status colors are Tailwind tokens. Brand/surface: `accen
 (+`accent.hover`), `base`, `card`, `card-hover`. Neutral text ramp (high→low emphasis):
 `fg-strong`, `fg`, `fg-muted`, `muted`, `subtle`, `faint`. Status: `success`, `danger`, `info`,
 `warning`. Re-skin = edit the `colors` block and swap the brand name/logo — **zero component
-edits**. Do NOT reintroduce raw hex (`bg-[#...]`), color-scale literals (`text-gray-500`,
-`text-green-400`), or bare `text-white`/`bg-black` in components — the `src/theme-tokens.test.js`
-guard fails the build if you do. Exception: `DevPanel.jsx` keeps `purple-*`/`gray-*`/`#0F172A` —
-it is an internal dev tool, not client-facing surface, and is exempt from the guard.
+edits**. Do NOT reintroduce raw hex in classes (`bg-[#...]`), color-scale literals (`text-gray-500`,
+`text-green-400`), or bare `text-white`/`bg-black` in `src/components`/`src/pages` — the
+`src/theme-tokens.test.js` guard fails the build if you do (it scans those two dirs; bare hex in
+JS style objects is outside its reach, so still avoid it). Exception: `DevPanel.jsx` keeps
+`purple-*`/`gray-*`/`text-white`/`#0F172A` — it is an internal dev tool, not client-facing
+surface, and is exempt from the guard.
 
 ### Seam 2 — Feature registry (`src/features.js`)
 One array drives both routes (`App.jsx`) and the bottom nav (`BottomNav.jsx`). To remove a
