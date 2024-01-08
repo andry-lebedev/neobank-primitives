@@ -13,8 +13,13 @@ export function formatMoney(amount: string | number, currency: string = brand.cu
   return `${new Intl.NumberFormat(brand.locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value)} ${currency}`
 }
 
-export function formatDate(iso: string): string {
-  const parts = new Intl.DateTimeFormat(brand.locale, { month: 'short', day: 'numeric' }).formatToParts(new Date(iso))
+export function formatDate(iso?: string): string {
+  if (!iso) return ''
+
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) return ''
+
+  const parts = new Intl.DateTimeFormat(brand.locale, { month: 'short', day: 'numeric' }).formatToParts(date)
   const month = parts.find((part) => part.type === 'month')?.value
   const day = parts.find((part) => part.type === 'day')?.value
   return [month, day].filter(Boolean).join(' ')
@@ -25,5 +30,6 @@ export function transferTitle(t: Transfer): string {
     case 'offramp': return 'Bank payout'
     case 'onramp': return 'Deposit'
     case 'wallet_to_wallet': return 'Wallet transfer'
+    default: return 'Transfer'
   }
 }

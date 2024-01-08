@@ -12,10 +12,16 @@ describe('format', () => {
     expect(formatDate('2026-06-13T10:30:00.000Z')).toMatch(/Jun 13/)
   })
 
+  it('returns an empty string for invalid dates', () => {
+    expect(formatDate('not-a-date')).toBe('')
+    expect(formatDate()).toBe('')
+  })
+
   it('titles transfers by type', () => {
     const t: Transfer = { id: 't1', type: 'offramp', state: 'completed', createdAt: '2026-06-01T00:00:00Z', to: { identifier: 'IE12BANK', currency: 'EUR' } }
     expect(transferTitle(t)).toBe('Bank payout')
     expect(transferTitle({ ...t, type: 'onramp' })).toBe('Deposit')
     expect(transferTitle({ ...t, type: 'wallet_to_wallet' })).toBe('Wallet transfer')
+    expect(transferTitle({ ...t, type: 'crypto_transfer' } as unknown as Transfer)).toBe('Transfer')
   })
 })
