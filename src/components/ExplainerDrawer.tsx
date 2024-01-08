@@ -25,6 +25,13 @@ const ONBOARDING_DONE: Record<string, number> = {
 export function ExplainerDrawer() {
   const { open, setOpen } = useExplainer()
   const [active, setActive] = useState<ActiveFlow | null>(null)
+  // Drive the slide-in: mount translated off-screen, then flip to visible.
+  const [shown, setShown] = useState(false)
+  useEffect(() => {
+    if (!open) { setShown(false); return }
+    const id = requestAnimationFrame(() => setShown(true))
+    return () => cancelAnimationFrame(id)
+  }, [open])
 
   useEffect(() => onAction(e => {
     if (e.type === 'transfer.updated') {
@@ -52,7 +59,13 @@ export function ExplainerDrawer() {
   const flow = active ? explainers[active.key] : null
 
   return (
-    <aside className="fixed inset-x-0 bottom-16 z-40 max-h-[55vh] overflow-y-auto border-t bg-card p-5 md:inset-x-auto md:inset-y-0 md:right-0 md:bottom-auto md:max-h-none md:w-[300px] md:border-t-0 md:border-l">
+    <aside
+      className={cn(
+        'fixed inset-x-0 bottom-16 z-40 max-h-[55vh] overflow-y-auto border-t bg-card p-5 transition-transform duration-200 ease-out',
+        'md:inset-x-auto md:right-4 md:top-20 md:bottom-4 md:max-h-none md:w-[320px] md:rounded-2xl md:border md:shadow-2xl',
+        shown ? 'translate-y-0 md:translate-x-0' : 'translate-y-full md:translate-y-0 md:translate-x-[120%]',
+      )}
+    >
       <div className="mb-1 flex items-center justify-between">
         <h2 className="text-sm font-bold">What Swipelux just did</h2>
         <Button variant="ghost" size="sm" aria-label="Close explainer" onClick={() => setOpen(false)}>

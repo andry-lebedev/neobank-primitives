@@ -48,7 +48,7 @@ export function AppShell({ nav, children }: { nav: NavItem[]; children: ReactNod
       </nav>
 
       {/* Top bar */}
-      <header className={cn('sticky top-0 z-20 border-b bg-background/90 backdrop-blur md:pl-16', open && 'md:pr-[300px]')}>
+      <header className="sticky top-0 z-20 border-b bg-background/90 backdrop-blur md:pl-16">
         <div className="mx-auto flex h-14 w-full max-w-md items-center justify-between px-4">
           <span className="flex items-center gap-2 font-bold md:hidden">
             <img src={brand.logoSrc} alt="" className="size-6 rounded-md" /> {brand.name}
@@ -70,8 +70,8 @@ export function AppShell({ nav, children }: { nav: NavItem[]; children: ReactNod
         </div>
       </header>
 
-      {/* Centered content column — stays centered whether the drawer is open or not */}
-      <main className={cn('md:pl-16', open && 'md:pr-[300px]')}>
+      {/* Centered content column — the explainer floats over it, so it never shifts on open */}
+      <main className="md:pl-16">
         <div className="mx-auto w-full max-w-md px-4 pb-28 pt-6 md:pb-12">{children}</div>
       </main>
 
