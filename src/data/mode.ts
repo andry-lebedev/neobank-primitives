@@ -12,7 +12,12 @@ export function getBaseUrl(): string {
 }
 
 export function getApiKey(): string {
-  return localStorage.getItem(KEY_STORAGE) ?? import.meta.env.VITE_API_TOKEN ?? ''
+  // A present localStorage entry — even an empty string — is the user's
+  // explicit choice (Go live / Disconnect) and overrides the env fallback.
+  // Only when nothing is stored do we fall back to VITE_API_TOKEN.
+  const stored = localStorage.getItem(KEY_STORAGE)
+  if (stored !== null) return stored
+  return import.meta.env.VITE_API_TOKEN ?? ''
 }
 
 export function setApiKey(key: string): void {
@@ -20,9 +25,10 @@ export function setApiKey(key: string): void {
   emitAction({ type: 'mode.changed', mode: 'live' })
 }
 
-// Note: cannot clear a key supplied via VITE_API_TOKEN env — only stored keys.
+// Records an explicit disconnect ('' beats the VITE_API_TOKEN env fallback),
+// so Disconnect returns to demo even when a key is set in .env.
 export function clearApiKey(): void {
-  localStorage.removeItem(KEY_STORAGE)
+  localStorage.setItem(KEY_STORAGE, '')
   emitAction({ type: 'mode.changed', mode: getMode() })
 }
 

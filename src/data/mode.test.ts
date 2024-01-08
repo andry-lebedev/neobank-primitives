@@ -20,6 +20,14 @@ describe('mode', () => {
     expect(getMode()).toBe('demo')
   })
 
+  it('disconnect overrides a VITE_API_TOKEN env key (returns to demo)', () => {
+    vi.stubEnv('VITE_API_TOKEN', 'sk_from_env')
+    expect(getMode()).toBe('live') // env key alone → live
+    clearApiKey()
+    expect(getApiKey()).toBe('')
+    expect(getMode()).toBe('demo') // explicit disconnect beats the env fallback
+  })
+
   it('emits mode.changed on set/clear', () => {
     const events: ActionEvent[] = []
     const off = onAction(e => events.push(e))
