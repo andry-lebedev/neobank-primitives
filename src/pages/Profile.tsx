@@ -63,7 +63,7 @@ export default function Profile() {
         <Card>
           <CardHeader className="pb-1"><CardTitle className="text-sm">Wallet</CardTitle></CardHeader>
           <CardContent>
-            {wallet.address && <CopyField label={`Address (${wallet.chain ?? 'polygon'})`} value={wallet.address} />}
+            {wallet.address && <CopyField label={`Address (${wallet.chain ?? 'polygon'})${mode === 'demo' ? ' · demo' : ''}`} value={wallet.address} />}
             {accounts.map(a => a.iban && <CopyField key={a.id} label={a.label ?? 'IBAN'} value={a.iban} />)}
           </CardContent>
         </Card>
