@@ -157,6 +157,7 @@ export interface PayoutInput {
   currency?: string
   toId: string
   toCurrency: string
+  kind?: 'bank' | 'wallet'
 }
 
 export interface TopupInput {

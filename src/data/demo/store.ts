@@ -1,4 +1,5 @@
 import { emitAction } from '@/lib/events'
+import { brand } from '@/brand.config'
 import { seedState, DEMO_CUSTOMER_ID, type DemoState } from './fixtures'
 import type {
   Account, CreateAccountInput, CreateCustomerInput, CreateRecipientAccountInput,
@@ -213,7 +214,8 @@ export const demoStore = {
     const s = load()
     const currency = input.currency ?? 'USDC'
     adjustBalance(currency, -input.amount) // throws on insufficient funds
-    const isP2p = input.toId.startsWith('0x')
+    const kind = input.kind ?? (input.toId.startsWith('0x') ? 'wallet' : 'bank')
+    const isP2p = kind === 'wallet'
     const quote = isP2p ? null : this.createPayoutQuote({ fromWalletId: input.fromWalletId, amount: input.amount, currency, toAccountId: input.toId, toCurrency: input.toCurrency })
     const recipient = s.recipients.find(r => (s.recipientAccounts[r.id] ?? []).some(a => a.id === input.toId))
     const t: Transfer = {
@@ -235,7 +237,7 @@ export const demoStore = {
   topup(input: TopupInput): Transfer {
     const s = load()
     const amount = input.amount ?? 1000
-    const currency = input.currency ?? 'EUR'
+    const currency = input.currency ?? s.wallet.balances?.find(b => b.currency === brand.currency)?.currency ?? s.wallet.balances?.[0]?.currency ?? brand.currency
     adjustBalance(currency, amount)
     const t: Transfer = {
       id: nextId('tx'),

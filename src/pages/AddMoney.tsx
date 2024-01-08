@@ -5,17 +5,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { CopyField } from '@/components/CopyField'
 import { useApp } from '@/context/useApp'
 import { notify, track } from '@/integrations'
+import { brand } from '../brand.config'
 
 export default function AddMoney() {
   const { source, mode, wallet, accounts, addTransfer } = useApp()
   const [busy, setBusy] = useState(false)
   const account = accounts.find(a => a.source === 'virtual') ?? accounts[0]
+  const primaryBalance = wallet?.balances?.find(b => b.currency === brand.currency) ?? wallet?.balances?.[0]
+  const simulateCurrency = primaryBalance?.currency ?? brand.currency
 
   async function simulate() {
     if (!wallet) return
     setBusy(true)
     try {
-      const transfer = await source.topup({ walletId: wallet.id, amount: 1000, currency: mode === 'demo' ? 'EUR' : 'USDC' })
+      const transfer = await source.topup({ walletId: wallet.id, amount: 1000, currency: simulateCurrency })
       addTransfer(transfer)
       track('addmoney.simulated', {})
       notify('Deposit created — watch it settle')
