@@ -24,6 +24,13 @@ describe('explainers', () => {
     }
   })
 
+  it('every explainer is reachable from an action event', () => {
+    const flows = new Set(Object.values(EVENT_FLOW).filter((f): f is FlowKey => f !== null))
+    for (const key of Object.keys(explainers)) {
+      expect(flows.has(key as FlowKey), `${key} is not mapped by any action event`).toBe(true)
+    }
+  })
+
   it('stepsDone tracks transfer lifecycle', () => {
     expect(stepsDone('payout', 'pending')).toBe(2)
     expect(stepsDone('payout', 'in_progress')).toBe(3)
