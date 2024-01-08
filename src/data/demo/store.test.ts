@@ -19,6 +19,21 @@ describe('demo store', () => {
     expect(demoStore.listTransfers(DEMO_CUSTOMER_ID).length).toBeGreaterThanOrEqual(10)
   })
 
+  it('seeds multiple personas and switches the active customer', () => {
+    const ids = demoStore.listCustomers().map(c => c.id)
+    expect(ids).toContain(DEMO_CUSTOMER_ID)
+    expect(ids).toContain('demo-customer-biz')
+    expect(ids.length).toBeGreaterThanOrEqual(3)
+
+    expect(demoStore.getActiveCustomerId()).toBe(DEMO_CUSTOMER_ID) // default
+    demoStore.setActiveCustomer('demo-customer-biz')
+    expect(demoStore.getActiveCustomerId()).toBe('demo-customer-biz')
+    expect(demoStore.getCustomer('demo-customer-biz').type).toBe('business')
+
+    demoStore.setActiveCustomer('not-a-real-id') // unknown → falls back to default
+    expect(demoStore.getActiveCustomerId()).toBe(DEMO_CUSTOMER_ID)
+  })
+
   it('payout deducts balance, starts pending, auto-completes and emits', () => {
     const wallet = demoStore.listWallets(DEMO_CUSTOMER_ID)[0]
     const before = Number(wallet.balances!.find(b => b.currency === 'EUR')!.amount)

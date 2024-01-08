@@ -171,6 +171,7 @@ export type AppMode = 'demo' | 'live'
 // The single contract every screen talks to. Implemented by src/data/demo and
 // src/data/live; wrapped by src/data/tracked.ts which emits action events.
 export interface DataSource {
+  listCustomers(): Promise<Customer[]>
   getCustomer(id: string): Promise<Customer>
   createCustomer(input: CreateCustomerInput): Promise<Customer>
   initiateKyc(customerId: string): Promise<KycSession>

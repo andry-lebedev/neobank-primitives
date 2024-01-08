@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import { AppContext } from './appContext'
 import { getSource } from '@/data'
 import { getMode } from '@/data/mode'
-import { DEMO_CUSTOMER_ID } from '@/data/demo/fixtures'
+import { demoStore } from '@/data/demo/store'
 import { emitAction, onAction } from '@/lib/events'
 import { onSession, resolveCustomerId } from '@/integrations'
 import type { Account, Customer, Transfer, Wallet } from '@/data/types'
@@ -14,7 +14,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [generation, setGeneration] = useState(0) // bump to reload everything
   const mode = getMode()
   const source = useMemo(() => getSource(), [generation]) // eslint-disable-line react-hooks/exhaustive-deps
-  const customerId = mode === 'demo' ? DEMO_CUSTOMER_ID : resolveCustomerId()
+  const customerId = mode === 'demo' ? demoStore.getActiveCustomerId() : resolveCustomerId()
 
   const [customer, setCustomer] = useState<Customer | null>(null)
   const [wallet, setWallet] = useState<Wallet | null>(null)
