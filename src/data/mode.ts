@@ -30,16 +30,12 @@ export function getMode(): AppMode {
   return getApiKey() ? 'live' : 'demo'
 }
 
-// A 401/403 means the key is bad. Anything else (200, or 400 from a
-// parameterless list call) means auth passed.
+// Only a successful response confirms the key was accepted.
 export async function validateApiKey(key: string): Promise<boolean> {
   try {
     await axios.get(`${getBaseUrl()}/v1/transfers`, { headers: { 'X-API-Key': key } })
     return true
-  } catch (err) {
-    if (axios.isAxiosError(err) && err.response) {
-      return err.response.status !== 401 && err.response.status !== 403
-    }
-    return false // network failure — treat as not validated
+  } catch {
+    return false
   }
 }

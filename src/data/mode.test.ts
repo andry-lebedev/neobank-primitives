@@ -32,7 +32,7 @@ describe('mode', () => {
     off()
   })
 
-  it('validateApiKey: 401/403 → false, network 200/400 → true', async () => {
+  it('validateApiKey: 401/403/400 → false, 200 → true', async () => {
     vi.mocked(axios.get).mockRejectedValueOnce({ isAxiosError: true, response: { status: 401 } })
     vi.mocked(axios.isAxiosError).mockReturnValue(true)
     expect(await validateApiKey('bad')).toBe(false)
@@ -41,6 +41,6 @@ describe('mode', () => {
     expect(await validateApiKey('good')).toBe(true)
 
     vi.mocked(axios.get).mockRejectedValueOnce({ isAxiosError: true, response: { status: 400 } })
-    expect(await validateApiKey('good-but-400')).toBe(true)
+    expect(await validateApiKey('good-but-400')).toBe(false)
   })
 })
