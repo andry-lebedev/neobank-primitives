@@ -26,6 +26,11 @@ export default defineConfig([
     },
     rules: {
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      // React-Compiler-preview rules (eslint-plugin-react-hooks v7): the app uses
+      // idiomatic patterns these flag — a loading toggle inside a data-fetch effect
+      // and the latest-ref update pattern. Kept as warnings, not build-breaking errors.
+      'react-hooks/set-state-in-effect': 'warn',
+      'react-hooks/immutability': 'warn',
     },
   },
   {
