@@ -1,9 +1,10 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './theme.css'
+import App from './App'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <div className="p-8 font-sans">v2 scaffold OK</div>
+    <App />
   </StrictMode>,
 )
