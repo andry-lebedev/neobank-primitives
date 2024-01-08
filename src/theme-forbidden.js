@@ -11,6 +11,8 @@ export const FORBIDDEN = [
   /\b(?:text|bg|border|ring|placeholder|fill|stroke|divide)-(?:white|black)\b/,
   // Arbitrary hex values in classes: bg-[#0F172A]
   /-\[#[0-9a-fA-F]{3,8}\]/,
+  // Raw hex in inline style objects: style={{ color: '#fff' }}
+  /(?:color|background|backgroundColor|borderColor|fill|stroke)\s*:\s*['"`]?#[0-9a-fA-F]{3,8}/,
 ]
 
 export const UI_DIRS = ['components', 'pages']

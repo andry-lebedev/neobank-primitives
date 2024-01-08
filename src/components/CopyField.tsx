@@ -5,9 +5,13 @@ import { Button } from '@/components/ui/button'
 export function CopyField({ label, value }: { label: string; value: string }) {
   const [copied, setCopied] = useState(false)
   const copy = () => {
-    navigator.clipboard?.writeText(value).catch(() => {})
-    setCopied(true)
-    setTimeout(() => setCopied(false), 1500)
+    if (!navigator.clipboard) return
+    navigator.clipboard.writeText(value)
+      .then(() => {
+        setCopied(true)
+        setTimeout(() => setCopied(false), 1500)
+      })
+      .catch(() => {})
   }
   return (
     <div className="flex items-center justify-between gap-3 py-2">

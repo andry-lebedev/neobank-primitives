@@ -40,4 +40,15 @@ describe('theme token guard', () => {
     }
     expect(offenders, `Raw color literals found — use semantic tokens:\n${offenders.join('\n')}`).toEqual([])
   })
+
+  it('flags raw hex in inline style objects', () => {
+    const samples = [
+      `style={{ color: '#fff' }}`,
+      `style={{ backgroundColor: "#0F172A" }}`,
+      `<div style={{ borderColor: '#abc123' }} />`,
+    ]
+    for (const s of samples) {
+      expect(FORBIDDEN.some(re => re.test(s)), s).toBe(true)
+    }
+  })
 })
