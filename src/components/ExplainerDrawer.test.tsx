@@ -3,7 +3,7 @@ import { act, screen } from '@testing-library/react'
 import { renderWithProviders } from '@/test/utils'
 import { setSourceOverride } from '@/data'
 import { ExplainerDrawer } from './ExplainerDrawer'
-import { useExplainer } from '@/context/ExplainerContext'
+import { useExplainer } from '@/context/useExplainer'
 import { emitAction } from '@/lib/events'
 import { useEffect } from 'react'
 
