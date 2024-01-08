@@ -20,5 +20,5 @@ export const brand: BrandConfig = {
     profile: true,
     onboarding: true,
   },
-  explainerDefaultOn: true,
+  explainerDefaultOn: false,
 }

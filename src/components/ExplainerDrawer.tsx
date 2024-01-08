@@ -43,6 +43,7 @@ export function ExplainerDrawer() {
     }
     const key = EVENT_FLOW[e.type]
     if (!key) return
+    setOpen(true) // an operation started — surface the explainer to narrate it
     if (key === 'onboarding') {
       setActive({ key, transferId: null, done: ONBOARDING_DONE[e.type] ?? 0 })
       return
@@ -53,7 +54,7 @@ export function ExplainerDrawer() {
       transferId: transfer?.id ?? null,
       done: transfer ? stepsDone(key, transfer.state) : 1, // quoted → first step done
     })
-  }), [])
+  }), [setOpen])
 
   if (!open) return null
   const flow = active ? explainers[active.key] : null
@@ -62,7 +63,7 @@ export function ExplainerDrawer() {
     <aside
       className={cn(
         'fixed inset-x-0 bottom-16 z-40 max-h-[55vh] overflow-y-auto border-t bg-card p-5 transition-transform duration-200 ease-out',
-        'md:inset-x-auto md:right-4 md:top-20 md:bottom-4 md:max-h-none md:w-[320px] md:rounded-2xl md:border md:shadow-2xl',
+        'md:inset-x-auto md:right-4 md:top-4 md:bottom-auto md:max-h-[calc(100vh-2rem)] md:w-[320px] md:rounded-2xl md:border md:shadow-2xl',
         shown ? 'translate-y-0 md:translate-x-0' : 'translate-y-full md:translate-y-0 md:translate-x-[120%]',
       )}
     >
