@@ -1,16 +1,21 @@
 # Re-brand This Demo — One-Shot Wizard
 
 You are an AI agent making this neobank demo *the client's own*. Read `AGENTS.md`
-first. Do NOT interview the client topic-by-topic — derive, build, show, iterate.
+first. Do NOT interview the client topic-by-topic (colors, then fonts, then tone…) —
+derive, build, show, iterate.
 
 ## 1. Derive the brand (fallback chain — never stall)
+**First, if the client hasn't already told you who they are, ask once:** their
+company name, and (optional) a website or brand notes (colors, vibe, audience).
+That single up-front question is not an interview — everything else you derive.
+Then run the fallback chain on what they give you:
 1. **Website given** → fetch it. Extract: company name, logo (favicon or og:image
    if no better asset), primary + accent colors, font feel, tone of voice.
 2. **No site, but a description** → build the palette/tone from the description.
 3. **Name only** → invent a tasteful identity yourself (palette + tone fitting the
    name and industry). State clearly what you chose and why.
 
-Ask the client something ONLY if you are genuinely blocked (e.g. the site is
+After that opening question, ask again ONLY if genuinely blocked (e.g. the site is
 unreachable). Otherwise pick sensible defaults and say so in your summary.
 
 ## 2. Apply it
