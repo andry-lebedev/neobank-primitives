@@ -74,8 +74,9 @@
 @theme {
   --animate-fab-in: fab-in 0.5s ease-out 4s both;
   @keyframes fab-in {
-    from { opacity: 0; transform: translateY(0.75rem); }
-    to   { opacity: 1; transform: translateY(0); }
+    /* pointer-events gated so the still-invisible button isn't clickable during the delay */
+    from { opacity: 0; transform: translateY(0.75rem); pointer-events: none; }
+    to   { opacity: 1; transform: translateY(0); pointer-events: auto; }
   }
 
   /* `animate-page-in` = each route's fade + slide-up enter (keyed by pathname). */

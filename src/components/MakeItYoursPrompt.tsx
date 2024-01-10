@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Check, Copy } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -15,10 +15,13 @@ green, then run it (npm run dev) and show me the result and what you chose.`
 // The prompt block + copy-to-clipboard button, with transient "copied" feedback.
 export function MakeItYoursPrompt() {
   const [copied, setCopied] = useState(false)
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined)
+  useEffect(() => () => clearTimeout(timer.current), [])
   const copy = () => {
     navigator.clipboard?.writeText(MAKE_IT_YOURS_PROMPT).catch(() => {})
     setCopied(true)
-    setTimeout(() => setCopied(false), 1500)
+    clearTimeout(timer.current)
+    timer.current = setTimeout(() => setCopied(false), 1500)
   }
   return (
     <div className="space-y-3">

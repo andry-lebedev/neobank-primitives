@@ -27,8 +27,10 @@ export function AppShell({ nav, children }: { nav: NavItem[]; children: ReactNod
   const location = useLocation()
   const navigate = useNavigate()
   const isHome = location.pathname === '/'
-  // History back, but fall back home so a deep-linked page never leaves the app.
-  const goBack = () => (window.history.length > 1 ? navigate(-1) : navigate('/'))
+  // History back, but fall back home when there's no in-app history to return to.
+  // location.key === 'default' marks the first entry the router saw, so we never
+  // navigate(-1) out of the app on a deep link reached from another site.
+  const goBack = () => (location.key !== 'default' ? navigate(-1) : navigate('/'))
   const initials = [customer?.personal?.firstName?.[0], customer?.personal?.lastName?.[0]].filter(Boolean).join('') || '•'
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
