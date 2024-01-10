@@ -54,8 +54,10 @@ git commit -m "docs(qol): restore v2 design + plan docs onto main line"
 - [ ] **Step 1: Install the two new devDependencies**
 
 ```bash
-npm install -D eslint-plugin-sonarjs@^4.0.3 typhonjs-escomplex@^0.1.0
+npm install -D eslint-plugin-sonarjs@^4.0.3 typhonjs-escomplex@^0.1.0 @typescript-eslint/parser@^8.59.2
 ```
+
+(`@typescript-eslint/parser` is otherwise only a transitive dep via `typescript-eslint`; the cognitive config imports it directly, so pin it explicitly.)
 
 - [ ] **Step 2: Verify they resolved against ESLint 10 with no peer error**
 
@@ -69,8 +71,10 @@ Expected: both listed with no `UNMET PEER DEPENDENCY` / `invalid` lines. (`eslin
 // Per-file Maintainability Index gate.
 //
 // Strips TypeScript types via the compiler API, then runs typhonjs-escomplex
-// over the resulting ES module to obtain Halstead V + cyclomatic + SLoC -> MI
-// on the Microsoft 0-100 scale.
+// over the resulting ES module to obtain Halstead V + cyclomatic + SLoC -> MI.
+// escomplex returns the original SEI Maintainability Index (uncapped, ~0-171),
+// not the clamped 0-100 variant — simple files can score above 100. The 75
+// floor is applied on that scale.
 //
 // Usage:
 //   node scripts/ci/mi-gate.mjs <file.ts> [file.ts ...]
@@ -245,14 +249,18 @@ BASE_SHA="${BASE_SHA:-origin/master}"
 HEAD_SHA="${HEAD_SHA:-HEAD}"
 MIN_MI="${MIN_MI:-75}"
 
-# Production code only. Tests are excluded — the gate measures behavioural code.
+# Production code only. Tests and .d.ts are excluded — the gate measures
+# behavioural code. The :(glob) pathspec magic makes `**` match zero-or-more
+# directories, so top-level files (e.g. src/App.tsx) are caught too; git's
+# default pathspec would require at least one directory after `**`.
 CHANGED_LIST=$(
   git diff --name-only --diff-filter=AM "$BASE_SHA" "$HEAD_SHA" -- \
-    'src/**/*.ts' 'src/**/*.tsx' \
-    ':(exclude)src/**/*.spec.ts' \
-    ':(exclude)src/**/*.test.ts' \
-    ':(exclude)src/**/*.spec.tsx' \
-    ':(exclude)src/**/*.test.tsx'
+    ':(glob)src/**/*.ts' ':(glob)src/**/*.tsx' \
+    ':(glob,exclude)src/**/*.spec.ts' \
+    ':(glob,exclude)src/**/*.test.ts' \
+    ':(glob,exclude)src/**/*.spec.tsx' \
+    ':(glob,exclude)src/**/*.test.tsx' \
+    ':(glob,exclude)src/**/*.d.ts'
 )
 
 if [ -z "$CHANGED_LIST" ]; then
@@ -266,9 +274,12 @@ echo "$CHANGED_LIST" | sed 's/^/  /'
 echo
 
 # IFS=newline so the unquoted "$CHANGED_LIST" expands to one arg per file.
+# set -f disables globbing so a filename with a glob metachar isn't expanded.
 IFS=$'\n'
+set -f
 # shellcheck disable=SC2086
 set -- $CHANGED_LIST
+set +f
 unset IFS
 
 FAILED=0
@@ -434,5 +445,5 @@ Expected: clean working tree; commits for the spec, docs restore, MI gate + deps
 
 - The complexity gate is **blocking** and inspects **only files changed in the PR**, so it cannot retroactively fail existing `src/`.
 - Do not add a sticky PR comment, deploy step, or the sonarjs "smells" preset — all explicitly out of scope.
-- The git pathspec `src/**/*.ts` relies on git's wildmatch (same pattern the sibling `wallet-infrastructure` gate uses with `app/**`); `**` matches zero-or-more directories.
+- The gate uses `:(glob)` pathspec magic (`:(glob)src/**/*.ts`) so `**` matches zero-or-more directories — git's *default* pathspec requires at least one directory after `**`, which would silently skip top-level files like `src/App.tsx`. The sibling `wallet-infrastructure` gate avoids this only because its files all live nested under `app/`; this repo has top-level `src/*.ts(x)`, so `:(glob)` is required.
 - ESLint `--config <file>` uses only that file, bypassing `eslint.config.js`, so the cognitive config stays isolated from day-to-day lint.

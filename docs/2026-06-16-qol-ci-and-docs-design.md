@@ -66,7 +66,9 @@ a failure fails the PR check.
 
 - Computes the changed-file list with
   `git diff --name-only --diff-filter=AM "$BASE_SHA" "$HEAD_SHA"` scoped to
-  `src/**/*.ts` and `src/**/*.tsx`, excluding `*.test.ts(x)` and `*.spec.ts(x)`.
+  `:(glob)src/**/*.ts` and `:(glob)src/**/*.tsx`, excluding `*.test.ts(x)`,
+  `*.spec.ts(x)`, and `*.d.ts`. The `:(glob)` magic is required so `**` matches
+  zero-or-more directories and top-level files (`src/App.tsx`) are not skipped.
 - If no production files changed → print a skip line, exit 0.
 - Otherwise runs both sub-gates over the changed files and fails (exit 1) if either fails.
 - Env: `BASE_SHA` (default `origin/master`), `HEAD_SHA` (default `HEAD`), `MIN_MI` (default 75).
@@ -93,15 +95,18 @@ Invoked as `npx --no-install eslint --config eslint.cognitive.config.mjs --no-wa
 
 ### `scripts/ci/mi-gate.mjs`
 
-Copied verbatim from the sibling (already path-agnostic). Strips TS types via the compiler API,
-runs `typhonjs-escomplex` per file, fails any file with Maintainability Index < `MIN_MI` (75 on
-the Microsoft 0–100 scale). Invoked as `MIN_MI=75 node scripts/ci/mi-gate.mjs <files>`.
+Ported from the sibling (already path-agnostic). Strips TS types via the compiler API, runs
+`typhonjs-escomplex` per file, fails any file with Maintainability Index < `MIN_MI`. escomplex
+returns the original SEI Maintainability Index (uncapped, ~0–171), so the 75 floor is applied on
+that scale and simple files routinely score above 100. Invoked as
+`MIN_MI=75 node scripts/ci/mi-gate.mjs <files>`.
 
 ### `package.json`
 
 - New script: `"gate": "bash scripts/ci/complexity-gate.sh"`.
-- New devDependencies: `eslint-plugin-sonarjs`, `typhonjs-escomplex`. (`typescript` and the
-  `@typescript-eslint/parser` — via `typescript-eslint` — are already present.)
+- New devDependencies: `eslint-plugin-sonarjs`, `typhonjs-escomplex`, and an explicit
+  `@typescript-eslint/parser` (the cognitive config imports it directly, so it should not be
+  left as a transitive-only dep of `typescript-eslint`). `typescript` is already present.
 
 ## Component 3 — docs restore
 
