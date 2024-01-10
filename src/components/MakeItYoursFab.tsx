@@ -12,8 +12,9 @@ export function MakeItYoursFab() {
   const [open, setOpen] = useState(false)
   return (
     <Dialog open={open} onOpenChange={setOpen}>
+      {/* One-time slide-up entrance (~4s after load); calm, no idle motion. */}
       <DialogTrigger asChild>
-        <Button className="fixed bottom-[5.5rem] right-4 z-30 gap-1.5 rounded-full shadow-lg md:bottom-4">
+        <Button className="fixed bottom-[5.5rem] right-4 z-30 animate-fab-in gap-1.5 rounded-full shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl active:scale-95 md:bottom-4">
           <Sparkles className="size-4" /> Make this app yours
         </Button>
       </DialogTrigger>
