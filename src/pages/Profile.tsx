@@ -74,8 +74,8 @@ export default function Profile() {
           <CardTitle className="text-sm">Connection</CardTitle>
           <CardDescription>
             {mode === 'demo'
-              ? 'Running on demo data. Connect a Swipelux sandbox API key to go live — that is the only configuration this app has.'
-              : 'Connected to the Swipelux sandbox.'}
+              ? 'Running on demo data. Connect a Swipelux API key to go live — that is the only configuration this app has.'
+              : 'Connected to Swipelux.'}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex gap-2">

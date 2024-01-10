@@ -39,7 +39,7 @@ export default function LiveEntry() {
       <div className="text-center">
         <img src={brand.logoSrc} alt="" className="mx-auto mb-3 size-12 rounded-xl" />
         <h1 className="text-xl font-extrabold">You're live</h1>
-        <p className="text-sm text-muted-foreground">Connected to the Swipelux sandbox. Whose account should we open?</p>
+        <p className="text-sm text-muted-foreground">Connected to Swipelux. Whose account should we open?</p>
       </div>
 
       <Card>
