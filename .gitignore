@@ -29,5 +29,5 @@ dist-ssr
 api-docs/
 
 # Internal design history + local tooling — not part of the shipped kit
-docs/
+docs/superpowers/
 .claude/
