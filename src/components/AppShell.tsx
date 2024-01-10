@@ -1,5 +1,5 @@
-import { Link, NavLink } from 'react-router-dom'
-import { Zap } from 'lucide-react'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { ChevronLeft, Zap } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
@@ -24,6 +24,11 @@ export interface NavItem {
 export function AppShell({ nav, children }: { nav: NavItem[]; children: ReactNode }) {
   const { mode, customer } = useApp()
   const { open, toggle } = useExplainer()
+  const location = useLocation()
+  const navigate = useNavigate()
+  const isHome = location.pathname === '/'
+  // History back, but fall back home so a deep-linked page never leaves the app.
+  const goBack = () => (window.history.length > 1 ? navigate(-1) : navigate('/'))
   const initials = [customer?.personal?.firstName?.[0], customer?.personal?.lastName?.[0]].filter(Boolean).join('') || '•'
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
@@ -52,10 +57,22 @@ export function AppShell({ nav, children }: { nav: NavItem[]; children: ReactNod
       {/* Top bar */}
       <header className="sticky top-0 z-20 border-b bg-background/90 backdrop-blur md:pl-16">
         <div className="mx-auto flex h-14 w-full max-w-md items-center justify-between px-4">
-          <Link to="/" className="flex items-center gap-2 font-bold md:hidden" aria-label={`${brand.name} home`}>
-            <img src={brand.logoSrc} alt="" className="size-6 rounded-md" /> {brand.name}
-          </Link>
-          <Link to="/" className="hidden items-center gap-2 font-bold md:flex" aria-label={`${brand.name} home`}>{brand.name}</Link>
+          <div className="flex items-center gap-1">
+            {!isHome && (
+              <button
+                type="button"
+                onClick={goBack}
+                aria-label="Go back"
+                className="-ml-1 flex size-8 animate-back-in items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+              >
+                <ChevronLeft className="size-5" strokeWidth={1.5} />
+              </button>
+            )}
+            <Link to="/" className="flex items-center gap-2 font-bold md:hidden" aria-label={`${brand.name} home`}>
+              <img src={brand.logoSrc} alt="" className="size-6 rounded-md" /> {brand.name}
+            </Link>
+            <Link to="/" className="hidden items-center gap-2 font-bold md:flex" aria-label={`${brand.name} home`}>{brand.name}</Link>
+          </div>
           <div className="flex items-center gap-2">
             {mode === 'live' && (
               <span className="flex items-center gap-1.5 rounded-full bg-success/10 px-2.5 py-1 text-[10px] font-semibold text-success">
@@ -78,7 +95,10 @@ export function AppShell({ nav, children }: { nav: NavItem[]; children: ReactNod
 
       {/* Centered content column — the explainer floats over it, so it never shifts on open */}
       <main className="md:pl-16">
-        <div className="mx-auto w-full max-w-md px-4 pb-28 pt-6 md:pb-12">{children}</div>
+        <div className="mx-auto w-full max-w-md px-4 pb-28 pt-6 md:pb-12">
+          {/* Keyed by path so each navigation remounts → plays the page-in enter animation. */}
+          <div key={location.pathname} className="animate-page-in">{children}</div>
+        </div>
       </main>
 
       {/* Mobile bottom tabs */}
