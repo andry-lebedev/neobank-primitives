@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { emitAction } from '@/lib/events'
+import { clearCustomerId } from '@/integrations'
 import type { AppMode } from './types'
 
 // The ONLY configuration in this app is the Swipelux API key.
@@ -12,12 +13,9 @@ export function getBaseUrl(): string {
 }
 
 export function getApiKey(): string {
-  // A present localStorage entry — even an empty string — is the user's
-  // explicit choice (Go live / Disconnect) and overrides the env fallback.
-  // Only when nothing is stored do we fall back to VITE_API_TOKEN.
-  const stored = localStorage.getItem(KEY_STORAGE)
-  if (stored !== null) return stored
-  return import.meta.env.VITE_API_TOKEN ?? ''
+  // The key lives only in-app (localStorage), set via Go live and removed via
+  // Disconnect. No .env fallback — nothing sensitive is read from env.
+  return localStorage.getItem(KEY_STORAGE) ?? ''
 }
 
 export function setApiKey(key: string): void {
@@ -25,10 +23,11 @@ export function setApiKey(key: string): void {
   emitAction({ type: 'mode.changed', mode: 'live' })
 }
 
-// Records an explicit disconnect ('' beats the VITE_API_TOKEN env fallback),
-// so Disconnect returns to demo even when a key is set in .env.
+// Disconnect returns to demo and forgets the active customer, so reconnecting
+// with a different key never loads the previous key's customer.
 export function clearApiKey(): void {
-  localStorage.setItem(KEY_STORAGE, '')
+  localStorage.removeItem(KEY_STORAGE)
+  clearCustomerId()
   emitAction({ type: 'mode.changed', mode: getMode() })
 }
 

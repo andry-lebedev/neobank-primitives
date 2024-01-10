@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { setApiKey, validateApiKey } from '@/data/mode'
-import { setCustomerId } from '@/integrations'
+import { clearCustomerId, setCustomerId } from '@/integrations'
 
 export function GoLiveDialog({ trigger }: { trigger: ReactNode }) {
   const [open, setOpen] = useState(false)
@@ -22,7 +22,9 @@ export function GoLiveDialog({ trigger }: { trigger: ReactNode }) {
       setError('That key was rejected by the Swipelux sandbox. Check it and try again.')
       return
     }
-    if (customerId.trim()) setCustomerId(customerId.trim())
+    const id = customerId.trim()
+    if (id) setCustomerId(id)
+    else clearCustomerId() // blank → drop any prior key's customer; pick one after connecting
     setApiKey(key.trim()) // emits mode.changed → app reloads in live mode
     setOpen(false)
   }
