@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { AppProvider } from './AppContext'
+import { AppProvider } from './AppProvider'
 import { useApp } from './useApp'
 import { setSourceOverride } from '@/data'
 import { withTracking } from '@/data/tracked'

@@ -14,6 +14,9 @@ describe('AddMoney', () => {
     renderWithProviders(<AddMoney />)
     expect(await screen.findByText(/IE29/)).toBeInTheDocument()
     expect(screen.getByText(/0x71C9/)).toBeInTheDocument()
+    expect(await screen.findByText(/eligible pay-in rail: sepa/i)).toBeInTheDocument()
+    expect(screen.getByText(/custody: custodial/i)).toBeInTheDocument()
+    expect(screen.queryByText(/send from any bank/i)).not.toBeInTheDocument()
   })
 
   it('simulated deposit adds a transfer', async () => {
@@ -22,5 +25,13 @@ describe('AddMoney', () => {
     renderWithProviders(<><AddMoney /><Toaster /></>)
     await user.click(await screen.findByRole('button', { name: /simulate/i }))
     expect(await screen.findByText(/deposit created/i)).toBeInTheDocument()
+  })
+
+  it('reports automatic credit only after the provider returns an active rule', async () => {
+    const user = userEvent.setup()
+    renderWithProviders(<AddMoney />)
+    await user.click(await screen.findByRole('button', { name: /enable automatic credit/i }))
+    expect(await screen.findByText(/active rule/i)).toBeInTheDocument()
+    expect(screen.getByText(/source: provider_response/i)).toBeInTheDocument()
   })
 })

@@ -3,7 +3,7 @@ import type { DataSource } from '../types'
 
 // Async face over the synchronous demo store. The small latency makes
 // loading states visible so the demo feels like a real network app.
-export function createDemoSource({ latencyMs = 300 }: { latencyMs?: number } = {}): DataSource {
+export function createDemoSource({ latencyMs = 300, kycMs }: { latencyMs?: number; kycMs?: number } = {}): DataSource {
   const later = <T>(fn: () => T): Promise<T> =>
     new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -19,7 +19,7 @@ export function createDemoSource({ latencyMs = 300 }: { latencyMs?: number } = {
     listCustomers: () => later(() => demoStore.listCustomers()),
     getCustomer: id => later(() => demoStore.getCustomer(id)),
     createCustomer: input => later(() => demoStore.createCustomer(input)),
-    initiateKyc: customerId => later(() => demoStore.initiateKyc(customerId)),
+    initiateKyc: customerId => later(() => demoStore.initiateKyc(customerId, kycMs)),
     listWallets: customerId => later(() => demoStore.listWallets(customerId)),
     getWallet: (customerId, walletId) => later(() => demoStore.getWallet(customerId, walletId)),
     createWallet: (customerId, chain) => later(() => demoStore.createWallet(customerId, chain)),

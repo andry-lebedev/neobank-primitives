@@ -14,8 +14,12 @@ export function MakeItYoursFab() {
     <Dialog open={open} onOpenChange={setOpen}>
       {/* One-time slide-up entrance (~4s after load); calm, no idle motion. */}
       <DialogTrigger asChild>
-        <Button className="fixed bottom-[5.5rem] right-4 z-30 animate-fab-in gap-1.5 rounded-full shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl active:scale-95 md:bottom-4">
-          <Sparkles className="size-4" /> Make this app yours
+        <Button
+          aria-label="Make this app yours"
+          className="fixed bottom-[5.5rem] right-4 z-30 size-11 animate-fab-in gap-1.5 rounded-full p-0 shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl active:scale-95 sm:h-9 sm:w-auto sm:px-3 md:bottom-4"
+        >
+          <Sparkles className="size-4" />
+          <span className="hidden sm:inline">Make this app yours</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">

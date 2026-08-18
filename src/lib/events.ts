@@ -1,4 +1,5 @@
 import type { Account, AppMode, Customer, Quote, Transfer, Wallet } from '@/data/types'
+import type { OperationReceipt } from '@/financial/runtime'
 
 // Typed app-wide action events. Emitted by the data layer (src/data/tracked.ts
 // and demo-store timers); consumed by the explainer drawer and integrations.
@@ -13,6 +14,7 @@ export type ActionEvent =
   | { type: 'p2p.created'; transfer: Transfer }
   | { type: 'topup.created'; transfer: Transfer }
   | { type: 'transfer.updated'; transfer: Transfer }
+  | { type: 'operation.receipt'; receipt: OperationReceipt }
   | { type: 'mode.changed'; mode: AppMode }
 
 export type ActionEventType = ActionEvent['type']

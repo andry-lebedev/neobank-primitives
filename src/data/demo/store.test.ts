@@ -46,7 +46,11 @@ describe('demo store', () => {
     expect(after).toBeCloseTo(before - 100)
 
     vi.advanceTimersByTime(SETTLE_MS + 10)
-    expect(demoStore.getTransfer(t.id).state).toBe('completed')
+    expect(demoStore.getTransfer(t.id)).toMatchObject({
+      state: 'completed',
+      updatedAt: expect.any(String),
+      completedAt: expect.any(String),
+    })
     expect(events.some(e => e.type === 'transfer.updated')).toBe(true)
     off()
   })

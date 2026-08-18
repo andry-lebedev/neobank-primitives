@@ -3,7 +3,7 @@ import { Check, CircleDot, ExternalLink, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useExplainer } from '@/context/useExplainer'
 import { onAction } from '@/lib/events'
-import { explainers, EVENT_FLOW, stepsDone, type FlowKey } from '../explainers'
+import { explainers, EVENT_FLOW, receiptExplainer, stepsDone, type ExplainerFlow, type FlowKey } from '../explainers'
 import { cn } from '@/lib/utils'
 
 interface ActiveFlow {
@@ -11,6 +11,7 @@ interface ActiveFlow {
   transferId: string | null
   done: number // -1 = failed at active step
   failureReason?: string
+  flow?: ExplainerFlow
 }
 
 // Onboarding has no transfer to track — progress maps directly from events.
@@ -25,19 +26,28 @@ const ONBOARDING_DONE: Record<string, number> = {
 export function ExplainerDrawer() {
   const { open, setOpen } = useExplainer()
   const [active, setActive] = useState<ActiveFlow | null>(null)
-  // Drive the slide-in: mount translated off-screen, then flip to visible.
-  const [shown, setShown] = useState(false)
-  useEffect(() => {
-    if (!open) { setShown(false); return }
-    const id = requestAnimationFrame(() => setShown(true))
-    return () => cancelAnimationFrame(id)
-  }, [open])
 
   useEffect(() => onAction(e => {
     if (e.type === 'transfer.updated') {
       setActive(prev => {
         if (!prev || prev.transferId !== e.transfer.id) return prev
-        return { ...prev, done: stepsDone(prev.key, e.transfer.state), failureReason: e.transfer.failureReason }
+        const total = prev.flow?.steps.length
+        const done = total
+          ? e.transfer.state === 'failed' ? -1 : e.transfer.state === 'completed' ? total : total - 1
+          : stepsDone(prev.key, e.transfer.state)
+        return { ...prev, done, failureReason: e.transfer.failureReason }
+      })
+      return
+    }
+    if (e.type === 'operation.receipt') {
+      const flow = receiptExplainer(e.receipt)
+      const failed = e.receipt.status === 'failed' || e.receipt.status === 'canceled'
+      setOpen(true)
+      setActive({
+        key: flow.key,
+        transferId: e.receipt.id,
+        done: failed ? -1 : e.receipt.status === 'completed' ? flow.steps.length : flow.steps.length - 1,
+        flow,
       })
       return
     }
@@ -57,14 +67,14 @@ export function ExplainerDrawer() {
   }), [setOpen])
 
   if (!open) return null
-  const flow = active ? explainers[active.key] : null
+  const flow = active ? active.flow ?? explainers[active.key] : null
 
   return (
     <aside
       className={cn(
         'fixed inset-x-0 bottom-16 z-40 max-h-[55vh] overflow-y-auto border-t bg-card p-5 transition-transform duration-200 ease-out',
         'md:inset-x-auto md:right-4 md:top-4 md:bottom-auto md:max-h-[calc(100vh-2rem)] md:w-[320px] md:rounded-2xl md:border md:shadow-2xl',
-        shown ? 'translate-y-0 md:translate-x-0' : 'translate-y-full md:translate-y-0 md:translate-x-[120%]',
+        'translate-y-0 md:translate-x-0',
       )}
     >
       <div className="mb-1 flex items-center justify-between">

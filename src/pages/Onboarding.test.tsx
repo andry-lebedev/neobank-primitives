@@ -17,5 +17,8 @@ describe('Onboarding', () => {
     await user.click(screen.getByRole('button', { name: /create account/i }))
 
     expect(await screen.findByText(/account ready/i, undefined, { timeout: 4000 })).toBeInTheDocument()
+    expect(screen.getByText(/identity approved/i)).toBeInTheDocument()
+    expect(screen.getByText(/custody: custodial/i)).toBeInTheDocument()
+    expect(screen.queryByText(/verification completes in a few seconds/i)).not.toBeInTheDocument()
   })
 })

@@ -15,6 +15,8 @@ describe('Profile', () => {
     expect(screen.getByText(/0x71C9/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /go live/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /reset demo/i })).toBeInTheDocument()
+    expect(screen.getByText(/required runtime configuration: swipelux api key/i)).toBeInTheDocument()
+    expect(screen.getByText(/custody: custodial/i)).toBeInTheDocument()
     expect(screen.getByText(/make it yours/i)).toBeInTheDocument()
   })
 })

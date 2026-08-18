@@ -26,8 +26,9 @@ import ts from "typescript";
 const MIN_MI = Number(process.env.MIN_MI ?? 75);
 const FORMAT = process.env.FORMAT ?? "table";
 
-function stripTypes(source) {
+function stripTypes(source, filePath) {
   return ts.transpileModule(source, {
+    fileName: filePath,
     compilerOptions: {
       target: ts.ScriptTarget.ESNext,
       module: ts.ModuleKind.ESNext,
@@ -38,7 +39,7 @@ function stripTypes(source) {
 
 function analyze(filePath) {
   const source = readFileSync(filePath, "utf8");
-  const js = stripTypes(source);
+  const js = stripTypes(source, filePath);
   const report = escomplex.analyzeModule(js);
   return {
     file: filePath,

@@ -2,11 +2,12 @@ import axios from 'axios'
 import { emitAction } from '@/lib/events'
 import { clearCustomerId } from '@/integrations'
 import type { AppMode } from './types'
+import { APP_SUPPORT } from '@/support'
 
-// The ONLY configuration in this app is the Swipelux API key.
-// No key → demo mode (local realistic data). Key → live sandbox.
+// A stored Swipelux API key selects provider-backed mode; VITE_API_URL can
+// optionally point the client at a different API environment.
 const KEY_STORAGE = 'swipelux_api_key'
-const DEFAULT_BASE_URL = 'https://platform.sbx.swipelux.com'
+const DEFAULT_BASE_URL = APP_SUPPORT.live.defaultBaseUrl
 
 export function getBaseUrl(): string {
   return import.meta.env.VITE_API_URL ?? DEFAULT_BASE_URL
@@ -38,7 +39,7 @@ export function getMode(): AppMode {
 // Only a successful response confirms the key was accepted.
 export async function validateApiKey(key: string): Promise<boolean> {
   try {
-    await axios.get(`${getBaseUrl()}/v1/transfers`, { headers: { 'X-API-Key': key } })
+    await axios.get(`${getBaseUrl()}/v3/capabilities`, { headers: { 'X-API-Key': key } })
     return true
   } catch {
     return false

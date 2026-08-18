@@ -52,6 +52,10 @@ describe('mode', () => {
 
     vi.mocked(axios.get).mockResolvedValueOnce({ data: [] })
     expect(await validateApiKey('good')).toBe(true)
+    expect(axios.get).toHaveBeenCalledWith(
+      'https://platform.sbx.swipelux.com/v3/capabilities',
+      { headers: { 'X-API-Key': 'good' } },
+    )
 
     vi.mocked(axios.get).mockRejectedValueOnce({ isAxiosError: true, response: { status: 400 } })
     expect(await validateApiKey('good-but-400')).toBe(false)

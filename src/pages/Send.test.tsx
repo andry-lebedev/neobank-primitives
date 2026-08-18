@@ -19,9 +19,11 @@ describe('Send', () => {
     await user.click(screen.getByRole('button', { name: /get quote/i }))
 
     expect(await screen.findByText(/recipient gets/i)).toBeInTheDocument()
+    expect(screen.getByText(/quote expires/i)).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: /confirm/i }))
 
-    expect(await screen.findByText(/on its way/i)).toBeInTheDocument()
+    expect(await screen.findByText(/accepted by provider/i)).toBeInTheDocument()
+    expect(screen.getByText(/policy: allow/i)).toBeInTheDocument()
   })
 
   it('auto-selects the first recipient so quoting needs no extra click', async () => {
@@ -41,7 +43,23 @@ describe('Send', () => {
     await user.click(await screen.findByRole('button', { name: /Maria K\./ }))
     await user.type(screen.getByLabelText(/amount/i), '9999999')
     await user.click(screen.getByRole('button', { name: /get quote/i }))
+    expect(await screen.findByText(/human approval required/i)).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: /approve and get quote/i }))
     await user.click(await screen.findByRole('button', { name: /confirm/i }))
     expect(await screen.findByText(/insufficient/i)).toBeInTheDocument()
+  })
+
+  it('creates a v3 wallet destination, requires approval, and executes its exact quote', async () => {
+    const user = userEvent.setup()
+    renderWithProviders(<Send />)
+    await user.click(screen.getByRole('button', { name: /crypto wallet/i }))
+    await user.type(screen.getByLabelText(/recipient name/i), 'Ari Wallet')
+    await user.type(screen.getByLabelText(/wallet address/i), '0x1234567890abcdef')
+    await user.type(screen.getByLabelText(/amount \(USDC\)/i), '10')
+    await user.click(screen.getByRole('button', { name: /get quote/i }))
+    expect(await screen.findByText(/human approval required/i)).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: /approve and get quote/i }))
+    await user.click(await screen.findByRole('button', { name: /confirm transfer/i }))
+    expect(await screen.findByText(/accepted by provider/i)).toBeInTheDocument()
   })
 })
