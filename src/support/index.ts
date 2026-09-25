@@ -24,7 +24,7 @@ export const APP_SUPPORT = {
   },
   live: {
     apiVersion: 'v3',
-    defaultBaseUrl: 'https://platform.sbx.swipelux.com',
+    defaultBaseUrl: 'https://platform.swipelux.com',
     capabilityPath: '/v3/customers/{customerId}/capabilities/supported',
   },
   providerEvidence: {
